@@ -2,8 +2,6 @@
 
 ## Começar o aplicativo: 
 
-First, run the development server:
-
 ```bash
 npm run dev
 ```
