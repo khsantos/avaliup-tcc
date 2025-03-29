@@ -12,3 +12,4 @@ Abra [http://localhost:3000](http://localhost:3000) com o seu navegador para ver
 - Zod
 - Axios
 - Supabase
+- PostgreSQL
