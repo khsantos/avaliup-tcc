@@ -9,8 +9,11 @@ const ubuntu = Ubuntu({
 });
 
 export const metadata = {
-  title: "App",
-  description: "...",
+  title: {
+    default: "Avali.up",
+    template: "%s | Avali.up",
+  },
+  description: "O melhor site para encontrar produtos de qualidade.",
 };
 
 export default function RootLayout({

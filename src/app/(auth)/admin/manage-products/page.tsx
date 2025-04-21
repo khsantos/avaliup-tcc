@@ -1,3 +1,7 @@
+export const metadata = {
+  title: "Gerenciar Produtos",
+};
+
 function Page() {
   return (
     <div className="p-6">

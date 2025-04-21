@@ -1,4 +1,6 @@
-"use client";
+export const metadata = {
+  title: "Página Inicial",
+};
 
 export default function Home() {
   return (
