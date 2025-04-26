@@ -31,16 +31,16 @@ export default function Login() {
     }
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-50">
-            <div className="w-full max-w-md p-8 space-y-6 bg-white shadow-md rounded-md">
+        <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-[#030712]">
+            <div className="w-full max-w-md p-8 space-y-6 shadow-md rounded-md">
                 <div className="flex items-center justify-center">
                     <ThemeSwitch />
                 </div>
-                <h2 className="text-2xl font-bold text-[#010B62]">Login</h2>
+                <h2 className="text-2xl font-bold text-[#010B62] dark:text-white">Login</h2>
                 {error && <p className="text-sm text-red-500">{error}</p>}
                 <form className="space-y-4">
                     <div>
-                        <label htmlFor="email" className="block text-sm font-medium mb-1 text-[#010B62]">
+                        <label htmlFor="email" className="block text-sm font-medium mb-1 text-[#010B62] dark:text-white">
                             E-mail
                         </label>
                         <input
@@ -49,7 +49,7 @@ export default function Login() {
                             type="email"
                             required
                             placeholder="Insira seu e-mail"
-                            className="w-full px-3 py-2 mt-1 border rounded-md border-[#010B62] focus:outline-none focus:ring-2 focus:ring-blue-500 dark:placeholder-gray-500"
+                            className="w-full px-3 py-2 mt-1 border rounded-md border-[#010B62] dark:border-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:placeholder-gray-500"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                         />
@@ -57,7 +57,7 @@ export default function Login() {
                     </div>
                     <div>
                         <div className="flex items-center justify-between mb-1">
-                            <label htmlFor="password" className="text-sm font-medium text-gray-700">
+                            <label htmlFor="password" className="text-sm font-medium text-[#010b62] dark:text-white">
                                 Senha
                             </label>
                             <Link href="/reset-password" className="text-sm text-[#01BAEF] hover:underline">
@@ -71,7 +71,7 @@ export default function Login() {
                                 type={showPassword ? "text" : "password"}
                                 required
                                 placeholder="Insira sua senha"
-                                className="w-full px-3 py-2 mt-1 border rounded-md border-[#010B62] focus:outline-none focus:ring-2 focus:ring-blue-500 dark:placeholder-gray-500"
+                                className="w-full px-3 py-2 mt-1 border rounded-md border-[#010B62] dark:border-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:placeholder-gray-500"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                             />
