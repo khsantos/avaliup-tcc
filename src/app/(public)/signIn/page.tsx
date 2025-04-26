@@ -1,13 +1,46 @@
+"use client"
+
+import ThemeSwitch from "@/src/components/ThemeSwitch";
+import { supabase } from "@/src/lib/supabase";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 
 export default function Login() {
+    const router = useRouter();
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+
+    const handleLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError("");
+
+        const { error } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+        });
+
+        if (error) {
+            setError(error.message);
+        } else {
+            router.push("/");
+        }
+    }
+
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-50">
             <div className="w-full max-w-md p-8 space-y-6 bg-white shadow-md rounded-md">
-                <h2 className="text-2xl font-bold text-center text-blue-900">Login</h2>
+                <div className="flex items-center justify-center">
+                    <ThemeSwitch />
+                </div>
+                <h2 className="text-2xl font-bold text-[#010B62]">Login</h2>
+                {error && <p className="text-sm text-red-500">{error}</p>}
                 <form className="space-y-4">
                     <div>
-                        <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                        <label htmlFor="email" className="block text-sm font-medium mb-1 text-[#010B62]">
                             E-mail
                         </label>
                         <input
@@ -16,50 +49,64 @@ export default function Login() {
                             type="email"
                             required
                             placeholder="Insira seu e-mail"
-                            className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-3 py-2 mt-1 border rounded-md border-[#010B62] focus:outline-none focus:ring-2 focus:ring-blue-500 dark:placeholder-gray-500"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                         />
+
                     </div>
                     <div>
-                        <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                            Senha
-                        </label>
-                        <input
-                            id="password"
-                            name="password"
-                            type="password"
-                            required
-                            placeholder="Insira sua senha"
-                            className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                        <div className="text-right">
-                            <Link href="/forgot-password" className="text-sm text-blue-600 hover:underline">
+                        <div className="flex items-center justify-between mb-1">
+                            <label htmlFor="password" className="text-sm font-medium text-gray-700">
+                                Senha
+                            </label>
+                            <Link href="/reset-password" className="text-sm text-[#01BAEF] hover:underline">
                                 Esqueceu sua senha?
                             </Link>
+                        </div>
+                        <div className="relative">
+                            <input
+                                id="password"
+                                name="password"
+                                type={showPassword ? "text" : "password"}
+                                required
+                                placeholder="Insira sua senha"
+                                className="w-full px-3 py-2 mt-1 border rounded-md border-[#010B62] focus:outline-none focus:ring-2 focus:ring-blue-500 dark:placeholder-gray-500"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                            <button type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute top-1/2 mt-0.5 right-3 transform -translate-y-1/2 text-gray-500 focus:outline-none"
+                            >
+                                {showPassword ? <FiEyeOff /> : <FiEye />}
+                            </button>
                         </div>
                     </div>
                     <button
                         type="submit"
-                        className="w-full px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                        className="w-full px-4 py-2 text-white bg-[#010B62] rounded-md hover:bg-blue-900 dark:placeholder-gray-500"
+                        onClick={handleLogin}
                     >
                         Entrar
                     </button>
                 </form>
                 <div className="text-center">
-                    <p className="text-sm">
+                    <p className="text-sm text-[#010B62]">
                         É novo no Avail.up?{" "}
-                        <Link href="/register" className="text-blue-600 hover:underline">
+                        <Link href="/signUp" className="text-[#01BAEF] hover:underline">
                             Crie sua conta
                         </Link>
                     </p>
                 </div>
                 <div className="flex items-center justify-between">
-                    <hr className="w-full border-gray-300" />
-                    <span className="px-2 text-sm text-gray-500">OU</span>
-                    <hr className="w-full border-gray-300" />
+                    <hr className="w-full border-[#010B62]" />
+                    <span className="px-2 text-sm text-[#010B62]">OU</span>
+                    <hr className="w-full border-[#010B62]" />
                 </div>
                 <button
                     type="button"
-                    className="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border rounded-md hover:bg-gray-100"
+                    className="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border rounded-md border-[#010B62] hover:bg-gray-300"
                 >
                     <img
                         src="/google-icon.svg"
@@ -68,12 +115,12 @@ export default function Login() {
                     />
                     Google
                 </button>
-                <div className="text-center text-sm text-gray-500">
-                    <Link href="/terms" className="hover:underline">
+                <div className="text-center justify-center text-sm text-gray-500">
+                    <Link href="/terms" className="hover:underline text-[#01BAEF]">
                         Termos de uso
                     </Link>{" "}
                     |{" "}
-                    <Link href="/privacy" className="hover:underline">
+                    <Link href="/privacy" className="hover:underline text-[#01BAEF]">
                         Política de Privacidade
                     </Link>
                 </div>
