@@ -85,14 +85,14 @@ export default function Login() {
                     </div>
                     <button
                         type="submit"
-                        className="w-full px-4 py-2 text-white bg-[#010B62] rounded-md hover:bg-blue-900 dark:placeholder-gray-500"
+                        className="w-full px-4 py-2 text-white bg-[#010B62] dark:bg-[#01BAEF] rounded-md hover:bg-blue-900 dark:placeholder-gray-500"
                         onClick={handleLogin}
                     >
                         Entrar
                     </button>
                 </form>
                 <div className="text-center">
-                    <p className="text-sm text-[#010B62]">
+                    <p className="text-sm text-[#010B62] dark:text-white">
                         É novo no Avail.up?{" "}
                         <Link href="/signUp" className="text-[#01BAEF] hover:underline">
                             Crie sua conta
@@ -100,13 +100,15 @@ export default function Login() {
                     </p>
                 </div>
                 <div className="flex items-center justify-between">
-                    <hr className="w-full border-[#010B62]" />
-                    <span className="px-2 text-sm text-[#010B62]">OU</span>
-                    <hr className="w-full border-[#010B62]" />
+                    <hr className="w-full border-[#010B62] dark:border-white" />
+                    <span className="px-2 text-sm text-[#010B62] dark:text-white ">OU</span>
+                    <hr className="w-full border-[#010B62] dark:border-white" />
                 </div>
                 <button
                     type="button"
-                    className="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border rounded-md border-[#010B62] hover:bg-gray-300"
+                    className="flex items-center justify-center w-full px-4 py-2 text-sm 
+                     text-gray-700 bg-white border dark:border-2 rounded-md 
+                    border-[#010B62] dark:bg-[#030712] dark:border-white dark:text-white hover:bg-gray-300"
                 >
                     <img
                         src="/google-icon.svg"
