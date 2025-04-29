@@ -1,11 +1,11 @@
 "use client"
 
-import ThemeSwitch from "@/src/components/ThemeSwitch";
 import { supabase } from "@/src/lib/supabase";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
+import Logo from "@/src/components/Logo";
 
 export default function Login() {
     const router = useRouter();
@@ -32,11 +32,9 @@ export default function Login() {
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-[#030712]">
-            <div className="w-full max-w-md p-8 space-y-6 shadow-md rounded-md">
-                <div className="flex items-center justify-center">
-                    <ThemeSwitch />
-                </div>
-                <h2 className="text-2xl font-bold text-[#010B62] dark:text-white">Login</h2>
+            <div className="w-[345px] space-y-6">
+                <Logo />
+                <h2 className="text-2xl font-bold text-[#010B62] text-center dark:text-white">Faça Login no Avali.up</h2>
                 {error && <p className="text-sm text-red-500">{error}</p>}
                 <form className="space-y-4">
                     <div>
@@ -49,7 +47,7 @@ export default function Login() {
                             type="email"
                             required
                             placeholder="Insira seu e-mail"
-                            className="w-full px-3 py-2 mt-1 border rounded-md border-[#010B62] dark:border-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:placeholder-gray-500"
+                            className="w-[345px] h-[45px] px-3 py-2 mt-1 border rounded-md border-[#010B62] dark:border-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:placeholder-gray-500"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                         />
@@ -60,7 +58,7 @@ export default function Login() {
                             <label htmlFor="password" className="text-sm font-medium text-[#010b62] dark:text-white">
                                 Senha
                             </label>
-                            <Link href="/reset-password" className="text-sm text-[#01BAEF] hover:underline">
+                            <Link href="/reset-password" className="text-sm text-[#0969da] dark:text-[#00AFD3] hover:underline">
                                 Esqueceu sua senha?
                             </Link>
                         </div>
@@ -71,7 +69,7 @@ export default function Login() {
                                 type={showPassword ? "text" : "password"}
                                 required
                                 placeholder="Insira sua senha"
-                                className="w-full px-3 py-2 mt-1 border rounded-md border-[#010B62] dark:border-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:placeholder-gray-500"
+                                className="w-[345px] h-[45px] px-3 py-2 mt-1 border rounded-md border-[#010B62] dark:border-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:placeholder-gray-500"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                             />
@@ -85,7 +83,7 @@ export default function Login() {
                     </div>
                     <button
                         type="submit"
-                        className="w-full px-4 py-2 text-white bg-[#010B62] dark:bg-[#01BAEF] rounded-md hover:bg-blue-900 dark:placeholder-gray-500"
+                        className="w-[345px] h-[45px] px-4 py-2 text-white bg-[#010B62] dark:bg-[#01BAEF] rounded-md hover:bg-blue-900 dark:placeholder-gray-500"
                         onClick={handleLogin}
                     >
                         Entrar
@@ -93,8 +91,8 @@ export default function Login() {
                 </form>
                 <div className="text-center">
                     <p className="text-sm text-[#010B62] dark:text-white">
-                        É novo no Avail.up?{" "}
-                        <Link href="/signUp" className="text-[#01BAEF] hover:underline">
+                        É novo no Avali.up?{" "}
+                        <Link href="/signUp" className="text-[#0969da] dark:text-[#00AFD3] hover:underline">
                             Crie sua conta
                         </Link>
                     </p>
@@ -118,11 +116,11 @@ export default function Login() {
                     Google
                 </button>
                 <div className="text-center justify-center text-sm text-gray-500">
-                    <Link href="/terms" className="hover:underline text-[#01BAEF]">
+                    <Link href="/terms" className="hover:underline text-[#0969da] dark:text-[#00AFD3]">
                         Termos de uso
                     </Link>{" "}
                     |{" "}
-                    <Link href="/privacy" className="hover:underline text-[#01BAEF]">
+                    <Link href="/privacy" className="hover:underline text-[#0969da] dark:text-[#00AFD3]">
                         Política de Privacidade
                     </Link>
                 </div>
