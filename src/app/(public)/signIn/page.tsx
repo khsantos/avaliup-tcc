@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import Logo from "@/src/components/Logo";
+import ThemeSwitch from "@/src/components/ThemeSwitch";
 
 export default function Login() {
     const router = useRouter();
@@ -33,7 +34,8 @@ export default function Login() {
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-[#030712]">
             <div className="w-[345px] space-y-6">
-                <Logo />
+                <div className="mt-8"><Logo /></div>
+                <div className="fixed bottom-2 left-4"><ThemeSwitch /></div>
                 <h2 className="text-2xl font-bold text-[#010B62] text-center dark:text-white">Faça Login no Avali.up</h2>
                 {error && <p className="text-sm text-red-500">{error}</p>}
                 <form className="space-y-4">
@@ -83,7 +85,7 @@ export default function Login() {
                     </div>
                     <button
                         type="submit"
-                        className="w-[345px] h-[45px] px-4 py-2 text-white bg-[#010B62] dark:bg-[#01BAEF] rounded-md hover:bg-blue-900 dark:placeholder-gray-500"
+                        className="w-[345px] h-[45px] px-4 py-2 text-white bg-[#010B62] cursor-pointer dark:bg-[#01BAEF] rounded-md hover:bg-[#202766] dark:hover:bg-[#0D91AC]"
                         onClick={handleLogin}
                     >
                         Entrar
@@ -104,9 +106,7 @@ export default function Login() {
                 </div>
                 <button
                     type="button"
-                    className="flex items-center justify-center w-full px-4 py-2 text-sm 
-                     text-gray-700 bg-white border dark:border-2 rounded-md 
-                    border-[#010B62] dark:bg-[#030712] dark:border-white dark:text-white hover:bg-gray-300"
+                    className="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-[#010B62] border rounded-md border-[#010B62] hover:bg-gray-300 cursor-pointer dark:text-white dark-border-white dark:hover:bg-[#202766] dark:border-white"
                 >
                     <img
                         src="/google-icon.svg"
