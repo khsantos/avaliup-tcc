@@ -32,7 +32,7 @@ export default function SiteLayout({
     <div>
       <header className="bg-white dark:bg-[#030712] shadow-sm border-b border-gray-200 px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-6">
-          <div className="flex items-center gap-2 font-bold text-blue-900">
+          <div className="flex flex-col items-center gap-1 font-bold text-blue-900">
             <span className="text-2xl">⌨️</span>
             <Link href="/" className="text-xl font-semibold">
               Avali.up
