@@ -26,7 +26,7 @@ export default function Page() {
 
   return (
     <div className="min-h-screen bg-white p-4 space-y-10">
-      <section className="bg-[#191970] text-white rounded-xl p-6 flex flex-col md:flex-row justify-between items-center relative">
+      <section className="bg-[#191970] text-white p-6 flex flex-col md:flex-row justify-between items-center relative">
         <div className="space-y-2 max-w-md">
           <p className="text-3xl font-bold">⭐ TOP #1</p>
           <h1 className="text-2xl font-semibold">
