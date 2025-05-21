@@ -12,7 +12,7 @@ const nextConfig: NextConfig = {
   },
 
   images: {
-    domains: ['source.unsplash.com', 'picsum.photos'],
+    domains: ['source.unsplash.com', 'picsum.photos', 'qjpnvzrmiibksdvxmzop.supabase.co'],
   },
 };
 
