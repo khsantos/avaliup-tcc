@@ -6,7 +6,7 @@ import ProductCarousel from "@/src/components/ProductCarousel";
 
 export default function Page() {
   return (
-    <div className="min-h-screen  p-4 space-y-10 dark:bg-[#030712] border rounded-md">
+    <div className="min-h-screen p-4 dark:bg-[#030712]">
       <Hero />
       <div className=" px-4 py-10 flex justify-center">
         <div className=" max-w-7xl w-full p-6">
