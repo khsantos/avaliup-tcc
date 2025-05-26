@@ -3,6 +3,7 @@
 import Hero from "@/src/components/Hero";
 import products from "@/src/data/homeData";
 import ProductCarousel from "@/src/components/ProductCarousel";
+import PriceHistoryChart from "@/src/components/PriceHistoryChart";
 
 export default function Page() {
   return (
@@ -17,6 +18,8 @@ export default function Page() {
           <ProductCarousel products={products} />
         </div>
       </div>
+
+      <PriceHistoryChart />
     </div>
   );
 }
