@@ -41,7 +41,7 @@ export default function PriceHistoryChart() {
             }
           />
           <Tooltip
-            contentStyle={{ fontSize: "12px" }} // Tooltip menor
+            contentStyle={{ fontSize: "12px" }}
             formatter={(value) =>
               (value as number).toLocaleString("pt-BR", {
                 style: "currency",
@@ -49,13 +49,19 @@ export default function PriceHistoryChart() {
               })
             }
           />
-          <Legend
-            wrapperStyle={{ fontSize: "12px" }} // Legenda menor
-          />
+          <Legend wrapperStyle={{ fontSize: "12px" }} />
           <Line
             type="monotone"
             dataKey="price"
             stroke="#0ea5e9"
+            strokeWidth={2}
+            dot={false}
+            name="Menor Preço"
+          />
+          <Line
+            type="monotone"
+            dataKey="minorPrice"
+            stroke="#010b62"
             strokeWidth={2}
             dot={false}
             name="Preço"
