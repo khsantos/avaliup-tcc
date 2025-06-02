@@ -1,4 +1,3 @@
-// pages/ranking.tsx ou src/pages/ranking/index.tsx
 import Image from "next/image";
 import { Card, CardContent } from "@/src/components/ui/card";
 
@@ -7,32 +6,33 @@ export default function RankingPage() {
     { name: "João", points: 450, avatar: "/avatar1.png" },
     { name: "Ana", points: 445, avatar: "/avatar2.png" },
     { name: "Luís", points: 350, avatar: "/avatar3.png" },
-    // outros usuários...
+    { name: "Rafael Pereira", points: 200, avatar: "/avatar4.png" },
   ];
 
   return (
     <div className="min-h-screen bg-white px-4 py-8">
-      {/* Banner */}
-      <div className="w-full max-w-5xl mx-auto mb-8">
+      <div className="relative w-full max-w-5xl mx-auto mb-12">
+        <h1 className=" top-4 left-6 text-[#010b62] text-3xl font-bold drop-shadow-lg z-10 mb-4">
+          Ranking
+        </h1>
+
         <Image
-          src="/banner-rtx.png"
+          src="https://qjpnvzrmiibksdvxmzop.supabase.co/storage/v1/object/public/heros/hero-ranking.png"
           alt="Prêmio da semana"
           width={1200}
           height={300}
-          className="rounded-xl"
+          className="rounded-xl w-full object-cover"
         />
       </div>
 
-      {/* Pódio */}
-      <div className="flex justify-center items-end gap-4 mb-12">
+      <div className="flex justify-center items-end gap-4 mb-12 flex-wrap">
         <PodiumPlace place={2} user={ranking[1]} height="h-40" />
-        <PodiumPlace place={1} user={ranking[0]} height="h-48" highlight />
+        <PodiumPlace place={1} user={ranking[0]} height="h-48" />
         <PodiumPlace place={3} user={ranking[2]} height="h-36" />
       </div>
 
-      {/* Tabela */}
-      <div className="max-w-4xl mx-auto">
-        <table className="w-full text-sm border border-gray-300 rounded-lg overflow-hidden">
+      <div className="overflow-x-auto max-w-4xl mx-auto">
+        <table className="w-full text-sm border border-gray-300 rounded-lg overflow-hidden shadow-md">
           <thead className="bg-gray-100 text-gray-700">
             <tr>
               <th className="p-3 text-left">Rank</th>
@@ -42,9 +42,9 @@ export default function RankingPage() {
             </tr>
           </thead>
           <tbody>
-            {ranking.map((user, i) => (
-              <tr key={i} className="border-t">
-                <td className="p-3">{i + 1}</td>
+            {ranking.slice(3).map((user, i) => (
+              <tr key={i} className="border-t hover:bg-gray-50">
+                <td className="p-3">{i + 4}</td>
                 <td className="p-3">
                   <Image
                     src={user.avatar}
@@ -58,6 +58,21 @@ export default function RankingPage() {
                 <td className="p-3">{user.points}</td>
               </tr>
             ))}
+
+            <tr className="border-t font-semibold bg-yellow-50">
+              <td className="p-3">200</td>
+              <td className="p-3">
+                <Image
+                  src="/meu-avatar.png"
+                  alt="Você"
+                  width={32}
+                  height={32}
+                  className="rounded-full"
+                />
+              </td>
+              <td className="p-3">Você</td>
+              <td className="p-3">200</td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -65,30 +80,51 @@ export default function RankingPage() {
   );
 }
 
-function PodiumPlace({ place, user, height, highlight = false }: any) {
-  const colors = {
-    1: "bg-blue-800",
-    2: "bg-gray-300",
-    3: "bg-yellow-400",
+function PodiumPlace({
+  place,
+  user,
+  height,
+}: {
+  place: 1 | 2 | 3;
+  user: { name: string; points: number; avatar: string };
+  height: string;
+}) {
+  const colors: Record<1 | 2 | 3, string> = {
+    1: "bg-[#001f66]",
+    2: "bg-[#dbe9f4]",
+    3: "bg-[#fcd34d]",
+  };
+
+  const medalha: Record<1 | 2 | 3, string> = {
+    1: "🥇",
+    2: "🥈",
+    3: "🥉",
   };
 
   return (
-    <Card
-      className={`w-24 ${height} flex flex-col justify-end items-center ${
-        colors[place as 1 | 2 | 3]
-      } text-white rounded-t-xl`}
-    >
-      <CardContent className="flex flex-col items-center justify-center py-2">
-        <Image
-          src={user.avatar}
-          alt={user.name}
-          width={40}
-          height={40}
-          className="rounded-full mb-2 border-2 border-white"
-        />
-        <div className="font-semibold">{user.name}</div>
-        <div className="text-sm">{user.points}xp</div>
-      </CardContent>
-    </Card>
+    <div className="flex flex-col items-center w-28">
+      <div className="relative mb-2">
+        <div className="w-16 h-16 rounded-full border-4 border-white shadow-md overflow-hidden">
+          <Image
+            src={user.avatar}
+            alt={user.name}
+            width={64}
+            height={64}
+            className="object-cover w-full h-full"
+          />
+        </div>
+        <div className="absolute -top-2 -right-2 text-xl">{medalha[place]}</div>
+      </div>
+
+      <Card
+        className={`w-full ${height} ${colors[place]} rounded-t-xl text-center text-white flex flex-col justify-end`}
+      >
+        <CardContent className="flex flex-col items-center justify-end pb-3 pt-2">
+          <div className="text-xl font-bold">{place}</div>
+          <div className="text-sm font-semibold">{user.name}</div>
+          <div className="text-xs">{user.points}xp</div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
