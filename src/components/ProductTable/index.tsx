@@ -10,7 +10,7 @@ import {
 } from "../ui/table";
 import { Checkbox } from "../ui/checkbox";
 import { Star, ArrowDown, ArrowUp } from "lucide-react";
-import { Products } from "@/src/types/Products";
+import { Products } from "@/src/types/Product";
 import Image from "next/image";
 import { useState } from "react";
 

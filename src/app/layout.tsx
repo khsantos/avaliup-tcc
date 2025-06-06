@@ -24,7 +24,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning className={ubuntu.variable}>
-      <head />
+      <head>
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXX"
+          crossOrigin="anonymous"
+        ></script>
+      </head>
       <body>
         <Providers>
           <main className="flex-grow">
