@@ -31,7 +31,9 @@ export default function ProductCard({ rank, name, rating, image }: Product) {
           <span>⭐</span>0.0
         </div>
       )}
-      <p className="text-xs text-[#010b62] mb-3">Nota Avaliup</p>
+      <p className="text-xs text-[#010b62] mb-3 dark:text-white">
+        Nota Avaliup
+      </p>
 
       <button className="bg-[#010b62] hover:bg-cyan-600 transition text-white text-sm px-4 py-2 rounded w-full">
         Ver avaliações
