@@ -1,3 +1,5 @@
+"use client";
+
 import data from "@/src/data/priceHistory";
 import {
   LineChart,

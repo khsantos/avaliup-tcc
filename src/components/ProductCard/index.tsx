@@ -1,7 +1,14 @@
 import { Product } from "@/src/types/Product";
 import Image from "next/image";
+import Link from "next/link";
 
-export default function ProductCard({ rank, name, rating, image }: Product) {
+export default function ProductCard({
+  id,
+  rank,
+  name,
+  rating,
+  image,
+}: Product) {
   return (
     <div className="border border-[#010b62] dark:border-white rounded-xl p-4 flex flex-col items-center text-white w-64 h-[360px]">
       <div className="text-[#010b62] dark:text-white self-start mb-2 text-sm font-semibold flex items-center gap-1 ">
@@ -35,9 +42,11 @@ export default function ProductCard({ rank, name, rating, image }: Product) {
         Nota Avaliup
       </p>
 
-      <button className="bg-[#010b62] hover:bg-cyan-600 transition text-white text-sm px-4 py-2 rounded w-full">
-        Ver avaliações
-      </button>
+      <Link href={`/produto/${id}`} className="w-full">
+        <button className="bg-[#010b62] hover:bg-cyan-600 transition text-white text-sm px-4 py-2 rounded w-full">
+          Ver avaliações
+        </button>
+      </Link>
     </div>
   );
 }
