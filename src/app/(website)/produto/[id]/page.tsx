@@ -19,9 +19,7 @@ export default async function ProductPage({
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 text-white">
-      {/* Topo */}
       <div className="flex flex-col lg:flex-row gap-10">
-        {/* Imagem principal */}
         <div className="flex-shrink-0 mx-auto">
           <Image
             src={product.image}
@@ -33,7 +31,6 @@ export default async function ProductPage({
           />
         </div>
 
-        {/* Detalhes */}
         <div className="flex-1 space-y-4">
           <div className="inline-block bg-blue-900 text-sm text-white font-semibold px-4 py-1 rounded-sm shadow">
             Top #{product.rank} - Mouses gamers custo-benefício
@@ -66,7 +63,6 @@ export default async function ProductPage({
             </div>
           </div>
 
-          {/* Produtos semelhantes */}
           <div className="mt-6">
             <h3 className="text-lg font-semibold mb-3 text-[#010b62]">
               Produtos semelhantes
@@ -78,7 +74,6 @@ export default async function ProductPage({
         </div>
       </div>
 
-      {/* Histórico de preços */}
       <div className="mt-16">
         <h2 className="text-2xl font-bold mb-1 text-[#010b62]">
           Histórico de preços
@@ -91,7 +86,6 @@ export default async function ProductPage({
         </div>
       </div>
 
-      {/* Ficha técnica */}
       <div className="mt-16">
         <h2 className="text-2xl font-bold mb-2 text-[#010b62]">
           Ficha técnica
