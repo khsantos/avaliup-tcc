@@ -3,13 +3,7 @@
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
 import ProductCard from "../ProductCard";
-type Product = {
-  rank: number;
-  name: string;
-  description: string;
-  rating: number;
-  imageUrl: string;
-};
+import { Product } from "@/src/types/Product";
 
 type ProductCarouselProps = {
   products: Product[];
@@ -33,10 +27,10 @@ export default function ProductCarousel({ products }: ProductCarouselProps) {
   });
 
   return (
-    <div className="overflow-x-hidden pr-4">
-      <div ref={sliderRef} className="flex gap-3 min-w-full pb-2 pl-1">
-        {products.map((product) => (
-          <div key={product.rank} className="keen-slider__slide">
+    <div className="overflow-x-auto pr-4">
+      <div ref={sliderRef} className="flex gap-3 pb-2 pl-1 pr-20 w-auto">
+        {products.slice(0, 10).map((product) => (
+          <div key={product.id} className="keen-slider__slide">
             <ProductCard {...product} />
           </div>
         ))}

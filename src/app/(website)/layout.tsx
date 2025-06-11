@@ -68,7 +68,7 @@ export default function SiteLayout({
               Subcategorias ▾
             </button>
             <button className="hover:underline dark:text-white">
-              Ranking ▾
+              <a href="/ranking">Ranking ▾</a>
             </button>
           </nav>
         </div>

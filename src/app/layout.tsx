@@ -1,3 +1,4 @@
+import Footer from "../components/Footer";
 import "./globals.css";
 import { Providers } from "./providers";
 import { Ubuntu } from "next/font/google";
@@ -23,9 +24,20 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning className={ubuntu.variable}>
-      <head />
+      <head>
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXX"
+          crossOrigin="anonymous"
+        ></script>
+      </head>
       <body>
-        <Providers>{children}</Providers>
+        <Providers>
+          <main className="flex-grow">
+            {children}
+            <Footer />
+          </main>
+        </Providers>
       </body>
     </html>
   );

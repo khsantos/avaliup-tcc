@@ -1,1 +1,0 @@
-// Arquivo principal para início de backend

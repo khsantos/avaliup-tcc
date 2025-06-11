@@ -11,9 +11,26 @@ const nextConfig: NextConfig = {
     return config;
   },
 
-  images: {
-    domains: ['source.unsplash.com', 'picsum.photos', 'qjpnvzrmiibksdvxmzop.supabase.co'],
-  },
+images: {
+  remotePatterns: [
+    {
+      protocol: 'https',
+      hostname: 'source.unsplash.com',
+    },
+    {
+      protocol: 'https',
+      hostname: 'picsum.photos',
+    },
+    {
+      protocol: 'https',
+      hostname: 'qjpnvzrmiibksdvxmzop.supabase.co',
+    },
+    {
+      protocol: 'https',
+      hostname: 'images.kabum.com.br',
+    }
+  ],
+},
 };
 
 export default nextConfig;
