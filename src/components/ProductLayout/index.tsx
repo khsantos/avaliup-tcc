@@ -146,7 +146,7 @@ export default function ProductLayout() {
                             variant="outline"
                             size="icon"
                             onClick={() => setIsWishlisted(!isWishlisted)}
-                            className={isWishlisted ? "text-red-500 border-red-500" : ""}
+                            className={isWishlisted ? "text-red-500 border-red-500" : "text-black"}
                         >
                             <Heart className={`w-4 h-4 ${isWishlisted ? "fill-current" : ""}`} />
                         </Button>

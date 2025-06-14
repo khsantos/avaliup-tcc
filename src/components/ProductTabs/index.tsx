@@ -65,7 +65,15 @@ export default function ProductTabs() {
 
             case "especificacoes":
                 return (
-                    <ProductSpecification />
+                    <div>
+                        <h2 className="text-2xl font-bold mb-1 text-[#010b62]">
+                            Ficha técnica
+                        </h2>
+                        <p className="text-sm text-gray-400 mb-4">
+                            Consulte as especificações técnicas deste produto.
+                        </p>
+                        <ProductSpecification />
+                    </div>
                 )
 
             case "duvidas":
