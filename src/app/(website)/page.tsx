@@ -8,6 +8,7 @@ import { supabase } from "@/src/lib/supabase";
 import { Product } from "@/src/types/Product";
 import AdSensePlaceholder from "@/src/components/TestAdPlaceholder";
 import LoadingOrEmpty from "@/src/components/LoadingOrEmpty";
+import ProductSpecification from "@/src/components/ProductSpecification";
 
 export default function Page() {
   const [allProducts, setAllProducts] = useState<Product[]>([]);
@@ -80,8 +81,6 @@ export default function Page() {
           />
         </div>
       </section>
-
-      <PriceHistoryChart />
     </div>
   );
 }
