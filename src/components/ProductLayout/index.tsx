@@ -1,158 +1,218 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "../ui/button"
-import { Star, Heart, Share2, MousePointer, Zap, Award, Shield } from "lucide-react"
-import Image from "next/image"
+import { useState } from "react";
+import { Button } from "../ui/button";
+import {
+  Star,
+  Heart,
+  Share2,
+  MousePointer,
+  Zap,
+  Award,
+  Shield,
+} from "lucide-react";
+import Image from "next/image";
+import { Product } from "@/src/types/Product";
 
-export default function ProductLayout() {
-    const [selectedThumb, setSelectedThumb] = useState(0)
-    const [isWishlisted, setIsWishlisted] = useState(false)
+export default function ProductLayout({ product }: { product: Product }) {
+  const [selectedThumb, setSelectedThumb] = useState(0);
+  const [isWishlisted, setIsWishlisted] = useState(false);
 
-    const thumbnails = [{ icon: MousePointer }, { icon: Zap }, { icon: Award }, { icon: Shield }]
+  const thumbnails = [
+    { icon: MousePointer },
+    { icon: Zap },
+    { icon: Award },
+    { icon: Shield },
+  ];
 
-    const ratingBreakdown = [
-        { stars: 5, percentage: 75 },
-        { stars: 4, percentage: 15 },
-        { stars: 3, percentage: 6 },
-        { stars: 2, percentage: 3 },
-        { stars: 1, percentage: 1 },
-    ]
+  const ratingBreakdown = [
+    { stars: 5, percentage: 75 },
+    { stars: 4, percentage: 15 },
+    { stars: 3, percentage: 6 },
+    { stars: 2, percentage: 3 },
+    { stars: 1, percentage: 1 },
+  ];
 
-    const characteristics = [
-        { name: "Performance", rating: 4.5 },
-        { name: "Custo-benefício", rating: 4.8 },
-        { name: "Conforto", rating: 4.3 },
-        { name: "Preço", rating: 4.6 },
-        { name: "Durabilidade", rating: 4.2 },
-    ]
+  const characteristics = [
+    { name: "Performance", rating: 4.5 },
+    { name: "Custo-benefício", rating: 4.8 },
+    { name: "Conforto", rating: 4.3 },
+    { name: "Preço", rating: 4.6 },
+    { name: "Durabilidade", rating: 4.2 },
+  ];
 
-    const renderStars = (rating: number, showEmpty = true) => {
-        const fullStars = Math.floor(rating)
-        const hasHalfStar = rating % 1 !== 0
-        const emptyStars = showEmpty ? 5 - fullStars - (hasHalfStar ? 1 : 0) : 0
-
-        return (
-            <div className="flex items-center">
-                {[...Array(fullStars)].map((_, i) => (
-                    <Star key={`full-${i}`} className="w-4 h-4 fill-orange-400 text-orange-400" />
-                ))}
-                {hasHalfStar && <Star className="w-4 h-4 fill-orange-400 text-orange-400" />}
-                {[...Array(emptyStars)].map((_, i) => (
-                    <Star key={`empty-${i}`} className="w-4 h-4 text-gray-300" />
-                ))}
-            </div>
-        )
+  const getRankingText = (rank: number, category: string) => {
+    switch (category.toLowerCase()) {
+      case "mouse":
+        return `Top #${rank} - Mouses gamers custo-benefício`;
+      case "teclado":
+        return `Top #${rank} - Teclados mecânicos custo-benefício`;
+      case "headset":
+        return `Top #${rank} - Headsets gamers recomendados`;
+      default:
+        return `Top #${rank} - Produto em destaque`;
     }
+  };
+
+  const renderStars = (rating: number, showEmpty = true) => {
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 !== 0;
+    const emptyStars = showEmpty ? 5 - fullStars - (hasHalfStar ? 1 : 0) : 0;
 
     return (
-        <div className="max-w-5xl mx-auto p-6 bg-white">
-            <div className="flex gap-6">
-                {/* Left Side - Thumbnails and Main Image */}
-                <div className="flex gap-4">
-                    {/* Vertical Thumbnails */}
-                    <div className="flex flex-col gap-2">
-                        {thumbnails.map((thumb, index) => {
-                            const Icon = thumb.icon
-                            return (
-                                <button
-                                    key={index}
-                                    onClick={() => setSelectedThumb(index)}
-                                    className={`w-12 h-12 border rounded-lg flex items-center justify-center transition-colors ${selectedThumb === index
-                                        ? "border-blue-500 bg-blue-50"
-                                        : "border-gray-200 bg-gray-50 hover:border-gray-300"
-                                        }`}
-                                >
-                                    <Icon className="w-5 h-5 text-gray-600" />
-                                </button>
-                            )
-                        })}
-                    </div>
+      <div className="flex items-center">
+        {[...Array(fullStars)].map((_, i) => (
+          <Star
+            key={`full-${i}`}
+            className="w-4 h-4 fill-[#FFB24B] text-[#FFB24B]"
+          />
+        ))}
+        {hasHalfStar && (
+          <Star className="w-4 h-4 fill-[#FFB24B] text-[#FFB24B]" />
+        )}
+        {[...Array(emptyStars)].map((_, i) => (
+          <Star key={`empty-${i}`} className="w-4 h-4 text-gray-300" />
+        ))}
+      </div>
+    );
+  };
 
-                    {/* Main Product Image */}
-                    <div className="w-80 h-80 bg-gray-50 rounded-lg flex items-center justify-center">
-                        <Image
-                            src="/placeholder.svg?height=280&width=280"
-                            alt="Mouse Zaopin-Z2"
-                            width={280}
-                            height={280}
-                            className="object-contain"
-                        />
-                    </div>
-                </div>
+  return (
+    <div className="max-w-5xl mx-auto p-6 bg-white">
+      <div className="flex gap-6">
+        <div className="flex gap-4">
+          <div className="flex flex-col gap-2">
+            {thumbnails.map((thumb, index) => {
+              const Icon = thumb.icon;
+              return (
+                <button
+                  key={index}
+                  onClick={() => setSelectedThumb(index)}
+                  className={`w-12 h-12 border rounded-lg flex items-center justify-center transition-colors ${
+                    selectedThumb === index
+                      ? "border-[#010b62] bg-gray-100 border-2"
+                      : "border-gray-200 bg-gray-50 hover:border-gray-300"
+                  }`}
+                >
+                  <Icon className="w-5 h-5 text-gray-600" />
+                </button>
+              );
+            })}
+          </div>
 
-                {/* Right Side - Product Information */}
-                <div className="flex-1 space-y-4">
-                    {/* Top Badge */}
-                    <div className="bg-blue-900 text-white px-4 py-2 rounded-lg flex items-center gap-2 w-fit">
-                        <Award className="w-4 h-4 text-yellow-400" />
-                        <span className="text-sm font-medium">Top #1 - Mouses gamers custo-benefício</span>
-                    </div>
-
-                    {/* Product Title and Share */}
-                    <div className="flex items-center justify-between">
-                        <h1 className="text-xl font-semibold text-gray-900">Mouse Zaopin-Z2 4K Hotswappable Wireless</h1>
-                        <Button variant="ghost" size="sm">
-                            <Share2 className="w-4 h-4" />
-                        </Button>
-                    </div>
-
-                    {/* Rating Section */}
-                    <div className="flex items-center gap-6">
-                        <div className="flex items-center gap-2">
-                            <span className="text-3xl font-bold text-orange-500">4.9</span>
-                            {renderStars(4.9)}
-                        </div>
-                        <span className="text-gray-600 text-sm">12.321 avaliações</span>
-                    </div>
-
-                    {/* Rating Breakdown Bars */}
-                    <div className="space-y-1">
-                        {ratingBreakdown.map((item) => (
-                            <div key={item.stars} className="flex items-center gap-2">
-                                <span className="text-xs text-gray-600 w-2">{item.stars}</span>
-                                <Star className="w-3 h-3 fill-orange-400 text-orange-400" />
-                                <div className="flex-1 bg-gray-200 rounded-full h-1.5 max-w-48">
-                                    <div className="bg-blue-600 h-1.5 rounded-full" style={{ width: `${item.percentage}%` }} />
-                                </div>
-                                <span className="text-xs text-gray-600">{item.stars}</span>
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* Characteristics - Horizontal Layout */}
-                    <div>
-                        <h3 className="text-sm font-medium text-gray-900 mb-2">Avaliações por características</h3>
-                        <div className="flex gap-6">
-                            {characteristics.map((char, index) => (
-                                <div key={index} className="text-center">
-                                    <div className="text-xs text-gray-700 mb-1">{char.name}</div>
-                                    {renderStars(char.rating)}
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Price */}
-                    <div className="pt-2">
-                        <div className="text-2xl font-bold text-gray-900">R$335,00</div>
-                        <div className="text-xs text-gray-600">à vista</div>
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="flex gap-3 pt-2">
-                        <Button className="bg-blue-900 hover:bg-blue-800 text-white px-6">Avaliar Produto</Button>
-                        <Button
-                            variant="outline"
-                            size="icon"
-                            onClick={() => setIsWishlisted(!isWishlisted)}
-                            className={isWishlisted ? "text-red-500 border-red-500" : "text-black"}
-                        >
-                            <Heart className={`w-4 h-4 ${isWishlisted ? "fill-current" : ""}`} />
-                        </Button>
-                    </div>
-                </div>
-            </div>
+          <div className="w-80 h-80 bg-gray-50 rounded-lg flex items-center justify-center">
+            <Image
+              src={product.image || "/placeholder.svg"}
+              alt={product.name}
+              width={280}
+              height={280}
+              className="object-contain"
+            />
+          </div>
         </div>
-    )
+
+        <div className="flex-1 space-y-4">
+          <div className="bg-[#010b62] text-white px-4 py-2 rounded-lg flex items-center gap-2 w-fit">
+            <Award className="w-5 h-5 text-[#FFB24B]" />
+            <span className="text-xl font-semibold">
+              {getRankingText(product.rank, product.category)}
+            </span>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <h1 className="text-xl font-semibold text-[#010b62]">
+              {product.name}
+            </h1>
+            <Button
+              variant="ghost"
+              size="lg"
+              className="text-[#010b62] mb-6 hover:bg-[#010b62] hover:text-white "
+            >
+              <Share2 className="w-12 h-12" />
+            </Button>
+          </div>
+
+          <div className="flex items-center gap-6">
+            {product.rating !== null ? (
+              <>
+                <div className="flex items-center gap-2">
+                  <span className="text-3xl font-bold text-[#FFB24B]">
+                    {product.rating.toFixed(1)}
+                  </span>
+                  {renderStars(product.rating)}
+                </div>
+                <span className="text-gray-600 text-sm">
+                  {product.review_count.toLocaleString()} avaliações
+                </span>
+              </>
+            ) : (
+              <span className="text-gray-500 text-sm italic">
+                Sem avaliações ainda
+              </span>
+            )}
+          </div>
+
+          <div className="space-y-1">
+            {ratingBreakdown.map((item) => (
+              <div key={item.stars} className="flex items-center gap-2">
+                <span className="text-xs text-gray-600 w-2">{item.stars}</span>
+                <Star className="w-3 h-3 fill-[#FFB24B] text-[#FFB24B]" />
+                <div className="flex-1 bg-gray-200 rounded-full h-1.5 max-w-48">
+                  <div
+                    className="bg-[#010b62] h-1.5 rounded-full"
+                    style={{ width: `${item.percentage}%` }}
+                  />
+                </div>
+                <span className="text-xs text-gray-600">{item.stars}</span>
+              </div>
+            ))}
+          </div>
+
+          <div>
+            <h3 className="font-bold text-[#010b62] mb-2">
+              Avaliações por características
+            </h3>
+            <div className="flex gap-6">
+              {characteristics.map((char, index) => (
+                <div key={index} className="text-center">
+                  <div className="text-xs text-[#010b62] mb-1">{char.name}</div>
+                  {renderStars(char.rating)}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="pt-2">
+            <div className="text-2xl font-bold text-[#010b62]">
+              R${product.price.toFixed(2)}{" "}
+              <span className="text-base">à vista</span>
+            </div>
+            <div className="text-sm text-gray-600 font-light">
+              menor preço atual
+            </div>
+          </div>
+
+          <div className="flex gap-3 pt-2">
+            <Button className="bg-[#010b62] hover:bg-[#0060B1] text-white px-6 cursor-pointer">
+              Avaliar Produto
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setIsWishlisted(!isWishlisted)}
+              className={
+                isWishlisted
+                  ? "text-white bg-[#010b62]"
+                  : "text-[#010b62] border border-[#010b62] cursor-pointer hover:text-white hover:bg-[#010b62]"
+              }
+            >
+              <Heart
+                className={`w-4 h-4 ${isWishlisted ? "fill-current" : ""}`}
+              />
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }

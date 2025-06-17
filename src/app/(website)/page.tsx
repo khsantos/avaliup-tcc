@@ -2,13 +2,11 @@
 
 import Hero from "@/src/components/Hero";
 import ProductCarousel from "@/src/components/ProductCarousel";
-import PriceHistoryChart from "@/src/components/PriceHistoryChart";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/src/lib/supabase";
 import { Product } from "@/src/types/Product";
 import AdSensePlaceholder from "@/src/components/TestAdPlaceholder";
 import LoadingOrEmpty from "@/src/components/LoadingOrEmpty";
-import ProductSpecification from "@/src/components/ProductSpecification";
 
 export default function Page() {
   const [allProducts, setAllProducts] = useState<Product[]>([]);

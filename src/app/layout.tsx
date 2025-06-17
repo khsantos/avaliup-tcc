@@ -23,8 +23,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning className={ubuntu.variable}>
+    <html lang="pt-br" suppressHydrationWarning className={ubuntu.variable}>
       <head>
+        <link rel="icon" href="/logo-avaliup.svg" />
         <script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXX"
