@@ -55,7 +55,7 @@ export default function PriceMarketplaceComparison() {
             className="relative overflow-hidden border hover:shadow-lg transition-shadow bg-white flex flex-col min-h-[270px]"
           >
             {store.isPromotion && (
-              <div className="absolute top-0 left-0 right-0 bg-orange-400 text-white text-center py-1 text-xs font-medium">
+              <div className="absolute top-0 left-0 right-0 bg-[#FFB24B] text-white text-center py-1 text-xs font-medium">
                 🔥 Promoção
               </div>
             )}

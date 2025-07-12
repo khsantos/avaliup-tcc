@@ -1,10 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Star } from "lucide-react";
-import PriceHistoryChart from "../PriceHistoryChart";
 import ProductSpecification from "../ProductSpecification";
 import PriceMarketplaceComparison from "../PriceMarketplaceComparison";
+import UserReviews from "../UserReview";
 
 type ProductTabsProps = {
   productId: string;
@@ -25,38 +24,7 @@ export default function ProductTabs({ productId }: ProductTabsProps) {
       case "avaliacoes":
         return (
           <div className="p-6">
-            <h3 className="text-xl font-semibold mb-4 text-[#010b62]">
-              Avaliações dos Usuários
-            </h3>
-            <div className="space-y-4">
-              <div className="border-b pb-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="flex text-yellow-400">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-current" />
-                    ))}
-                  </div>
-                  <span className="text-sm text-gray-600">João Silva</span>
-                </div>
-                <p className="text-gray-700">
-                  Excelente mouse para gaming! Muito preciso e confortável.
-                </p>
-              </div>
-              <div className="border-b pb-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="flex text-yellow-400">
-                    {[...Array(4)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-current" />
-                    ))}
-                    <Star className="w-4 h-4 text-gray-300" />
-                  </div>
-                  <span className="text-sm text-gray-600">Maria Santos</span>
-                </div>
-                <p className="text-gray-700">
-                  Boa qualidade, mas poderia ter mais opções de customização.
-                </p>
-              </div>
-            </div>
+            <UserReviews />
           </div>
         );
 

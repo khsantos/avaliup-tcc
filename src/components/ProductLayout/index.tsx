@@ -5,6 +5,7 @@ import { Button } from "../ui/button";
 import { Star, Heart, Share2, Award } from "lucide-react";
 import Image from "next/image";
 import { Product } from "@/src/types/Product";
+import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 
 export default function ProductLayout({ product }: { product: Product }) {
   const [selectedThumb, setSelectedThumb] = useState(0);
@@ -21,11 +22,11 @@ export default function ProductLayout({ product }: { product: Product }) {
   ];
 
   const characteristics = [
-    { name: "Performance", rating: 4.5 },
+    { name: "Performance", rating: 3.5 },
     { name: "Custo-benefício", rating: 4.8 },
-    { name: "Conforto", rating: 4.3 },
+    { name: "Conforto", rating: 3.7 },
     { name: "Preço", rating: 4.6 },
-    { name: "Durabilidade", rating: 4.2 },
+    { name: "Durabilidade", rating: 3.2 },
   ];
 
   const getRankingText = (rank: number, category: string) => {
@@ -89,7 +90,7 @@ export default function ProductLayout({ product }: { product: Product }) {
               </button>
             ))}
           </div>
-          <div className="w-64 h-64 bg-gray-50 rounded-lg flex items-center justify-center">
+          <div className="w-64 h-64 rounded-lg flex items-center justify-center mt-35">
             <Image
               src={
                 thumbnails[selectedThumb] || product.image || "/placeholder.svg"
@@ -97,21 +98,21 @@ export default function ProductLayout({ product }: { product: Product }) {
               alt={product.name}
               width={200}
               height={200}
-              className="object-contain mt-35"
+              className="object-contain"
             />
           </div>
         </div>
 
         <div className="flex-1 space-y-4 self-end">
-          <div className="bg-[#010b62] text-white px-4 py-2 rounded-lg flex items-center gap-2 w-fit">
+          <div className="bg-[#010b62] text-white px-4 py-2 rounded-lg flex items-center gap-2 w-fit dark:bg-[#01BAEF]">
             <Award className="w-5 h-5 text-[#FFB24B]" />
-            <span className="text-xl font-semibold">
+            <span className="text-xl font-semibold dark:text-white">
               {getRankingText(product.rank, product.category)}
             </span>
           </div>
 
           <div className="flex items-center justify-between">
-            <h1 className="text-xl font-semibold text-[#010b62]">
+            <h1 className="text-xl font-semibold text-[#010b62] dark:text-white">
               {product.name}
             </h1>
             <Button
@@ -119,7 +120,7 @@ export default function ProductLayout({ product }: { product: Product }) {
               size="lg"
               className="text-[#010b62] mb-6 hover:bg-[#010b62] hover:text-white "
             >
-              <Share2 className="w-12 h-12" />
+              <Share2 className="w-12 h-12 dark:text-white" />
             </Button>
           </div>
 
@@ -137,7 +138,7 @@ export default function ProductLayout({ product }: { product: Product }) {
                 </span>
               </>
             ) : (
-              <span className="text-gray-500 text-sm italic">
+              <span className="text-gray-500 dark:text-gray-300 text-sm italic">
                 Sem avaliações ainda
               </span>
             )}
@@ -146,34 +147,40 @@ export default function ProductLayout({ product }: { product: Product }) {
           <div className="space-y-1">
             {ratingBreakdown.map((item) => (
               <div key={item.stars} className="flex items-center gap-2">
-                <span className="text-xs text-[#010b62] w-2">{item.stars}</span>
+                <span className="text-xs text-[#010b62] dark:text-white w-2">
+                  {item.stars}
+                </span>
                 <Star className="w-3 h-3 fill-[#FFB24B] text-[#FFB24B]" />
                 <div className="flex-1 bg-gray-200 rounded-full h-1.5 max-w-48">
                   <div
-                    className="bg-[#010b62] h-1.5 rounded-full"
+                    className="bg-[#010b62] dark:bg-[#01BAEF] h-1.5 rounded-full"
                     style={{ width: `${item.percentage}%` }}
                   />
                 </div>
-                <span className="text-xs text-gray-600">{item.stars}</span>
+                <span className="text-xs text-gray-600 dark:text-gray-400">
+                  {item.stars}
+                </span>
               </div>
             ))}
           </div>
 
           <div>
-            <h3 className="font-bold text-[#010b62] mb-2">
+            <h3 className="font-bold text-[#010b62] dark:text-white mb-2">
               Avaliações por características
             </h3>
-            <div className="flex gap-0">
+            <div className="flex gap-0 -ml-4">
               {characteristics.map((char, index) => (
                 <div
                   key={index}
                   className={`flex flex-col items-start px-4 ${
                     index !== characteristics.length - 1
-                      ? "border-r border-[#010b62]"
+                      ? "border-r border-[#010b62] dark:border-white"
                       : ""
                   }`}
                 >
-                  <div className="text-xs text-[#010b62] mb-1">{char.name}</div>
+                  <div className="text-xs text-[#010b62] dark:text-white mb-1">
+                    {char.name}
+                  </div>
                   {renderStars(char.rating)}
                 </div>
               ))}
@@ -181,18 +188,19 @@ export default function ProductLayout({ product }: { product: Product }) {
           </div>
 
           <div className="pt-2">
-            <div className="text-2xl font-bold text-[#010b62]">
+            <div className="text-2xl font-bold text-[#010b62] dark:text-white">
               R${product.price.toFixed(2)}{" "}
               <span className="text-base">à vista</span>
             </div>
-            <div className="text-sm text-gray-600 font-light">
+            <div className="text-sm text-gray-600 dark:text-gray-300 font-light">
               menor preço atual
             </div>
           </div>
 
           <div className="flex gap-3 pt-2">
-            <Button className="bg-[#010b62] hover:bg-[#0060B1] text-white px-6 cursor-pointer">
+            <Button className="bg-[#010b62] hover:bg-[#0060B1] text-white px-6 cursor-pointer dark:bg-[#01BAEF]">
               Avaliar Produto
+              <MdOutlineKeyboardArrowRight className="w-4 h-4" />
             </Button>
             <Button
               variant="outline"
@@ -200,8 +208,8 @@ export default function ProductLayout({ product }: { product: Product }) {
               onClick={() => setIsWishlisted(!isWishlisted)}
               className={
                 isWishlisted
-                  ? "text-white bg-[#010b62]"
-                  : "text-[#010b62] border border-[#010b62] cursor-pointer hover:text-white hover:bg-[#010b62]"
+                  ? "text-white bg-[#010b62] dark:text-[#01BAEF] dark:bg-white dark:border-[#01BAEF]"
+                  : "text-[#010b62] border border-[#010b62] cursor-pointer hover:text-white hover:bg-[#010b62] dark:bg-[#030712] dark:text-white dark:border-white"
               }
             >
               <Heart
