@@ -1,30 +1,86 @@
+"use client";
+
 import { Card } from "../ui/card";
+import { Specification } from "@/src/types/Specification";
+import { supabase } from "@/src/lib/supabase";
+import { useEffect, useState } from "react";
 
-export default function ProductSpecification() {
-    const specifications = [
-        { label: "Sensor", value: "PAW3395" },
-        { label: "Peso", value: "+-65g" },
-        { label: "Conexão", value: "Cabeado - 2.4g - Bluetooth" },
-        { label: "Polling rate", value: "Dongle 1000Hz / Dongle 4000Hz" },
-        { label: "Switch", value: "TTC Gold 60M" },
-        { label: "Bateria", value: "500mAh" },
-    ];
+type SpecificationProductProps = {
+  productId: string;
+};
 
+export default function ProductSpecification({
+  productId,
+}: SpecificationProductProps) {
+  const [specifications, setSpecifications] = useState<Specification[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchSpecifications() {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from("products")
+        .select("specifications")
+        .eq("id", productId)
+        .single();
+
+      if (error) {
+        console.error("Erro ao buscar especificações do produto:", error);
+        setSpecifications([]);
+      } else if (data?.specifications) {
+        const specsArray = Object.entries(data.specifications).map(
+          ([key, value]) => ({
+            label: key,
+            value: String(value),
+          })
+        );
+        setSpecifications(specsArray);
+      } else {
+        setSpecifications([]);
+      }
+      setLoading(false);
+    }
+
+    if (productId) {
+      fetchSpecifications();
+    }
+  }, [productId]);
+
+  if (loading) {
     return (
-        <div className="p-2 max-w-8xl mx-auto">
-            <Card className="rounded-xl border border-[#b9b9d1] overflow-hidden">
-                {specifications.map((spec, index) => (
-                    <div
-                        key={index}
-                        className={`grid grid-cols-[220px_1fr] text-sm px-4 py-3 
-                            ${index % 2 === 0 ? "bg-[#e4e4f5]" : "bg-[#f7f7fb]"} 
-                            ${index !== specifications.length - 1 ? "border-b border-[#b9b9d1]" : ""}`}
-                    >
-                        <div className="font-medium text-[#010b62]">{spec.label}</div>
-                        <div className="text-[#010b62]">{spec.value}</div>
-                    </div>
-                ))}
-            </Card>
-        </div>
+      <div className="p-4 text-center text-[#010b62] font-semibold">
+        Carregando especificações...
+      </div>
     );
+  }
+
+  if (specifications.length === 0) {
+    return (
+      <div className="p-4 text-center text-[#010b62] font-semibold">
+        Nenhuma especificação encontrada.
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-2 max-w-8xl mx-auto">
+      <Card className="rounded-xl border border-[#b9b9d1] overflow-hidden">
+        {specifications.map((spec, index) => (
+          <div
+            key={index}
+            className={`grid grid-cols-[220px_1fr] text-sm px-4 py-3 
+              ${index % 2 === 0 ? "bg-[#e4e4f5]" : "bg-[#f7f7fb]"} 
+              ${
+                index !== specifications.length - 1
+                  ? "border-b border-[#b9b9d1]"
+                  : ""
+              }`}
+          >
+            <div className="font-medium text-[#010b62]">{spec.label}</div>
+            <div className="text-[#010b62]">{spec.value}</div>
+          </div>
+        ))}
+      </Card>
+    </div>
+  );
 }

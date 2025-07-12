@@ -17,9 +17,9 @@ export default async function ProductPage({
   if (!product || error) return notFound();
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 text-white">
+    <div className="w-[80%] mx-auto py-10 text-white">
       <ProductLayout product={product} />
-      <ProductTabs />
+      <ProductTabs productId={product.id} />
     </div>
   );
 }
