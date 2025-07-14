@@ -14,7 +14,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="relative bg-gradient-to-br from-[#010B62] to-[#021087] text-white p-6 flex flex-col md:flex-row justify-between items-center overflow-hidden rounded-lg">
+    <section className="relative bg-gradient-to-br from-[#010B62] to-[#021087] text-white p-6 flex flex-col md:flex-row justify-between items-center overflow-hidden rounded-lg h-100">
       <div className="space-y-2 max-w-md z-10">
         <p className="text-3xl font-bold flex items-center gap-2">
           <span className="text-[#FF9800] text-4xl">⭐</span> TOP #1

@@ -10,12 +10,12 @@ export default function ProductCard({
   image,
 }: Product) {
   return (
-    <div className="border border-[#010b62] dark:border-white rounded-xl p-4 flex flex-col items-center text-white w-64 h-[360px]">
+    <div className="border border-[#010b62] dark:border-white rounded-xl p-4 flex flex-col items-center text-white w-64 h-96 justify-between">
       <div className="text-[#010b62] dark:text-white self-start mb-2 text-sm font-semibold flex items-center gap-1 ">
         <span className="text-[#FF9800] text-lg">Ö</span> TOP #{rank}
       </div>
 
-      <h3 className="text-[#010b62] dark:text-white text-center text-sm font-medium ">
+      <h3 className="text-[#010b62] dark:text-white text-center text-sm font-medium line-clamp-2">
         {name}
       </h3>
 

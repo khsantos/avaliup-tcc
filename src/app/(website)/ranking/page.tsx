@@ -61,7 +61,7 @@ export default function RankingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white px-4 py-8">
+    <div className="min-h-screen px-4 py-8">
       <div className="relative w-full max-w-5xl mx-auto mb-12">
         <h1 className=" top-4 left-6 text-[#010b62] text-3xl font-bold drop-shadow-lg z-10 mb-3">
           Ranking
