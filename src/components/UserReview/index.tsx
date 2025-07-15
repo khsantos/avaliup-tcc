@@ -1,9 +1,11 @@
+"use client";
+
 import {
   Star,
   ThumbsUp,
   ThumbsDown,
   MessageCircle,
-  MoreHorizontal,
+  MoreVertical,
 } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { Card, CardContent } from "@/src/components/ui/card";
@@ -12,7 +14,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/src/components/ui/avatar";
-import { Badge } from "@/src/components/ui/badge";
+import { useState } from "react";
 
 interface UserReview {
   id: string;
@@ -30,10 +32,12 @@ interface UserReview {
 }
 
 export default function UserReviews() {
+  const [isExpanded, setIsExpanded] = useState(false);
+
   const defaultReview: UserReview = {
     id: "1",
     title: "Excelente mouse para gaming",
-    text: "Estou usando há 6 meses e posso dizer que é um dos melhores mouses que já tive. A precisão é incrível, o design é ergonômico e a bateria dura bastante. Recomendo para quem busca qualidade e custo-benefício. O sensor é muito responsivo e não tive problemas de conectividade.",
+    text: "Estou usando há 6 meses e posso dizer que é um dos melhores mouses que já tive. A precisão é incrível, o design é ergonômico e a bateria dura bastante. Recomendo para quem busca qualidade e custo-benefício. O sensor é muito responsivo e não tive problemas de conectividade. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras mauris nibh, tempus at blandit pretium, luctus non metus. Quisque varius non nisi quis pellentesque. Nunc egestas ex odio, non mollis eros eleifend sit amet. Donec as. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras mauris nibh, tempus at blandit pretium, luctus non metus. Quisque varius non nisi quis pellentesque. Nunc egestas ex odio, non mollis eros eleifend sit amet. Donec at.",
     userName: "João Silva",
     userAvatar: "/placeholder.svg?height=40&width=40",
     timeOfUse: "6 meses de uso",
@@ -42,7 +46,7 @@ export default function UserReviews() {
     likes: 12,
     dislikes: 1,
     comments: 3,
-    badges: ["Top Reviewer", "Compra Verificada"],
+    badges: ["Top Reviewer", "Compra Verificada", "Frequent Buyer"],
   };
 
   const reviewsToShow = [defaultReview];
@@ -52,7 +56,7 @@ export default function UserReviews() {
       <Star
         key={index}
         className={`w-4 h-4 ${
-          index < rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
+          index < rating ? "fill-yellow-400 text-yellow-400" : "text-gray-400"
         }`}
       />
     ));
@@ -60,124 +64,208 @@ export default function UserReviews() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-[#010b62]">
+      <div className="flex justify-between items-center -mt-8">
+        <h2 className="text-2xl font-bold text-[#010b62] dark:text-white -mb-7.5">
           Avaliações dos usuários
         </h2>
-        <div className="flex gap-3">
-          <select className="px-3 py-2 border rounded-md text-sm">
-            <option>Ordenar: Mais recentes</option>
-            <option>Mais úteis</option>
-            <option>Maior nota</option>
-            <option>Menor nota</option>
-          </select>
-          <select className="px-3 py-2 border rounded-md text-sm">
-            <option>Filtrar por</option>
-            <option>5 estrelas</option>
-            <option>4 estrelas</option>
-            <option>3 estrelas</option>
-            <option>2 estrelas</option>
-            <option>1 estrela</option>
-          </select>
+        <div className="flex gap-6">
+          {/* Ordenar */}
+          <div className="flex flex-col">
+            <label className="text-[#010b62] mb-2 flex items-center gap-1 dark:text-white">
+              Ordenar
+              <span className="inline-flex">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path
+                    d="M7 15V5M7 5L4 8M7 5L10 8"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M13 5V15M13 15L16 12M13 15L10 12"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </span>
+            </label>
+            <div className="relative">
+              <select className="w-48 px-4 py-2 border border-[#010b62]/50 dark:border-[#FFFFFF]/50 rounded-[4px] text-[#64748b] bg-white dark:bg-[#030712] focus:outline-none hover:border-[#010b62] transition-colors appearance-none">
+                <option>Mais recentes</option>
+                <option>Mais úteis</option>
+                <option>Maior nota</option>
+                <option>Menor nota</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Filtrar por */}
+          <div className="flex flex-col">
+            <label className="text-[#010b62] dark:text-white mb-2">
+              Filtrar por
+            </label>
+            <div className="relative">
+              <select className="w-48 px-4 py-2 border border-[#010b62]/50 rounded-[4px] dark:border-[#FFFFFF]/50 text-[#64748b] bg-white dark:bg-[#030712] focus:outline-none hover:border-[#010b62] transition-colors appearance-none">
+                <option>Todos</option>
+                <option>5 estrelas</option>
+                <option>4 estrelas</option>
+                <option>3 estrelas</option>
+                <option>2 estrelas</option>
+                <option>1 estrela</option>
+              </select>
+              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">
+                <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
+                  <path
+                    d="M6 9l6 6 6-6"
+                    stroke="#64748b"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </span>
+            </div>
+          </div>
         </div>
       </div>
 
       <div className="grid gap-4">
-        {(reviewsToShow ?? []).length > 0 ? (
+        {reviewsToShow.length > 0 ? (
           reviewsToShow.map((review) => (
             <Card
               key={review.id}
-              className="border hover:shadow-md transition-shadow"
+              className="dark:bg-[#030712] border border-[#222e3c] rounded-sm text-white"
             >
-              <CardContent className="p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex items-start gap-3">
-                    <Avatar className="w-12 h-12">
+              <CardContent className="p-4">
+                {/* Header: Avatar + Info + Rating */}
+                <div className="flex justify-between items-start mb-2">
+                  <div className="flex items-center gap-3 ">
+                    <Avatar className="w-10 h-10 bg-[#01BAEF]/70">
                       <AvatarImage
                         src={review.userAvatar || "/placeholder.svg"}
                         alt={review.userName}
                       />
-                      <AvatarFallback>
+                      <AvatarFallback className="bg-[#01BAEF]/70">
                         {review.userName.charAt(0)}
                       </AvatarFallback>
                     </Avatar>
-
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h4 className="font-semibold text-gray-900">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-lg">
                           {review.userName}
-                        </h4>
-                        <div className="flex gap-1">
-                          {review.badges.map((badge, index) => (
-                            <Badge
-                              key={index}
-                              variant="secondary"
-                              className="text-xs bg-blue-100 text-blue-800"
-                            >
-                              {badge}
-                            </Badge>
-                          ))}
-                        </div>
+                        </span>
+                        <span className="text-xs text-gray-300">
+                          Avaliado em 28/08/2024
+                        </span>
                       </div>
-
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <span>{review.timeOfUse}</span>
-                        <span>•</span>
-                        <span>Pagou {review.pricePaid}</span>
+                      <div className="flex gap-1 mt-1">
+                        {review.badges.slice(0, 3).map((badge, i) => (
+                          <span
+                            key={i}
+                            className="w-6 h-6 bg-[#e3f2fd] rounded-full flex items-center justify-center text-[#010b62] text-sm font-bold border border-[#b6d4fe]"
+                          >
+                            🏅
+                          </span>
+                        ))}
                       </div>
                     </div>
                   </div>
-
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-gray-400 hover:text-gray-600"
-                  >
-                    <MoreHorizontal className="w-4 h-4" />
-                  </Button>
+                  <div className="flex flex-col items-end gap-2">
+                    <div className="flex items-center gap-1">
+                      <span className="text-2xl font-bold text-yellow-400">
+                        {review.rating}
+                      </span>
+                      <div className="flex">{renderStars(review.rating)}</div>
+                    </div>
+                    <Button
+                      size="sm"
+                      className="bg-[#00b6f3] text-white rounded-lg px-4 py-1 font-semibold hover:bg-[#0096c7] transition"
+                    >
+                      Ver Detalhes
+                      <svg
+                        width="16"
+                        height="16"
+                        fill="none"
+                        viewBox="0 0 16 16"
+                        className="inline ml-1"
+                      >
+                        <path
+                          d="M5 8h6M9 6l2 2-2 2"
+                          stroke="#fff"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </Button>
+                  </div>
                 </div>
 
-                <div className="mb-3">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="flex">{renderStars(review.rating)}</div>
-                    <span className="text-sm font-medium">
-                      {review.rating}.0
-                    </span>
-                  </div>
-                  <h3 className="font-semibold text-gray-900 mb-2">
-                    {review.title}
-                  </h3>
+                {/* Extra info */}
+                <div className="text-[#00b6f3] text-sm font-semibold mb-2">
+                  Tempo de uso: {review.timeOfUse} | Valor pago:{" "}
+                  {review.pricePaid} | Loja: Aliexpress
                 </div>
 
-                <p className="text-gray-700 text-sm leading-relaxed mb-4">
-                  {review.text}
-                </p>
+                {/* Título */}
+                <div className="font-bold text-lg mb-1">{review.title}</div>
 
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <button className="flex items-center gap-1 text-sm text-gray-600 hover:text-gray-800">
-                      <ThumbsUp className="w-4 h-4" />
-                      <span>{review.likes}</span>
-                    </button>
+                {/* Texto e imagens lado a lado */}
+                <div className="flex justify-between gap-4 mb-2">
+                  {/* Texto cortado com fade */}
+                  <div className="flex-1 relative">
+                    <p
+                      className={`text-white text-base leading-snug whitespace-pre-line pr-4 ${
+                        isExpanded ? "" : "line-clamp-[4]"
+                      }`}
+                    >
+                      {review.text}
+                    </p>
 
-                    <button className="flex items-center gap-1 text-sm text-gray-600 hover:text-gray-800">
-                      <ThumbsDown className="w-4 h-4" />
-                      <span>{review.dislikes}</span>
-                    </button>
-
-                    <button className="flex items-center gap-1 text-sm text-gray-600 hover:text-gray-800">
-                      <MessageCircle className="w-4 h-4" />
-                      <span>{review.comments} comentários</span>
-                    </button>
+                    {/* Efeito de fade */}
+                    {!isExpanded && (
+                      <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-[#101926] to-transparent pointer-events-none" />
+                    )}
                   </div>
 
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="text-[#010b62] border-[#010b62] hover:bg-[#010b62] hover:text-white bg-transparent"
-                  >
-                    Ver detalhes
-                  </Button>
+                  {/* Bloco de imagens sempre visível */}
+                  <div className="w-20 shrink-0 flex items-center justify-center">
+                    <div className="bg-[#64748b] bg-opacity-30 rounded-lg w-20 h-20 flex items-center justify-center text-2xl text-white font-semibold">
+                      +3
+                    </div>
+                  </div>
+                </div>
+
+                {/* Botão Ver mais / Ver menos */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-[#00b6f3] hover:text-white p-0 h-auto"
+                  onClick={() => setIsExpanded(!isExpanded)}
+                >
+                  {isExpanded ? "Ver menos" : "Ver mais"}
+                </Button>
+
+                {/* Ações */}
+                <div className="flex items-center gap-6 mt-2">
+                  <span className="flex items-center gap-1 text-[#b6c2cd] text-base">
+                    <ThumbsUp className="w-5 h-5" />
+                    {review.likes}
+                  </span>
+                  <span className="flex items-center gap-1 text-[#b6c2cd] text-base">
+                    <ThumbsDown className="w-5 h-5" />
+                    {review.dislikes}
+                  </span>
+                  <span className="flex items-center gap-1 text-[#b6c2cd] text-base">
+                    <MessageCircle className="w-5 h-5" />
+                    {review.comments}
+                  </span>
+                  <span className="ml-auto text-[#b6c2cd]">
+                    <MoreVertical className="w-5 h-5" />
+                  </span>
                 </div>
               </CardContent>
             </Card>

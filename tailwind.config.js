@@ -7,5 +7,8 @@ module.exports = {
       }
     }
   },
+  plugins: [
+    lineClamp,
+  ],
   darkMode: 'class',
 }

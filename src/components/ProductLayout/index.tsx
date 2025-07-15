@@ -74,10 +74,10 @@ export default function ProductLayout({ product }: { product: Product }) {
               <button
                 key={index}
                 onClick={() => setSelectedThumb(index)}
-                className={`w-12 h-12 border rounded-lg flex items-center justify-center transition-colors ${
+                className={`w-16 h-16 border rounded-lg flex items-center justify-center transition-colors ${
                   selectedThumb === index
-                    ? "border-[#010b62] bg-gray-100 border-2"
-                    : "border-[#010b62] bg-gray-50"
+                    ? "border-[#010b62] dark:border-[#01BAEF]  dark:bg-gray-800 border-2"
+                    : "border-[#010b62] dark:border-[#01BAEF]"
                 }`}
               >
                 <Image
