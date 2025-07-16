@@ -18,6 +18,7 @@ import Image from "next/image";
 import LogoTeclado from "@/public/logo-teclado.svg";
 import LogoTecladoDark from "@/public/logo-teclado-dark.svg";
 import { useTheme } from "next-themes";
+import { useRouter } from "next/navigation";
 
 export default function SiteLayout({
   children,
@@ -27,6 +28,8 @@ export default function SiteLayout({
   const { theme, systemTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [session, setSession] = useState<Session | null>(null);
+  const router = useRouter();
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => setMounted(true), []);
 
@@ -40,6 +43,14 @@ export default function SiteLayout({
   }, []);
 
   if (!mounted) return null;
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      router.push(`/search?query=${encodeURIComponent(searchTerm.trim())}`);
+      setSearchTerm("");
+    }
+  };
 
   return (
     <div>
@@ -74,14 +85,18 @@ export default function SiteLayout({
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Pesquisar produtos"
-              className="border border-[#010B62] rounded-sm p-2 text-sm pl-8 focus:outline-none focus:ring-2 focus:ring-[#0969DA] dark:border-white"
-            />
-            <Search className="absolute left-2 top-2.5 w-4 h-4 text-[#010b62] dark:text-white" />
-          </div>
+          <form onSubmit={handleSearch} className="flex items-center">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Pesquisar produtos"
+                value={searchTerm || ""}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="border border-[#010B62] rounded-sm p-2 text-sm pl-8 focus:outline-none focus:ring-2 focus:ring-[#0969DA] dark:border-white"
+              />
+              <Search className="absolute left-2 top-2.5 w-4 h-4 text-[#010b62] dark:text-white" />
+            </div>
+          </form>
           <ThemeSwitch />
 
           {session?.user ? (
