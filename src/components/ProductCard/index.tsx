@@ -9,17 +9,30 @@ export default function ProductCard({
   rating,
   image,
 }: Product) {
-  return (
-    <div className="border border-[#010b62] dark:border-white rounded-xl p-4 flex flex-col items-center text-white w-64 h-96 justify-between">
-      <div className="text-[#010b62] dark:text-white self-start mb-2 text-sm font-semibold flex items-center gap-1 ">
-        <span className="text-[#FF9800] text-lg">Ö</span> TOP #{rank}
-      </div>
+  const getMedal = (rank?: number) => {
+    if (rank === 1) return "🥇";
+    if (rank === 2) return "🥈";
+    if (rank === 3) return "🥉";
+    return null;
+  };
 
-      <h3 className="text-[#010b62] dark:text-white text-center text-sm font-medium line-clamp-2">
+  return (
+    <div className="border border-[#010b62] dark:border-white rounded-xl p-4 text-white w-full min-h-[380px] flex flex-col justify-between">
+      {/* Medalha e Rank */}
+      {rank && rank <= 10 && (
+        <div className="text-[#010b62] dark:text-white mb-2 text-sm font-semibold flex items-center gap-1">
+          {rank <= 3 && <span className="text-lg">{getMedal(rank)}</span>}
+          <span>TOP #{rank}</span>
+        </div>
+      )}
+
+      {/* Nome */}
+      <h3 className="text-[#010b62] dark:text-white text-sm font-medium line-clamp-2 mb-2">
         {name}
       </h3>
 
-      <div className="relative w-28 h-28 my-4">
+      {/* Imagem */}
+      <div className="relative w-28 h-28 my-4 mx-auto">
         <Image
           src={image}
           alt={`Imagem do ${name}`}
@@ -28,21 +41,19 @@ export default function ProductCard({
         />
       </div>
 
-      {rating != null ? (
-        <div className="flex items-center gap-1 text-yellow-400 font-semibold text-sm">
+      {/* Nota Avaliação */}
+      <div className="flex flex-col items-start">
+        <div className="flex items-center gap-1 text-[#FFB24B] font-semibold text-md">
           <span>⭐</span>
-          <span>{rating.toFixed(1)}</span>
+          <span>{rating != null ? rating.toFixed(1) : "0.0"}</span>
         </div>
-      ) : (
-        <div className="text-sm text-yellow-400">
-          <span>⭐</span>0.0
-        </div>
-      )}
-      <p className="text-xs text-[#010b62] mb-3 dark:text-white">
-        Nota Avaliup
-      </p>
+        <p className="text-sm text-[#010b62]/90 dark:text-white">
+          Nota Avaliup
+        </p>
+      </div>
 
-      <Link href={`/produto/${id}`} className="w-full">
+      {/* Botão */}
+      <Link href={`/produto/${id}`} className="w-full mt-4">
         <button className="bg-[#010b62] hover:bg-cyan-600 transition text-white text-sm px-4 py-2 rounded w-full">
           Ver avaliações
         </button>

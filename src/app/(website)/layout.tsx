@@ -68,19 +68,76 @@ export default function SiteLayout({
             </Link>
           </div>
 
-          <nav className="flex gap-4 text-sm text-blue-900">
-            <button className="hover:underline cursor-pointer dark:text-white">
-              Periféricos ▾
-            </button>
-            <button className="hover:underline dark:text-white">
-              Hardware ▾
-            </button>
-            <button className="hover:underline dark:text-white">
-              Subcategorias ▾
-            </button>
-            <button className="hover:underline dark:text-white">
-              <a href="/ranking">Ranking ▾</a>
-            </button>
+          <nav className="flex gap-4 text-sm text-blue-900 dark:text-white">
+            {/* Periféricos */}
+            <DropdownMenu>
+              <DropdownMenuTrigger className="hover:underline cursor-pointer">
+                Periféricos ▾
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem asChild>
+                  <Link href="/categoria/mouses" className="hover:bg-gray-600">
+                    Mouses
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/categoria/teclados">Teclados</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/categoria/headsets">Headsets</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/categoria/mousepads">Mousepads</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/categoria/monitores">Monitores</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/categoria/microfones">Microfones</Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Hardware */}
+            <DropdownMenu>
+              <DropdownMenuTrigger className="hover:underline cursor-pointer">
+                Hardware ▾
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem asChild>
+                  <Link href="/categoria/processadores">Processadores</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/categoria/placas-de-video">Placas de Vídeo</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/categoria/ssds">SSDs</Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Subcategorias */}
+            <DropdownMenu>
+              <DropdownMenuTrigger className="hover:underline cursor-pointer">
+                Subcategorias ▾
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem asChild>
+                  <Link href="/subcategoria/low-end">Low-end</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/subcategoria/mid-end">Mid-end</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/subcategoria/high-end">High-end</Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Ranking */}
+            <Link href="/ranking" className="hover:underline">
+              Ranking
+            </Link>
           </nav>
         </div>
 
