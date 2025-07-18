@@ -42,7 +42,7 @@ export default function UserReviews() {
     userAvatar: "/placeholder.svg?height=40&width=40",
     timeOfUse: "6 meses de uso",
     pricePaid: "R$320,00",
-    rating: 5,
+    rating: 4,
     likes: 12,
     dislikes: 1,
     comments: 3,
@@ -56,7 +56,9 @@ export default function UserReviews() {
       <Star
         key={index}
         className={`w-4 h-4 ${
-          index < rating ? "fill-yellow-400 text-yellow-400" : "text-gray-400"
+          index < rating
+            ? "fill-[#FFB24B] text-[#FFB24B]"
+            : "text-[#FFB24B] fill-none"
         }`}
       />
     ));
@@ -64,14 +66,14 @@ export default function UserReviews() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center -mt-8">
-        <h2 className="text-2xl font-bold text-[#010b62] dark:text-white -mb-7.5">
+      <div className="flex justify-between items-center ">
+        <h2 className="text-2xl font-bold text-[#010b62] dark:text-white mt-6">
           Avaliações dos usuários
         </h2>
         <div className="flex gap-6">
           {/* Ordenar */}
           <div className="flex flex-col">
-            <label className="text-[#010b62] mb-2 flex items-center gap-1 dark:text-white">
+            <label className="text-[#010b62] flex items-center gap-1 dark:text-white">
               Ordenar
               <span className="inline-flex">
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -104,7 +106,7 @@ export default function UserReviews() {
 
           {/* Filtrar por */}
           <div className="flex flex-col">
-            <label className="text-[#010b62] dark:text-white mb-2">
+            <label className="text-[#010b62] dark:text-white ">
               Filtrar por
             </label>
             <div className="relative">
@@ -174,15 +176,17 @@ export default function UserReviews() {
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-2">
-                    <div className="flex items-center gap-1">
-                      <span className="text-2xl font-bold text-yellow-400">
+                    <div className="flex items-center gap-2">
+                      <span className="text-2xl font-bold text-[#FFB24B] px-1">
                         {review.rating}
                       </span>
-                      <div className="flex">{renderStars(review.rating)}</div>
+                      <div className="flex gap-1.5 text-[FFB24B]">
+                        {renderStars(review.rating)}
+                      </div>
                     </div>
                     <Button
                       size="sm"
-                      className="bg-[#00b6f3] text-white rounded-lg px-4 py-1 font-semibold hover:bg-[#0096c7] transition"
+                      className="bg-[#00b6f3] text-white rounded-se-lg px-4 py-1 font-semibold hover:bg-[#0096c7] transition"
                     >
                       Ver Detalhes
                       <svg

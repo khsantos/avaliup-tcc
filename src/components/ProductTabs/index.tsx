@@ -4,6 +4,7 @@ import { useState } from "react";
 import ProductSpecification from "../ProductSpecification";
 import PriceMarketplaceComparison from "../PriceMarketplaceComparison";
 import UserReviews from "../UserReview";
+import FAQ from "../FAQ";
 
 type ProductTabsProps = {
   productId: string;
@@ -23,7 +24,7 @@ export default function ProductTabs({ productId }: ProductTabsProps) {
     switch (activeTab) {
       case "avaliacoes":
         return (
-          <div className="p-6">
+          <div className="">
             <UserReviews />
           </div>
         );
@@ -31,10 +32,10 @@ export default function ProductTabs({ productId }: ProductTabsProps) {
       case "precos":
         return (
           <div>
-            <h2 className="text-2xl font-bold mb-1 text-[#010b62]">
+            <h2 className="text-2xl font-bold mb-1 text-[#010b62] dark:text-white">
               Histórico de preços
             </h2>
-            <p className="text-sm text-gray-400 mb-4">
+            <p className="text-sm text-[#010b62]/50 mb-4 dark:text-white/50">
               Acompanhe a variação do preço deste produto ao longo do tempo.
             </p>
             {/* <PriceHistoryChart /> */}
@@ -45,7 +46,7 @@ export default function ProductTabs({ productId }: ProductTabsProps) {
       case "especificacoes":
         return (
           <div>
-            <h2 className="text-2xl font-bold mb-1 text-[#010b62]">
+            <h2 className="text-2xl font-bold mb-1 text-[#010b62] dark:text-white">
               Ficha técnica
             </h2>
             <p className="text-sm text-gray-400 mb-4">
@@ -57,32 +58,18 @@ export default function ProductTabs({ productId }: ProductTabsProps) {
 
       case "duvidas":
         return (
-          <div className="p-6">
-            <h3 className="text-xl font-semibold mb-4">Dúvidas Frequentes</h3>
+          <div className="">
+            <div className="mb-10">
+              <h3 className="text-2xl font-semibold mb-1 text-[#010b62] dark:text-white">
+                Dúvidas
+              </h3>
+              <span className="text-[#010b62]/50 dark:text-white/50">
+                Observe e interaja com as dúvidas de nossa comunidade
+              </span>
+            </div>
             <div className="space-y-4">
-              <div className="border rounded-lg p-4">
-                <h4 className="font-medium mb-2">Como configurar o DPI?</h4>
-                <p className="text-gray-600 text-sm">
-                  Você pode ajustar o DPI através do software oficial ou usando
-                  os botões dedicados no mouse.
-                </p>
-              </div>
-              <div className="border rounded-lg p-4">
-                <h4 className="font-medium mb-2">
-                  A bateria dura quanto tempo?
-                </h4>
-                <p className="text-gray-600 text-sm">
-                  Com uso moderado, a bateria de 500mAh dura aproximadamente 70
-                  horas de uso contínuo.
-                </p>
-              </div>
-              <div className="border rounded-lg p-4">
-                <h4 className="font-medium mb-2">É compatível com Mac?</h4>
-                <p className="text-gray-600 text-sm">
-                  Sim, é compatível com Windows, Mac e Linux através de conexão
-                  USB ou Bluetooth.
-                </p>
-              </div>
+              <FAQ />
+              <FAQ />
             </div>
           </div>
         );
@@ -105,13 +92,13 @@ export default function ProductTabs({ productId }: ProductTabsProps) {
                 className={`flex-1 flex flex-col items-center justify-end pb-1 text-xs sm:text-sm font-medium transition-colors
                   ${
                     isActive
-                      ? "text-[#010b62]"
-                      : "text-gray-500 hover:text-gray-700"
+                      ? "text-[#010b62] dark:text-white"
+                      : "text-gray-600 hover:text-gray-700"
                   }
                 `}
                 style={{
                   borderBottom: isActive
-                    ? "3px solid #010b62"
+                    ? "3px solid #ffffff"
                     : "2px solid #e5e7eb", // gray-300
                 }}
               >

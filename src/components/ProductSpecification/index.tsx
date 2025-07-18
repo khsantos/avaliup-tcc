@@ -48,7 +48,7 @@ export default function ProductSpecification({
 
   if (loading) {
     return (
-      <div className="p-4 text-center text-[#010b62] font-semibold">
+      <div className="p-4 text-center text-[#010b62] dark:text-white font-semibold">
         Carregando especificações...
       </div>
     );
@@ -56,7 +56,7 @@ export default function ProductSpecification({
 
   if (specifications.length === 0) {
     return (
-      <div className="p-4 text-center text-[#010b62] font-semibold">
+      <div className="p-4 text-center text-[#010b62] dark:text-white font-semibold">
         Nenhuma especificação encontrada.
       </div>
     );
@@ -64,20 +64,28 @@ export default function ProductSpecification({
 
   return (
     <div className="p-2 max-w-8xl mx-auto">
-      <Card className="rounded-xl border border-[#b9b9d1] overflow-hidden">
+      <Card className="rounded-2xl border border-[#b9b9d1] bg-border-white overflow-hidden">
         {specifications.map((spec, index) => (
           <div
             key={index}
-            className={`grid grid-cols-[220px_1fr] text-sm px-4 py-3 
-              ${index % 2 === 0 ? "bg-[#e4e4f5]" : "bg-[#f7f7fb]"} 
+            className={`grid grid-cols-[220px_1fr] text-sm px-4 py-3
+              ${
+                index % 2 === 0
+                  ? "bg-[#e4e4f5] dark:bg-[#030712]"
+                  : "bg-[#f7f7fb] dark:bg-[#020B24]/85"
+              }
               ${
                 index !== specifications.length - 1
-                  ? "border-b border-[#b9b9d1]"
+                  ? "border-b border-[#b9b9d1] dark:border-none"
                   : ""
               }`}
           >
-            <div className="font-medium text-[#010b62]">{spec.label}</div>
-            <div className="text-[#010b62]">{spec.value}</div>
+            <div className="font-medium text-[#010b62] dark:text-white">
+              {spec.label}
+            </div>
+            <div className="text-[#010b62] dark:text-white border-l border-white/60 dark:border-white pl-4">
+              {spec.value}
+            </div>
           </div>
         ))}
       </Card>
