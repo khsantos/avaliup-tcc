@@ -64,7 +64,7 @@ export default function PriceMarketplaceComparison() {
               {/* Layout principal: imagem à esquerda, nome e preços à direita */}
               <div className="flex gap-3 flex-1 items-start">
                 {/* Imagem */}
-                <div className="w-14 h-14 bg-white rounded flex items-center justify-center shrink-0 mt-1">
+                <div className="w-14 h-28 bg-white rounded flex items-center justify-center shrink-0 mt-1">
                   <Image
                     src="/placeholder.svg?height=40&width=40"
                     alt="Produto"
