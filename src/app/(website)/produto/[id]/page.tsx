@@ -3,11 +3,12 @@ import { supabase } from "@/src/lib/supabase";
 import ProductTabs from "@/src/components/ProductTabs";
 import ProductLayout from "@/src/components/ProductLayout";
 
-export default async function ProductPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default async function ProductPage(
+  props: {
+    params: Promise<{ id: string }>;
+  }
+) {
+  const params = await props.params;
   const { data: product, error } = await supabase
     .from("products")
     .select("*")
