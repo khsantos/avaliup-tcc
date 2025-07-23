@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "../ui/button";
-import { Star, Heart, Share2, Award, ChevronLeft } from "lucide-react";
+import { Star, Heart, Share2, Award, ChevronLeft, Crown } from "lucide-react";
 import Image from "next/image";
 import { Product } from "@/src/types/Product";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
@@ -10,6 +10,9 @@ import { formatRating } from "@/src/lib/formatRating";
 import StarRating from "../StarRating";
 import StarRatingInput from "../StarRatingInput";
 import { motion, AnimatePresence } from "framer-motion";
+import { Label } from "../ui/label";
+import { Input } from "../ui/input";
+import { Textarea } from "../ui/textarea";
 
 export default function ProductLayout({ product }: { product: Product }) {
   const [selectedThumb, setSelectedThumb] = useState(0);
@@ -22,6 +25,85 @@ export default function ProductLayout({ product }: { product: Product }) {
     weight: 0,
     durability: 0,
   });
+
+  function StarRatingDisplay({ rating }: { rating: number }) {
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 !== 0;
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+    return (
+      <div className="flex items-center gap-0.5">
+        {[...Array(fullStars)].map((_, i) => (
+          <Star
+            key={`full-${i}`}
+            className="w-5 h-5 fill-orange-500 text-orange-500"
+          />
+        ))}
+        {hasHalfStar && (
+          <Star className="w-5 h-5 fill-orange-500/50 text-orange-500" />
+        )}
+        {[...Array(emptyStars)].map((_, i) => (
+          <Star
+            key={`empty-${i}`}
+            className="w-5 h-5 fill-muted stroke-muted-foreground"
+          />
+        ))}
+      </div>
+    );
+  }
+
+  function RatingBar({
+    label,
+    percentage,
+  }: {
+    label: string;
+    percentage: number;
+  }) {
+    return (
+      <div className="flex items-center gap-2">
+        <span className="text-sm font-medium text-gray-600">{label}</span>
+        <Star className="w-4 h-4 fill-orange-500 text-orange-500" />
+        <div className="flex-1 h-2 bg-gray-200 rounded-full">
+          <div
+            className="h-full bg-blue-700 rounded-full"
+            style={{ width: `${percentage}%` }}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  // Helper component for characteristic ratings display
+  function CharacteristicRating({
+    label,
+    rating,
+  }: {
+    label: string;
+    rating: number;
+  }) {
+    return (
+      <div className="flex flex-col items-center text-center">
+        <span className="text-sm font-medium text-gray-700 mb-1">{label}</span>
+        <StarRatingDisplay rating={rating} />
+      </div>
+    );
+  }
+
+  function FormCharacteristicRating({ label }: { label: string }) {
+    return (
+      <div className="flex flex-col items-center text-center">
+        <Label className="text-sm text-gray-600 mb-1">{label}</Label>
+        <div className="flex items-center gap-0.5">
+          {[...Array(5)].map((_, i) => (
+            <Star
+              key={`form-star-${i}`}
+              className="w-5 h-5 fill-muted stroke-muted-foreground cursor-pointer"
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   const thumbnails = product.images;
 
@@ -215,68 +297,211 @@ export default function ProductLayout({ product }: { product: Product }) {
             transition={{ duration: 0.4 }}
             className="space-y-6"
           >
-            <button
-              onClick={() => setShowForm(false)}
-              className="flex items-center text-blue-700 hover:underline"
-            >
-              <ChevronLeft className="w-4 h-4 mr-1" />
-              Voltar
-            </button>
+            <div className="min-h-screen bg-white p-4 md:p-8 lg:p-12">
+              <header className="mb-6">
+                <button
+                  className="flex items-center text-blue-700 hover:underline"
+                  onClick={() => setShowForm(false)}
+                >
+                  <ChevronLeft className="w-4 h-4 mr-1" />
+                  Voltar
+                </button>
+              </header>
 
-            <h2 className="text-3xl font-bold text-[#000080]">
-              Avaliar Produto
-            </h2>
-            <form className="space-y-6">
-              <div>
-                <h3 className="text-sm text-gray-600">Título da avaliação</h3>
-                <input className="w-full border border-blue-700 px-4 py-2 rounded-md" />
-              </div>
-              <div>
-                <h3 className="text-sm text-gray-600">Descrição</h3>
-                <textarea
-                  rows={5}
-                  className="w-full border border-blue-700 px-4 py-2 rounded-md"
-                />
-              </div>
-              <div>
-                <h3 className="text-sm text-gray-600">Loja / Site da compra</h3>
-                <input className="w-full border border-blue-700 px-4 py-2 rounded-md" />
-              </div>
-              <div>
-                <h3 className="text-sm text-gray-600">Valor pago</h3>
-                <input
-                  type="number"
-                  className="w-full border border-blue-700 px-4 py-2 rounded-md"
-                />
-              </div>
-              <div>
-                <h3 className="text-sm text-gray-600">Tempo de uso</h3>
-                <input className="w-full border border-blue-700 px-4 py-2 rounded-md" />
-              </div>
-
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                {Object.entries(ratings).map(([key, value]) => (
-                  <div key={key} className="flex flex-col items-center">
-                    <span className="text-sm text-gray-600 mb-1">
-                      {key.replace(/([A-Z])/g, " $1")}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+                {/* Left Column: Product Details and Ratings */}
+                <div className="space-y-8">
+                  {/* Top Banner */}
+                  <div className="bg-[#000080] text-white px-4 py-2 rounded-md flex items-center gap-2 w-fit">
+                    <Crown className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                    <span className="font-semibold">
+                      Top #1 - Mouses gamers custo-benefício
                     </span>
-                    <StarRatingInput
-                      value={value}
-                      onChange={(val) =>
-                        setRatings((prev) => ({ ...prev, [key]: val }))
-                      }
-                    />
                   </div>
-                ))}
-              </div>
+                  <h1 className="text-3xl font-bold text-[#000080] mb-4">
+                    Mouse Zaopin-Z2 4K Hotswappable Wireless
+                  </h1>
 
-              <button
-                type="submit"
-                className="w-full bg-[#000080] hover:bg-[#000060] text-white py-3 text-lg font-semibold rounded-md"
-              >
-                Enviar Avaliação
-              </button>
-            </form>
+                  <div className="flex flex-col md:flex-row gap-6">
+                    {/* Thumbnails */}
+                    <div className="flex flex-row md:flex-col gap-4 overflow-x-auto md:overflow-visible pb-2 md:pb-0">
+                      <Image
+                        src="/placeholder.svg?height=80&width=80"
+                        alt="Mouse top view"
+                        width={80}
+                        height={80}
+                        className="border rounded-md object-cover shrink-0"
+                      />
+                      <Image
+                        src="/placeholder.svg?height=80&width=80"
+                        alt="Mouse side view"
+                        width={80}
+                        height={80}
+                        className="border rounded-md object-cover shrink-0"
+                      />
+                      <Image
+                        src="/placeholder.svg?height=80&width=80"
+                        alt="Mouse angled view"
+                        width={80}
+                        height={80}
+                        className="border rounded-md object-cover shrink-0"
+                      />
+                      <Image
+                        src="/placeholder.svg?height=80&width=80"
+                        alt="Mouse bottom view"
+                        width={80}
+                        height={80}
+                        className="border rounded-md object-cover shrink-0"
+                      />
+                    </div>
+                    {/* Main Image */}
+                    <div className="flex-1 flex justify-center items-center min-w-0">
+                      <Image
+                        src="/placeholder.svg?height=400&width=400"
+                        alt="Mouse Zaopin-Z2 4K Hotswappable Wireless"
+                        width={400}
+                        height={400}
+                        className="object-contain w-full h-auto max-w-full"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Public Rating */}
+                  <div className="mt-8">
+                    <h2 className="text-2xl font-bold mb-4">Nota do Público</h2>
+                    <div className="flex items-center gap-4 mb-4">
+                      <span className="text-5xl font-bold text-orange-500">
+                        4.9
+                      </span>
+                      <div className="flex flex-col">
+                        <StarRatingDisplay rating={4.9} />
+                        <span className="text-sm text-gray-500">
+                          12,321 avaliações
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Rating Distribution Bars */}
+                    <div className="space-y-2">
+                      <RatingBar label="5" percentage={90} />
+                      <RatingBar label="4" percentage={70} />
+                      <RatingBar label="3" percentage={40} />
+                      <RatingBar label="2" percentage={20} />
+                      <RatingBar label="1" percentage={10} />
+                    </div>
+                  </div>
+
+                  {/* Evaluations by Characteristics */}
+                  <div className="mt-8">
+                    <h2 className="text-2xl font-bold mb-4">
+                      Avaliações por características
+                    </h2>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                      <CharacteristicRating label="Performance" rating={4.5} />
+                      <CharacteristicRating
+                        label="Custo-benefício"
+                        rating={4.0}
+                      />
+                      <CharacteristicRating label="Conforto" rating={3.5} />
+                      <CharacteristicRating label="Peso" rating={4.0} />
+                      <CharacteristicRating label="Durabilidade" rating={3.0} />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Column: Review Form */}
+                <div className="space-y-6">
+                  <h2 className="text-3xl font-bold text-[#000080]">
+                    Avaliar Produto
+                  </h2>
+                  <form className="space-y-6">
+                    <div className="grid gap-2">
+                      <Label
+                        htmlFor="review-title"
+                        className="text-sm text-gray-600"
+                      >
+                        Título da avaliação
+                      </Label>
+                      <Input
+                        id="review-title"
+                        placeholder=""
+                        className="border border-blue-700 focus:border-blue-900"
+                      />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label
+                        htmlFor="review-description"
+                        className="text-sm text-gray-600"
+                      >
+                        Descrição da avaliação
+                      </Label>
+                      <Textarea
+                        id="review-description"
+                        placeholder=""
+                        rows={5}
+                        className="border border-blue-700 focus:border-blue-900"
+                      />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label
+                        htmlFor="purchase-store"
+                        className="text-sm text-gray-600"
+                      >
+                        Loja / Site da compra
+                      </Label>
+                      <Input
+                        id="purchase-store"
+                        placeholder=""
+                        className="border border-blue-700 focus:border-blue-900"
+                      />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label
+                        htmlFor="price-paid"
+                        className="text-sm text-gray-600"
+                      >
+                        Valor pago
+                      </Label>
+                      <Input
+                        id="price-paid"
+                        placeholder=""
+                        type="number"
+                        className="border border-blue-700 focus:border-blue-900"
+                      />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label
+                        htmlFor="time-of-use"
+                        className="text-sm text-gray-600"
+                      >
+                        Tempo de uso
+                      </Label>
+                      <Input
+                        id="time-of-use"
+                        placeholder=""
+                        className="border border-blue-700 focus:border-blue-900"
+                      />
+                    </div>
+
+                    {/* Form Characteristic Ratings */}
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                      <FormCharacteristicRating label="Performance" />
+                      <FormCharacteristicRating label="Custo-benefício" />
+                      <FormCharacteristicRating label="Conforto" />
+                      <FormCharacteristicRating label="Peso" />
+                      <FormCharacteristicRating label="Durabilidade" />
+                    </div>
+
+                    <Button
+                      type="submit"
+                      className="w-full bg-[#000080] hover:bg-[#000060] text-white py-3 text-lg font-semibold"
+                    >
+                      Enviar Avaliação
+                    </Button>
+                  </form>
+                </div>
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
