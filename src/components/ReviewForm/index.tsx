@@ -27,7 +27,7 @@ export default function ReviewForm() {
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 max-w-xl w-full mx-auto">
       <h2 className="text-3xl font-medium text-[#010b62] dark:text-white">
         Avaliar Produto
       </h2>
@@ -52,13 +52,13 @@ export default function ReviewForm() {
               <textarea
                 id={field.id}
                 rows={5}
-                className="w-full border-2 border-[#010b62]/50 dark:border-[#01BAEF] rounded-md px-3 pt-5 pb-2 text-sm bg-white dark:bg-[#030712] text-[#010b62] dark:text-white focus:outline-none focus:ring-1 focus:ring-[#010b62] dark:focus:ring-[#01BAEF]"
+                className="w-full border-1 border-[#010b62]/50 dark:border-[#01BAEF] rounded-md px-3 pt-5 pb-2 text-sm bg-white dark:bg-[#030712] text-[#010b62] dark:text-white focus:outline-none focus:ring-1 focus:ring-[#010b62] dark:focus:ring-[#01BAEF]"
               />
             ) : (
               <input
                 id={field.id}
                 type={field.type}
-                className={`w-full border-2 border-[#010b62]/50 dark:border-[#01BAEF] rounded-md px-3 pt-5 pb-2 text-sm bg-white dark:bg-[#030712] text-[#010b62] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#010b62] dark:focus:ring-[#01BAEF] ${
+                className={`w-full border-1 border-[#010b62]/50 dark:border-[#01BAEF] rounded-md px-3 pt-5 pb-2 text-sm bg-white dark:bg-[#030712] text-[#010b62] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#010b62] dark:focus:ring-[#01BAEF] ${
                   field.type === "number" ? "no-spinner" : ""
                 }`}
               />
@@ -72,11 +72,12 @@ export default function ReviewForm() {
           </div>
         ))}
 
-        {/* Form Characteristic Ratings */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {ratingFields.map(({ label, key }) => (
-            <div key={key} className="flex flex-col items-center text-center">
-              <label className="text-sm text-gray-600 mb-1">{label}</label>
+        <div className="grid grid-cols-4 gap-4">
+          {ratingFields.slice(0, 4).map(({ label, key }) => (
+            <div key={key} className="flex flex-col text-left">
+              <label className="text-sm text-gray-700 dark:text-white mb-1">
+                {label}
+              </label>
               <StarRatingInput
                 value={ratings[key]}
                 onChange={(value) =>
@@ -85,21 +86,34 @@ export default function ReviewForm() {
                     [key]: value,
                   }))
                 }
-                size={20}
+                size={18}
               />
             </div>
           ))}
+          <div className="flex flex-col  text-left col-span-4">
+            <label className="text-sm text-gray-800 dark:text-white mb-1">
+              {ratingFields[4].label}
+            </label>
+            <StarRatingInput
+              value={ratings[ratingFields[4].key]}
+              onChange={(value) =>
+                setRatings((prev) => ({
+                  ...prev,
+                  [ratingFields[4].key]: value,
+                }))
+              }
+              size={18}
+            />
+          </div>
         </div>
-
         <Button
           type="submit"
-          className="w-full bg-[#010b62] hover:bg-[#020B24] text-white py-5 text-lg font-semibold"
+          className="w-full bg-[#010b62] hover:bg-[#020B24] dark:bg-[#01BAEF] dark:hover:bg-[#0969DA] text-white py-5.5 text-lg font-semibold mt-[27.5%]"
         >
           Enviar Avaliação
         </Button>
       </form>
 
-      {/* ✅ CSS que remove os spinners */}
       <style jsx>{`
         input.no-spinner::-webkit-outer-spin-button,
         input.no-spinner::-webkit-inner-spin-button {

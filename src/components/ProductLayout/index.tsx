@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "../ui/button";
-import { Star, Heart, Share2, Award, ChevronLeft, Crown } from "lucide-react";
+import { Star, Heart, Share2, Award, ChevronLeft } from "lucide-react";
 import Image from "next/image";
 import { Product } from "@/src/types/Product";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
@@ -59,14 +59,14 @@ export default function ProductLayout({ product }: { product: Product }) {
             transition={{ duration: 0.4 }}
           >
             {/* Layout do produto */}
-            <div className="flex gap-16 items-start w-full px-2">
+            <div className="flex gap-20 items-start w-full px-2">
               {/* Thumbnails */}
-              <div className="flex flex-col gap-3 min-w-fit">
+              <div className="flex flex-col gap-2 min-w-fit">
                 {thumbnails.map((thumbUrl, index) => (
                   <button
                     key={index}
                     onClick={() => setSelectedThumb(index)}
-                    className={`w-12 h-12 border rounded-lg flex items-center justify-center transition-colors ${
+                    className={`w-12 h-12 border rounded-md flex items-center justify-center transition-colors ${
                       selectedThumb === index
                         ? "border-[#010b62] dark:border-[#01BAEF] dark:bg-gray-800 border-2"
                         : "border-[#010b62] dark:border-[#01BAEF]"
@@ -83,7 +83,7 @@ export default function ProductLayout({ product }: { product: Product }) {
                 ))}
               </div>
               {/* Main Image */}
-              <div className="flex items-center justify-center w-[340px] h-[340px] rounded-lg">
+              <div className="flex items-center justify-center w-[340px] h-[340px] rounded-lg mt-[15%]">
                 <Image
                   src={
                     product.images[selectedThumb] ||
@@ -91,21 +91,21 @@ export default function ProductLayout({ product }: { product: Product }) {
                     "/placeholder.svg"
                   }
                   alt={product.name}
-                  width={320}
-                  height={320}
+                  width={600}
+                  height={600}
                   className="object-contain"
                 />
               </div>
               {/* Conteúdo do produto */}
               <div className="flex-1 flex flex-col gap-4 self-start">
-                <div className="bg-[#010b62] text-white px-4 py-2 rounded-lg flex items-center gap-2 w-fit dark:bg-[#01BAEF] mb-2">
+                <div className="bg-[#010b62] text-white px-4 py-2 rounded-md flex items-center gap-2 w-full dark:bg-[#01BAEF] mb-2">
                   <Award className="w-5 h-5 text-[#FFB24B]" />
-                  <span className="text-xl font-semibold dark:text-white">
+                  <span className="text-xl font-bold dark:text-white">
                     {getRankingText(product.rank, product.category)}
                   </span>
                 </div>
                 <div className="flex items-center justify-between mb-2">
-                  <h1 className="text-2xl font-bold text-[#010b62] dark:text-white">
+                  <h1 className="text-2xl -mt-3.5 font-bold text-[#010b62] dark:text-white">
                     {product.name}
                   </h1>
                   <Button
@@ -116,43 +116,33 @@ export default function ProductLayout({ product }: { product: Product }) {
                     <Share2 className="w-6 h-6 dark:text-white" />
                   </Button>
                 </div>
-                <div className="flex items-center gap-4 mb-2">
-                  {product.rating !== null ? (
-                    <>
-                      <span className="text-5xl font-bold text-[#FFB24B]">
-                        {formatRating(product.rating)}
-                      </span>
-                      <div className="flex flex-col">
-                        <StarRating rating={product.rating} size={20} />
-                        <span className="text-sm text-gray-500">
-                          {(product.review_count
-                            ? product.review_count.toLocaleString()
-                            : "0") + " avaliações"}
-                        </span>
-                      </div>
-                    </>
-                  ) : (
-                    <span className="text-gray-500 dark:text-gray-300 text-sm italic">
-                      Sem avaliações ainda
+                <div className="flex items-center min-w-[220px]">
+                  <span className="text-5xl font-bold text-[#FFB24B] leading-none">
+                    {formatRating(product.rating)}
+                  </span>
+                  <div className="flex flex-col ml-4">
+                    <StarRating rating={product.rating} size={22} />
+                    <span className="text-sm text-gray-500 mt-1">
+                      {(product.review_count
+                        ? product.review_count.toLocaleString()
+                        : "0") + " avaliações"}
                     </span>
-                  )}
+                  </div>
                 </div>
-                <div className="space-y-1">
+                <div className="flex-2 -space-y-0.5 max-w-[400px] min-w-[200px] w-1/2">
                   {ratingBreakdown.map((item) => (
                     <div key={item.stars} className="flex items-center gap-2">
-                      <span className="text-xs text-[#010b62] dark:text-white w-2">
-                        {item.stars}
-                      </span>
-                      <Star className="w-3 h-3 fill-[#FFB24B] text-[#FFB24B]" />
-                      <div className="flex-1 bg-gray-200 rounded-full h-1.5 max-w-48">
+                      <div className="flex-1 bg-gray-200 rounded-full h-2">
                         <div
-                          className="bg-[#010b62] dark:bg-[#01BAEF] h-1.5 rounded-full"
+                          className="bg-[#010b62] dark:bg-[#01BAEF] h-2 rounded-full"
                           style={{ width: `${item.percentage}%` }}
                         />
                       </div>
-                      <span className="text-xs text-gray-600 dark:text-gray-400">
+
+                      <span className="text-s text-[#010b62] dark:text-gray-400 w-4 text-right">
                         {item.stars}
                       </span>
+                      <Star className="w-4 h-4 fill-[#FFB24B] text-[#FFB24B] flex" />
                     </div>
                   ))}
                 </div>
@@ -160,16 +150,16 @@ export default function ProductLayout({ product }: { product: Product }) {
                   <h2 className="text-base font-bold text-[#010b62] dark:text-white mb-2">
                     Avaliações por características
                   </h2>
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
+                  <div className="grid grid-cols-5 divide-x divide-[#010b62]/40 dark:divide-[#FFFFFF]/50">
                     {characteristics.map((c) => (
                       <div
                         key={c.name}
-                        className="flex flex-col items-center text-center"
+                        className="flex flex-col items-start text-left first:pl-0 pl-3"
                       >
-                        <span className="text-sm font-medium text-gray-700 mb-1">
+                        <span className="text-sm font-medium text-[#010b62] dark:text-white mb-1">
                           {c.name}
                         </span>
-                        <StarRating rating={c.rating} size={18} />
+                        <StarRating rating={c.rating} size={20} />
                       </div>
                     ))}
                   </div>
@@ -221,10 +211,10 @@ export default function ProductLayout({ product }: { product: Product }) {
           >
             <header className="mb-6">
               <button
-                className="flex items-center text-[#010b62] hover:underline"
+                className="flex items-center text-[#010b62] dark:text-[#01BAEF] hover:underline"
                 onClick={() => setShowForm(false)}
               >
-                <ChevronLeft className="w-4 h-4 mr-1 text-[#010b62]" />
+                <ChevronLeft className="w-4 h-4 mr-1 text-[#010b62] dark:text-[#01BAEF]" />
                 Voltar
               </button>
             </header>
@@ -233,24 +223,24 @@ export default function ProductLayout({ product }: { product: Product }) {
               {/* Left Column: Product Details and Ratings */}
               <div className="space-y-8">
                 {/* Top Banner */}
-                <div className="bg-[#010b62] text-white px-4 py-2 rounded-md flex items-center gap-2 w-fit">
-                  <Crown className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                  <span className="font-semibold">
-                    Top #1 - Mouses gamers custo-benefício
+                <div className="bg-[#010b62] dark:bg-[#01BAEF] text-white px-4 py-2 rounded-md flex items-center gap-2 w-full">
+                  <Award className="w-5 h-5 text-[#FFB24B]" />
+                  <span className="text-xl font-bold dark:text-white">
+                    {getRankingText(product.rank, product.category)}
                   </span>
                 </div>
-                <h1 className="text-2xl font-medium text-[#010b62] -mt-6">
+                <h1 className="text-2xl font-medium text-[#010b62] -mt-6 dark:text-white">
                   {product.name}
                 </h1>
 
-                <div className="flex flex-col md:flex-row gap-6">
+                <div className="flex flex-col md:flex-row gap-6 -mt-4 max-w-[1200px] w-full mx-auto">
                   {/* Thumbnails */}
-                  <div className="flex flex-row md:flex-col gap-4 overflow-x-auto md:overflow-visible pb-2 md:pb-0">
+                  <div className="flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-visible pb-2 md:pb-0">
                     {product.images.map((img, i) => (
                       <button
                         key={i}
                         onClick={() => setSelectedThumb(i)}
-                        className={`w-12 h-12 border rounded-lg flex items-center justify-center transition-colors ${
+                        className={`w-12 h-12 border rounded-md flex items-center justify-center transition-colors ${
                           selectedThumb === i
                             ? "border-[#010b62] dark:border-[#01BAEF] dark:bg-gray-800 border-2"
                             : "border-[#010b62] dark:border-[#01BAEF]"
@@ -267,7 +257,7 @@ export default function ProductLayout({ product }: { product: Product }) {
                     ))}
                   </div>
                   {/* Main Image */}
-                  <div className="flex items-center mx-auto justify-center w-[400] h-[400] rounded-lg">
+                  <div className="flex-1 flex items-center justify-center overflow-hidden">
                     <Image
                       src={
                         product.images[selectedThumb] ||
@@ -275,27 +265,27 @@ export default function ProductLayout({ product }: { product: Product }) {
                         "/placeholder.svg"
                       }
                       alt={product.name}
-                      width={200}
-                      height={200}
-                      className="object-contain w-full h-auto max-w-full"
+                      width={400}
+                      height={400}
+                      className="object-contain max-w-full max-h-full"
                     />
                   </div>
                 </div>
 
                 {/* Public Rating */}
                 <div className="mt-8">
-                  <h2 className="text-2xl font-bold mb-4 text-[#010b62]">
+                  <h2 className="text-2xl font-bold mb-4 text-[#010b62] dark:text-white">
                     Nota do Público
                   </h2>
                   <div className="flex flex-col md:flex-row md:items-center gap-4 mb-4">
                     {/* Nota, estrelas e avaliações */}
-                    <div className="flex flex-col items-start min-w-[120px]">
-                      <span className="text-5xl font-bold text-orange-500 leading-none">
+                    <div className="flex items-center min-w-[220px]">
+                      <span className="text-5xl font-bold text-[#FFB24B] leading-none">
                         {formatRating(product.rating)}
                       </span>
-                      <div className="flex items-center gap-2 mt-1">
+                      <div className="flex flex-col ml-4">
                         <StarRating rating={product.rating} size={22} />
-                        <span className="text-sm text-gray-500 ml-2">
+                        <span className="text-sm text-gray-500 mt-1">
                           {(product.review_count
                             ? product.review_count.toLocaleString()
                             : "0") + " avaliações"}
@@ -303,40 +293,40 @@ export default function ProductLayout({ product }: { product: Product }) {
                       </div>
                     </div>
                     {/* Barras de avaliações */}
-                    <div className="flex-1 space-y-1">
+                    <div className="flex-2 -space-y-0.5">
                       {ratingBreakdown.map((item) => (
                         <div
                           key={item.stars}
                           className="flex items-center gap-2"
                         >
-                          <Star className="w-4 h-4 fill-[#FFB24B] text-[#FFB24B]" />
                           <div className="flex-1 bg-gray-200 rounded-full h-2 max-w-full">
                             <div
                               className="bg-[#010b62] dark:bg-[#01BAEF] h-2 rounded-full"
                               style={{ width: `${item.percentage}%` }}
                             />
                           </div>
-                          <span className="text-xs text-[#010b62] dark:text-white w-4 text-right">
+
+                          <span className="text-s text-[#010b62] dark:text-gray-400 w-4 text-right">
                             {item.stars}
                           </span>
+                          <Star className="w-4 h-4 fill-[#FFB24B] text-[#FFB24B] flex" />
                         </div>
                       ))}
                     </div>
                   </div>
                 </div>
 
-                {/* Evaluations by Characteristics */}
                 <div className="mt-8">
-                  <h2 className="text-2xl font-bold mb-4 text-[#010b62]">
+                  <h2 className="text-2xl font-bold mb-4 text-[#010b62] dark:text-white">
                     Avaliações por características
                   </h2>
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 divide-x divide-[#010b62]/50 dark:divide-[#FFFFFF]/50">
                     {characteristics.map((c) => (
                       <div
                         key={c.name}
-                        className="flex flex-col items-center text-center"
+                        className="flex flex-col items-start text-left first:pl-0 pl-3"
                       >
-                        <span className="text-sm font-medium text-gray-700 mb-1">
+                        <span className="text-sm font-medium text-[#010b62] dark:text-white mb-1 ">
                           {c.name}
                         </span>
                         <StarRating rating={c.rating} size={18} />
@@ -346,7 +336,6 @@ export default function ProductLayout({ product }: { product: Product }) {
                 </div>
               </div>
 
-              {/* Right Column: Review Form */}
               <ReviewForm />
             </div>
           </motion.div>

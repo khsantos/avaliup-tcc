@@ -24,7 +24,7 @@ export default function StarRating({
             style={{ width: size, height: size }}
           >
             <Star
-              className="text-gray-400 dark:text-gray-500 absolute"
+              className="text-[#FFB24B] dark:text-[#FFB24B] absolute"
               style={{ width: size, height: size }}
             />
 

@@ -31,7 +31,7 @@ export default function StarRatingInput({
             className={`transition-colors ${
               (hovered || value) >= star
                 ? "fill-[#FFB24B] text-[#FFB24B]"
-                : "text-gray-300"
+                : "text-[#FFB24B]"
             }`}
             style={{ width: size, height: size }}
           />
