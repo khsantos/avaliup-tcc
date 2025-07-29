@@ -8,30 +8,13 @@ import { Product } from "@/src/types/Product";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import { formatRating } from "@/src/lib/formatRating";
 import StarRating from "../StarRating";
-import StarRatingInput from "../StarRatingInput";
 import { motion, AnimatePresence } from "framer-motion";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
-import { Textarea } from "../ui/textarea";
-
-type RatingKey =
-  | "performance"
-  | "costBenefit"
-  | "comfort"
-  | "weight"
-  | "durability";
+import ReviewForm from "../ReviewForm";
 
 export default function ProductLayout({ product }: { product: Product }) {
   const [selectedThumb, setSelectedThumb] = useState(0);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const [ratings, setRatings] = useState<Record<RatingKey, number>>({
-    performance: 0,
-    costBenefit: 0,
-    comfort: 0,
-    weight: 0,
-    durability: 0,
-  });
 
   const thumbnails = product.images;
 
@@ -49,14 +32,6 @@ export default function ProductLayout({ product }: { product: Product }) {
     { name: "Conforto", rating: 3.7 },
     { name: "Preço", rating: 4.6 },
     { name: "Durabilidade", rating: 3.2 },
-  ];
-
-  const ratingFields: { label: string; key: RatingKey }[] = [
-    { label: "Performance", key: "performance" },
-    { label: "Custo-benefício", key: "costBenefit" },
-    { label: "Conforto", key: "comfort" },
-    { label: "Peso", key: "weight" },
-    { label: "Durabilidade", key: "durability" },
   ];
 
   const getRankingText = (rank: number, category: string) => {
@@ -372,111 +347,7 @@ export default function ProductLayout({ product }: { product: Product }) {
               </div>
 
               {/* Right Column: Review Form */}
-              <div className="space-y-8">
-                <h2 className="text-3xl font-medium text-[#000080]">
-                  Avaliar Produto
-                </h2>
-                <form className="space-y-6">
-                  <div className="grid gap-2">
-                    <Label
-                      htmlFor="review-title"
-                      className="text-sm text-[#010b62]"
-                    >
-                      Título da avaliação
-                    </Label>
-                    <Input
-                      id="review-title"
-                      placeholder="Digite um título da avaliação"
-                      className="border border-[#010b62]/50 focus:[#010b62] text-[#010b62]"
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label
-                      htmlFor="review-description"
-                      className="text-sm text-gray-600"
-                    >
-                      Descrição da avaliação
-                    </Label>
-                    <Textarea
-                      id="review-description"
-                      placeholder=""
-                      rows={5}
-                      className="border border-blue-700 focus:border-blue-900"
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label
-                      htmlFor="purchase-store"
-                      className="text-sm text-gray-600"
-                    >
-                      Loja / Site da compra
-                    </Label>
-                    <Input
-                      id="purchase-store"
-                      placeholder=""
-                      className="border border-blue-700 focus:border-blue-900"
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label
-                      htmlFor="price-paid"
-                      className="text-sm text-gray-600"
-                    >
-                      Valor pago
-                    </Label>
-                    <Input
-                      id="price-paid"
-                      placeholder=""
-                      type="number"
-                      className="border border-blue-700 focus:border-blue-900"
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label
-                      htmlFor="time-of-use"
-                      className="text-sm text-gray-600"
-                    >
-                      Tempo de uso
-                    </Label>
-                    <Input
-                      id="time-of-use"
-                      placeholder=""
-                      className="border border-blue-700 focus:border-blue-900"
-                    />
-                  </div>
-
-                  {/* Form Characteristic Ratings */}
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                    {ratingFields.map(({ label, key }) => (
-                      <div
-                        key={key}
-                        className="flex flex-col items-center text-center"
-                      >
-                        <Label className="text-sm text-gray-600 mb-1">
-                          {label}
-                        </Label>
-                        <StarRatingInput
-                          value={ratings[key]}
-                          onChange={(value) =>
-                            setRatings((prev) => ({
-                              ...prev,
-                              [key]: value,
-                            }))
-                          }
-                          size={20}
-                        />
-                      </div>
-                    ))}
-                  </div>
-
-                  <Button
-                    type="submit"
-                    className="w-full bg-[#000080] hover:bg-[#000060] text-white py-3 text-lg font-semibold"
-                  >
-                    Enviar Avaliação
-                  </Button>
-                </form>
-              </div>
+              <ReviewForm />
             </div>
           </motion.div>
         )}
