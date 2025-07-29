@@ -137,7 +137,7 @@ export default function ProductLayout({ product }: { product: Product }) {
   };
 
   return (
-    <div className="w-[80%] mx-auto py-10">
+    <div className="max-w-9xl mx-auto px-6 py-10">
       <AnimatePresence mode="wait">
         {!showForm ? (
           <motion.div
@@ -148,7 +148,7 @@ export default function ProductLayout({ product }: { product: Product }) {
             transition={{ duration: 0.4 }}
           >
             {/* Layout do produto */}
-            <div className="flex gap-10 items-start">
+            <div className="flex gap-10 items-start w-full">
               {/* Thumbnails */}
               <div className="flex min-w-fit gap-8">
                 <div className="flex flex-col gap-2">
@@ -295,211 +295,195 @@ export default function ProductLayout({ product }: { product: Product }) {
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: "100%", opacity: 0 }}
             transition={{ duration: 0.4 }}
-            className="space-y-6"
           >
-            <div className="min-h-screen bg-white p-4 md:p-8 lg:p-12">
-              <header className="mb-6">
-                <button
-                  className="flex items-center text-blue-700 hover:underline"
-                  onClick={() => setShowForm(false)}
-                >
-                  <ChevronLeft className="w-4 h-4 mr-1" />
-                  Voltar
-                </button>
-              </header>
+            <header className="mb-6">
+              <button
+                className="flex items-center text-blue-700 hover:underline"
+                onClick={() => setShowForm(false)}
+              >
+                <ChevronLeft className="w-4 h-4 mr-1" />
+                Voltar
+              </button>
+            </header>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-                {/* Left Column: Product Details and Ratings */}
-                <div className="space-y-8">
-                  {/* Top Banner */}
-                  <div className="bg-[#000080] text-white px-4 py-2 rounded-md flex items-center gap-2 w-fit">
-                    <Crown className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                    <span className="font-semibold">
-                      Top #1 - Mouses gamers custo-benefício
-                    </span>
-                  </div>
-                  <h1 className="text-3xl font-bold text-[#000080] mb-4">
-                    Mouse Zaopin-Z2 4K Hotswappable Wireless
-                  </h1>
+            <div className="flex gap-10 items-start w-full">
+              {/* Left Column: Product Details and Ratings */}
+              <div className="space-y-8">
+                {/* Top Banner */}
+                <div className="bg-[#000080] text-white px-4 py-2 rounded-md flex items-center gap-2 w-fit">
+                  <Crown className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                  <span className="font-semibold">
+                    Top #1 - Mouses gamers custo-benefício
+                  </span>
+                </div>
+                <h1 className="text-3xl font-bold text-[#000080] mb-4">
+                  {product.name}
+                </h1>
 
-                  <div className="flex flex-col md:flex-row gap-6">
-                    {/* Thumbnails */}
-                    <div className="flex flex-row md:flex-col gap-4 overflow-x-auto md:overflow-visible pb-2 md:pb-0">
+                <div className="flex flex-col md:flex-row gap-6">
+                  {/* Thumbnails */}
+                  <div className="flex flex-row md:flex-col gap-4 overflow-x-auto md:overflow-visible pb-2 md:pb-0">
+                    {product.images.map((img, i) => (
                       <Image
-                        src="/placeholder.svg?height=80&width=80"
-                        alt="Mouse top view"
+                        key={i}
+                        src={img}
+                        alt={`Thumbnail ${i + 1}`}
                         width={80}
                         height={80}
                         className="border rounded-md object-cover shrink-0"
                       />
-                      <Image
-                        src="/placeholder.svg?height=80&width=80"
-                        alt="Mouse side view"
-                        width={80}
-                        height={80}
-                        className="border rounded-md object-cover shrink-0"
-                      />
-                      <Image
-                        src="/placeholder.svg?height=80&width=80"
-                        alt="Mouse angled view"
-                        width={80}
-                        height={80}
-                        className="border rounded-md object-cover shrink-0"
-                      />
-                      <Image
-                        src="/placeholder.svg?height=80&width=80"
-                        alt="Mouse bottom view"
-                        width={80}
-                        height={80}
-                        className="border rounded-md object-cover shrink-0"
-                      />
-                    </div>
-                    {/* Main Image */}
-                    <div className="flex-1 flex justify-center items-center min-w-0">
-                      <Image
-                        src="/placeholder.svg?height=400&width=400"
-                        alt="Mouse Zaopin-Z2 4K Hotswappable Wireless"
-                        width={400}
-                        height={400}
-                        className="object-contain w-full h-auto max-w-full"
-                      />
-                    </div>
+                    ))}
                   </div>
-
-                  {/* Public Rating */}
-                  <div className="mt-8">
-                    <h2 className="text-2xl font-bold mb-4">Nota do Público</h2>
-                    <div className="flex items-center gap-4 mb-4">
-                      <span className="text-5xl font-bold text-orange-500">
-                        4.9
-                      </span>
-                      <div className="flex flex-col">
-                        <StarRatingDisplay rating={4.9} />
-                        <span className="text-sm text-gray-500">
-                          12,321 avaliações
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Rating Distribution Bars */}
-                    <div className="space-y-2">
-                      <RatingBar label="5" percentage={90} />
-                      <RatingBar label="4" percentage={70} />
-                      <RatingBar label="3" percentage={40} />
-                      <RatingBar label="2" percentage={20} />
-                      <RatingBar label="1" percentage={10} />
-                    </div>
-                  </div>
-
-                  {/* Evaluations by Characteristics */}
-                  <div className="mt-8">
-                    <h2 className="text-2xl font-bold mb-4">
-                      Avaliações por características
-                    </h2>
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                      <CharacteristicRating label="Performance" rating={4.5} />
-                      <CharacteristicRating
-                        label="Custo-benefício"
-                        rating={4.0}
-                      />
-                      <CharacteristicRating label="Conforto" rating={3.5} />
-                      <CharacteristicRating label="Peso" rating={4.0} />
-                      <CharacteristicRating label="Durabilidade" rating={3.0} />
-                    </div>
-                  </div>
+                  {/* Main Image */}
+                  <Image
+                    src={
+                      product.images[selectedThumb] ||
+                      product.image ||
+                      "/placeholder.svg"
+                    }
+                    alt={product.name}
+                    width={400}
+                    height={400}
+                    className="object-contain w-full h-auto max-w-full"
+                  />
                 </div>
 
-                {/* Right Column: Review Form */}
-                <div className="space-y-6">
-                  <h2 className="text-3xl font-bold text-[#000080]">
-                    Avaliar Produto
+                {/* Public Rating */}
+                <div className="mt-8">
+                  <h2 className="text-2xl font-bold mb-4 text-[#010b62]">
+                    Nota do Público
                   </h2>
-                  <form className="space-y-6">
-                    <div className="grid gap-2">
-                      <Label
-                        htmlFor="review-title"
-                        className="text-sm text-gray-600"
-                      >
-                        Título da avaliação
-                      </Label>
-                      <Input
-                        id="review-title"
-                        placeholder=""
-                        className="border border-blue-700 focus:border-blue-900"
-                      />
+                  <div className="flex items-center gap-4 mb-4">
+                    <span className="text-5xl font-bold text-orange-500">
+                      {formatRating(product.rating)}
+                    </span>
+                    <div className="flex flex-col">
+                      <StarRatingDisplay rating={4.9} />
+                      <span className="text-sm text-gray-500">
+                        12,321 avaliações
+                        {/* Adicionar tratamento se receber nulo */}
+                      </span>
                     </div>
-                    <div className="grid gap-2">
-                      <Label
-                        htmlFor="review-description"
-                        className="text-sm text-gray-600"
-                      >
-                        Descrição da avaliação
-                      </Label>
-                      <Textarea
-                        id="review-description"
-                        placeholder=""
-                        rows={5}
-                        className="border border-blue-700 focus:border-blue-900"
-                      />
-                    </div>
-                    <div className="grid gap-2">
-                      <Label
-                        htmlFor="purchase-store"
-                        className="text-sm text-gray-600"
-                      >
-                        Loja / Site da compra
-                      </Label>
-                      <Input
-                        id="purchase-store"
-                        placeholder=""
-                        className="border border-blue-700 focus:border-blue-900"
-                      />
-                    </div>
-                    <div className="grid gap-2">
-                      <Label
-                        htmlFor="price-paid"
-                        className="text-sm text-gray-600"
-                      >
-                        Valor pago
-                      </Label>
-                      <Input
-                        id="price-paid"
-                        placeholder=""
-                        type="number"
-                        className="border border-blue-700 focus:border-blue-900"
-                      />
-                    </div>
-                    <div className="grid gap-2">
-                      <Label
-                        htmlFor="time-of-use"
-                        className="text-sm text-gray-600"
-                      >
-                        Tempo de uso
-                      </Label>
-                      <Input
-                        id="time-of-use"
-                        placeholder=""
-                        className="border border-blue-700 focus:border-blue-900"
-                      />
-                    </div>
+                  </div>
 
-                    {/* Form Characteristic Ratings */}
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                      <FormCharacteristicRating label="Performance" />
-                      <FormCharacteristicRating label="Custo-benefício" />
-                      <FormCharacteristicRating label="Conforto" />
-                      <FormCharacteristicRating label="Peso" />
-                      <FormCharacteristicRating label="Durabilidade" />
-                    </div>
-
-                    <Button
-                      type="submit"
-                      className="w-full bg-[#000080] hover:bg-[#000060] text-white py-3 text-lg font-semibold"
-                    >
-                      Enviar Avaliação
-                    </Button>
-                  </form>
+                  {/* Rating Distribution Bars */}
+                  <div className="space-y-2">
+                    <RatingBar label="5" percentage={90} />
+                    <RatingBar label="4" percentage={70} />
+                    <RatingBar label="3" percentage={40} />
+                    <RatingBar label="2" percentage={20} />
+                    <RatingBar label="1" percentage={10} />
+                  </div>
                 </div>
+
+                {/* Evaluations by Characteristics */}
+                <div className="mt-8">
+                  <h2 className="text-2xl font-bold mb-4 text-[#010b62]">
+                    Avaliações por características
+                  </h2>
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                    <CharacteristicRating label="Performance" rating={4.5} />
+                    <CharacteristicRating
+                      label="Custo-benefício"
+                      rating={4.0}
+                    />
+                    <CharacteristicRating label="Conforto" rating={3.5} />
+                    <CharacteristicRating label="Peso" rating={4.0} />
+                    <CharacteristicRating label="Durabilidade" rating={3.0} />
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: Review Form */}
+              <div className="space-y-6">
+                <h2 className="text-3xl font-bold text-[#000080]">
+                  Avaliar Produto
+                </h2>
+                <form className="space-y-6">
+                  <div className="grid gap-2">
+                    <Label
+                      htmlFor="review-title"
+                      className="text-sm text-gray-600"
+                    >
+                      Título da avaliação
+                    </Label>
+                    <Input
+                      id="review-title"
+                      placeholder=""
+                      className="border border-blue-700 focus:border-blue-900"
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label
+                      htmlFor="review-description"
+                      className="text-sm text-gray-600"
+                    >
+                      Descrição da avaliação
+                    </Label>
+                    <Textarea
+                      id="review-description"
+                      placeholder=""
+                      rows={5}
+                      className="border border-blue-700 focus:border-blue-900"
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label
+                      htmlFor="purchase-store"
+                      className="text-sm text-gray-600"
+                    >
+                      Loja / Site da compra
+                    </Label>
+                    <Input
+                      id="purchase-store"
+                      placeholder=""
+                      className="border border-blue-700 focus:border-blue-900"
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label
+                      htmlFor="price-paid"
+                      className="text-sm text-gray-600"
+                    >
+                      Valor pago
+                    </Label>
+                    <Input
+                      id="price-paid"
+                      placeholder=""
+                      type="number"
+                      className="border border-blue-700 focus:border-blue-900"
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label
+                      htmlFor="time-of-use"
+                      className="text-sm text-gray-600"
+                    >
+                      Tempo de uso
+                    </Label>
+                    <Input
+                      id="time-of-use"
+                      placeholder=""
+                      className="border border-blue-700 focus:border-blue-900"
+                    />
+                  </div>
+
+                  {/* Form Characteristic Ratings */}
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                    <FormCharacteristicRating label="Performance" />
+                    <FormCharacteristicRating label="Custo-benefício" />
+                    <FormCharacteristicRating label="Conforto" />
+                    <FormCharacteristicRating label="Peso" />
+                    <FormCharacteristicRating label="Durabilidade" />
+                  </div>
+
+                  <Button
+                    type="submit"
+                    className="w-full bg-[#000080] hover:bg-[#000060] text-white py-3 text-lg font-semibold"
+                  >
+                    Enviar Avaliação
+                  </Button>
+                </form>
               </div>
             </div>
           </motion.div>
