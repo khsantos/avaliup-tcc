@@ -193,7 +193,7 @@ export default function SiteLayout({
             </DropdownMenu>
           ) : (
             <Link href="/signIn">
-              <button className="bg-white border border-[#010b62] text-[#010b62] p-2 rounded text-sm hover:bg-blue-800">
+              <button className="bg-white border border-[#010b62] text-[#010b62] p-2 rounded text-sm hover:bg-gray-300">
                 Entrar
               </button>
             </Link>

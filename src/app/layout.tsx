@@ -1,3 +1,4 @@
+import { Toaster } from "@/src/components/ui/sonner";
 import Footer from "../components/Footer";
 import "./globals.css";
 import { Providers } from "./providers";
@@ -36,6 +37,7 @@ export default function RootLayout({
         <Providers>
           <main className="flex-grow">
             {children}
+            <Toaster />
             <Footer />
           </main>
         </Providers>
