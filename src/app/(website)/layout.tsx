@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Search, User } from "lucide-react";
+import { Search } from "lucide-react";
 import ThemeSwitch from "@/src/components/ThemeSwitch";
 import { useEffect, useState } from "react";
 import { supabase } from "@/src/lib/supabase";
@@ -19,6 +19,7 @@ import LogoTeclado from "@/public/logo-teclado.svg";
 import LogoTecladoDark from "@/public/logo-teclado-dark.svg";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
+import { Avatar, AvatarFallback } from "@/src/components/ui/avatar";
 
 export default function SiteLayout({
   children,
@@ -159,12 +160,11 @@ export default function SiteLayout({
           {session?.user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button
-                  className="p-2 border border-blue-900 rounded-md hover:bg-blue-50 dark:hover:bg-blue-950 dark:border-white transition"
-                  aria-label="Abrir menu do usuário"
-                >
-                  <User className="w-5 h-5 text-blue-900 dark:text-white" />
-                </button>
+                <Avatar className="border border-blue-900 dark:border-white bg-white dark:bg-slate-800">
+                  <AvatarFallback className="text-blue-900 dark:text-white font-bold">
+                    {session.user.email?.[0]?.toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>

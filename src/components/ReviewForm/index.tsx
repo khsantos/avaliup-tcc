@@ -75,7 +75,7 @@ export default function ReviewForm() {
         <div className="grid grid-cols-4 gap-4">
           {ratingFields.slice(0, 4).map(({ label, key }) => (
             <div key={key} className="flex flex-col text-left">
-              <label className="text-sm text-gray-700 dark:text-white mb-1">
+              <label className="text-sm text-[#010b62] dark:text-white mb-1">
                 {label}
               </label>
               <StarRatingInput
@@ -91,7 +91,7 @@ export default function ReviewForm() {
             </div>
           ))}
           <div className="flex flex-col  text-left col-span-4">
-            <label className="text-sm text-gray-800 dark:text-white mb-1">
+            <label className="text-sm text-[#010b62] dark:text-white mb-1">
               {ratingFields[4].label}
             </label>
             <StarRatingInput
