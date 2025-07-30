@@ -160,7 +160,7 @@ export default function SiteLayout({
           {session?.user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Avatar className="border border-blue-900 dark:border-white bg-white dark:bg-slate-800">
+                <Avatar className="border border-blue-900  bg-white dark:bg-[#030712] dark:border-white">
                   <AvatarFallback className="text-blue-900 dark:text-white font-bold">
                     {session.user.email?.[0]?.toUpperCase()}
                   </AvatarFallback>
