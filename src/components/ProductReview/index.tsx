@@ -60,8 +60,8 @@ const ProductReviewView = ({
         </button>
       </header>
 
-      <div className="flex gap-10 items-start w-full py-2">
-        <div className="space-y-8">
+      <div className="flex flex-col lg:flex-row gap-10 items-start w-full py-2">
+        <div className="space-y-8 px-4 w-full">
           <div className="bg-[#010b62] dark:bg-[#01BAEF] text-white px-4 py-2 rounded-md flex items-center gap-2 w-full">
             <Award className="w-5 h-5 text-[#FFB24B]" />
             <span className="text-xl font-bold dark:text-white">
@@ -73,15 +73,16 @@ const ProductReviewView = ({
           </h1>
 
           <div className="flex flex-col md:flex-row gap-6 -mt-4 max-w-[1200px] w-full mx-auto">
-            <div className="flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-visible pb-2 md:pb-0">
+            <div className="flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-visible pb-2 md:pb-0 px-1">
               {product.images.map((img, i) => (
                 <button
                   key={i}
                   onClick={() => setSelectedThumb(i)}
-                  className={`w-12 h-12 border rounded-md flex items-center justify-center transition-colors ${selectedThumb === i
-                    ? "border-[#010b62] dark:border-[#01BAEF] dark:bg-gray-800 border-2"
-                    : "border-[#010b62] dark:border-[#01BAEF]"
-                    }`}
+                  className={`w-12 h-12 border rounded-md flex items-center justify-center transition-colors ${
+                    selectedThumb === i
+                      ? "border-[#010b62] dark:border-[#01BAEF] dark:bg-gray-800 border-2"
+                      : "border-[#010b62] dark:border-[#01BAEF]"
+                  }`}
                 >
                   <Image
                     src={img}
@@ -93,7 +94,7 @@ const ProductReviewView = ({
                 </button>
               ))}
             </div>
-            <div className="flex-1 flex items-center justify-center overflow-hidden">
+            <div className="flex items-center justify-center w-full max-w-md min-h-[200px]">
               <Image
                 src={
                   product.images[selectedThumb] ||
@@ -103,7 +104,7 @@ const ProductReviewView = ({
                 alt={product.name}
                 width={400}
                 height={400}
-                className="object-contain max-w-full max-h-full"
+                className="object-contain w-auto max-h-[300px]"
               />
             </div>
           </div>
@@ -146,20 +147,21 @@ const ProductReviewView = ({
             </div>
           </div>
 
-          <div className="mt-8">
-            <h2 className="text-2xl font-bold mb-4 text-[#010b62] dark:text-white">
+          <div className="flex flex-col gap-4">
+            <h2 className="text-2xl font-bold text-[#010b62] dark:text-white">
               Avaliações por características
             </h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 divide-x divide-[#010b62]/50 dark:divide-[#FFFFFF]/50">
+
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 divide-x divide-[#010b62]/50 dark:divide-white/50">
               {characteristics.map((c) => (
                 <div
                   key={c.name}
-                  className="flex flex-col items-start text-left first:pl-0 pl-3"
+                  className="flex flex-col items-center px-2 text-center first:pl-0"
                 >
-                  <span className="text-sm font-medium text-[#010b62] dark:text-white mb-1 ">
+                  <span className="text-xs font-medium text-[#010b62] dark:text-white mb-1 leading-tight">
                     {c.name}
                   </span>
-                  <StarRating rating={c.rating} size={18} />
+                  <StarRating rating={c.rating} size={16} />
                 </div>
               ))}
             </div>
