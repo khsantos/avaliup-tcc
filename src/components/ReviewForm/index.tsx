@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import StarRatingInput from "../StarRatingInput";
 import { Button } from "../ui/button";
 
@@ -25,6 +25,27 @@ export default function ReviewForm() {
     { label: "Peso", key: "weight" },
     { label: "Durabilidade", key: "durability" },
   ];
+
+  const [starSize, setStarSize] = useState(18); // Valor padrão
+
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      if (width < 480) {
+        setStarSize(16); // celular pequeno
+      } else if (width < 768) {
+        setStarSize(18); // celular/tablet
+      } else if (width < 1024) {
+        setStarSize(20); // tablet grande
+      } else {
+        setStarSize(22); // desktop
+      }
+    };
+
+    handleResize(); // define na primeira renderização
+    window.addEventListener("resize", handleResize); // atualiza ao redimensionar
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
     <div className="space-y-8 max-w-xl w-full mx-auto">
@@ -58,8 +79,9 @@ export default function ReviewForm() {
               <input
                 id={field.id}
                 type={field.type}
-                className={`w-full border-1 border-[#010b62]/50 dark:border-[#01BAEF] rounded-md px-3 pt-5 pb-2 text-sm bg-white dark:bg-[#030712] text-[#010b62] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#010b62] dark:focus:ring-[#01BAEF] ${field.type === "number" ? "no-spinner" : ""
-                  }`}
+                className={`w-full border-1 border-[#010b62]/50 dark:border-[#01BAEF] rounded-md px-3 pt-5 pb-2 text-sm bg-white dark:bg-[#030712] text-[#010b62] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#010b62] dark:focus:ring-[#01BAEF] ${
+                  field.type === "number" ? "no-spinner" : ""
+                }`}
               />
             )}
             <label
@@ -71,10 +93,15 @@ export default function ReviewForm() {
           </div>
         ))}
 
-        <div className="grid grid-cols-4 gap-4">
-          {ratingFields.slice(0, 4).map(({ label, key }) => (
-            <div key={key} className="flex flex-col text-left">
-              <label className="text-sm text-[#010b62] dark:text-white mb-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {ratingFields.map(({ label, key }) => (
+            <div
+              key={key}
+              className={`flex flex-col text-left min-w-0 ${
+                key === "durability" ? "lg:col-span-4" : ""
+              }`}
+            >
+              <label className="text-sm text-[#010b62] dark:text-white mb-1 break-words whitespace-normal leading-snug">
                 {label}
               </label>
               <StarRatingInput
@@ -85,29 +112,14 @@ export default function ReviewForm() {
                     [key]: value,
                   }))
                 }
-                size={18}
+                size={starSize}
               />
             </div>
           ))}
-          <div className="flex flex-col  text-left col-span-4">
-            <label className="text-sm text-[#010b62] dark:text-white mb-1">
-              {ratingFields[4].label}
-            </label>
-            <StarRatingInput
-              value={ratings[ratingFields[4].key]}
-              onChange={(value) =>
-                setRatings((prev) => ({
-                  ...prev,
-                  [ratingFields[4].key]: value,
-                }))
-              }
-              size={18}
-            />
-          </div>
         </div>
         <Button
           type="submit"
-          className="w-full bg-[#010b62] hover:bg-[#020B24] dark:bg-[#01BAEF] dark:hover:bg-[#0969DA] text-white py-5.5 text-lg font-semibold mt-[27.5%]"
+          className="w-full bg-[#010b62] hover:bg-[#020B24] dark:bg-[#01BAEF] dark:hover:bg-[#0969DA] text-white py-4 text-lg font-semibold mt-9"
         >
           Enviar Avaliação
         </Button>

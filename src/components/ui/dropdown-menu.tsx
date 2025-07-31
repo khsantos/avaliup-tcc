@@ -80,7 +80,7 @@ function DropdownMenuItem({
           "data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed " +
           (variant === "destructive"
             ? "text-red-600 focus:bg-red-300 focus:text-red-900 dark:focus:bg-red-800 dark:focus:text-red-400"
-            : "text-[#010b62] dark:text-white") + // <-- Aqui está a alteração
+            : "text-[#010b62] dark:text-white") +
           (inset ? " pl-8" : "") +
           " transition-colors duration-150 ease-in-out",
         className
