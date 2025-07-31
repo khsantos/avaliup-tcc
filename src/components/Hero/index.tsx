@@ -7,8 +7,8 @@ export default function Hero() {
 
   useEffect(() => {
     const { data } = supabase.storage
-      .from("heros")
-      .getPublicUrl("hero-mouse.png");
+      .from("products")
+      .getPublicUrl("mouse.png");
 
     setBannerUrl(data.publicUrl);
   }, []);

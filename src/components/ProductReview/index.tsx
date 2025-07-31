@@ -78,11 +78,10 @@ const ProductReviewView = ({
                 <button
                   key={i}
                   onClick={() => setSelectedThumb(i)}
-                  className={`w-12 h-12 border rounded-md flex items-center justify-center transition-colors ${
-                    selectedThumb === i
-                      ? "border-[#010b62] dark:border-[#01BAEF] dark:bg-gray-800 border-2"
-                      : "border-[#010b62] dark:border-[#01BAEF]"
-                  }`}
+                  className={`w-12 h-12 border rounded-md flex items-center justify-center transition-colors ${selectedThumb === i
+                    ? "border-[#010b62] dark:border-[#01BAEF] dark:bg-gray-800 border-2"
+                    : "border-[#010b62] dark:border-[#01BAEF]"
+                    }`}
                 >
                   <Image
                     src={img}

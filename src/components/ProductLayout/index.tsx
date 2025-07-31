@@ -59,18 +59,17 @@ export default function ProductLayout({ product }: { product: Product }) {
             transition={{ duration: 0.4 }}
           >
             {/* Layout do produto */}
-            <div className="flex gap-20 items-start w-full px-2">
+            <div className="flex gap-10 items-start w-full px-2 max-w-6xl mx-auto">
               {/* Thumbnails */}
-              <div className="flex flex-col gap-2 min-w-fit">
+              <div className="flex flex-col gap-2 min-w-[56px]">
                 {thumbnails.map((thumbUrl, index) => (
                   <button
                     key={index}
                     onClick={() => setSelectedThumb(index)}
-                    className={`w-12 h-12 border rounded-md flex items-center justify-center transition-colors ${
-                      selectedThumb === index
-                        ? "border-[#010b62] dark:border-[#01BAEF] dark:bg-gray-800 border-2"
-                        : "border-[#010b62] dark:border-[#01BAEF]"
-                    }`}
+                    className={`w-12 h-12 border rounded-md flex items-center justify-center transition-colors ${selectedThumb === index
+                      ? "border-[#010b62] dark:border-[#01BAEF] dark:bg-gray-800 border-2"
+                      : "border-[#010b62] dark:border-[#01BAEF]"
+                      }`}
                   >
                     <Image
                       src={thumbUrl}
@@ -83,7 +82,7 @@ export default function ProductLayout({ product }: { product: Product }) {
                 ))}
               </div>
               {/* Main Image */}
-              <div className="flex items-center justify-center w-[340px] h-[340px] rounded-lg mt-[15%]">
+              <div className="w-[320px] h-[320px] flex items-center justify-center rounded-lg mt-[15%]">
                 <Image
                   src={
                     product.images[selectedThumb] ||
@@ -97,7 +96,7 @@ export default function ProductLayout({ product }: { product: Product }) {
                 />
               </div>
               {/* Conteúdo do produto */}
-              <div className="flex-1 flex flex-col gap-4 self-start">
+              <div className="flex-1 max-w-[600px] flex flex-col gap-4 self-start">
                 <div className="bg-[#010b62] text-white px-4 py-2 rounded-md flex items-center gap-2 w-full dark:bg-[#01BAEF] mb-2">
                   <Award className="w-5 h-5 text-[#FFB24B]" />
                   <span className="text-xl font-bold dark:text-white">
@@ -150,20 +149,24 @@ export default function ProductLayout({ product }: { product: Product }) {
                   <h2 className="text-base font-bold text-[#010b62] dark:text-white mb-2">
                     Avaliações por características
                   </h2>
-                  <div className="grid grid-cols-5 divide-x divide-[#010b62]/40 dark:divide-[#FFFFFF]/50">
-                    {characteristics.map((c) => (
+                  <div className="flex overflow-x-auto no-scrollbar divide-x divide-[#010b62]/40 dark:divide-[#FFFFFF]/50">
+                    {characteristics.map((c, index) => (
                       <div
                         key={c.name}
-                        className="flex flex-col items-start text-left first:pl-0 pl-3"
+                        className={`flex flex-col min-w-[120px] pr-4 ${index === 0 ? "pl-0" : "pl-4"}`}
                       >
-                        <span className="text-sm font-medium text-[#010b62] dark:text-white mb-1">
+                        <span className="@max-xs:text-xs text-xs sm:text-sm md:text-xs font-medium text-[#010b62] dark:text-white mb-1">
                           {c.name}
                         </span>
-                        <StarRating rating={c.rating} size={20} />
+                        <StarRating
+                          rating={c.rating}
+                          size={window.innerWidth < 640 ? 14 : window.innerWidth < 768 ? 18 : 20}
+                        />
                       </div>
                     ))}
                   </div>
                 </div>
+
                 <div className="mt-2">
                   <div className="text-2xl font-bold text-[#010b62] dark:text-white">
                     R${product.price.toFixed(2)}{" "}
@@ -192,9 +195,8 @@ export default function ProductLayout({ product }: { product: Product }) {
                     }
                   >
                     <Heart
-                      className={`w-4 h-4 ${
-                        isWishlisted ? "fill-current" : ""
-                      }`}
+                      className={`w-4 h-4 ${isWishlisted ? "fill-current" : ""
+                        }`}
                     />
                   </Button>
                 </div>
@@ -218,6 +220,6 @@ export default function ProductLayout({ product }: { product: Product }) {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </div >
   );
 }

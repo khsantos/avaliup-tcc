@@ -58,9 +58,8 @@ export default function ReviewForm() {
               <input
                 id={field.id}
                 type={field.type}
-                className={`w-full border-1 border-[#010b62]/50 dark:border-[#01BAEF] rounded-md px-3 pt-5 pb-2 text-sm bg-white dark:bg-[#030712] text-[#010b62] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#010b62] dark:focus:ring-[#01BAEF] ${
-                  field.type === "number" ? "no-spinner" : ""
-                }`}
+                className={`w-full border-1 border-[#010b62]/50 dark:border-[#01BAEF] rounded-md px-3 pt-5 pb-2 text-sm bg-white dark:bg-[#030712] text-[#010b62] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#010b62] dark:focus:ring-[#01BAEF] ${field.type === "number" ? "no-spinner" : ""
+                  }`}
               />
             )}
             <label
