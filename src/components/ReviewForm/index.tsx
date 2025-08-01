@@ -138,6 +138,11 @@ export default function ReviewForm({ product }: ReviewFormProps) {
 
     if (insertError) {
       console.error("Erro ao enviar avaliação:", insertError);
+      console.error("Erro ao enviar avaliação:");
+      console.error("Mensagem:", insertError.message);
+      console.error("Detalhes:", insertError.details);
+      console.error("Código:", insertError.code);
+      console.error("Hint:", insertError.hint);
       setIsSubmitting(false);
       return;
     }
