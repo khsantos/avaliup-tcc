@@ -1,10 +1,14 @@
+"use client";
+
 import ReviewForm from "../ReviewForm";
 import StarRating from "../StarRating";
 import { formatRating } from "@/src/lib/formatRating";
 import { Award, ChevronLeft, Star } from "lucide-react";
 import Image from "next/image";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Product } from "@/src/types/Product";
+import { supabase } from "@/src/lib/supabase"; // certifique-se de importar
+import ProductCriteriaStars from "../ProductCriteriaRatings";
 
 interface ProductReviewViewProps {
   product: Product;
@@ -19,21 +23,46 @@ const ProductReviewView = ({
   setSelectedThumb,
   setShowForm,
 }: ProductReviewViewProps) => {
-  const ratingBreakdown = [
-    { stars: 5, percentage: 75 },
-    { stars: 4, percentage: 15 },
-    { stars: 3, percentage: 6 },
-    { stars: 2, percentage: 3 },
-    { stars: 1, percentage: 1 },
-  ];
+  const [ratingBreakdown, setRatingBreakdown] = useState<
+    { stars: number; percentage: number }[]
+  >([]);
 
-  const characteristics = [
-    { name: "Performance", rating: 3.5 },
-    { name: "Custo-benefício", rating: 4.8 },
-    { name: "Conforto", rating: 3.7 },
-    { name: "Preço", rating: 4.6 },
-    { name: "Durabilidade", rating: 3.2 },
-  ];
+  function calculateRatingBreakdown(reviews: { rating: number }[]) {
+    const starCounts = [0, 0, 0, 0, 0];
+    for (const { rating } of reviews) {
+      const rounded = Math.round(rating);
+      if (rounded >= 1 && rounded <= 5) {
+        starCounts[rounded - 1]++;
+      }
+    }
+
+    const total = reviews.length;
+    return starCounts
+      .map((count, i) => ({
+        stars: i + 1,
+        percentage: total ? Math.round((count / total) * 100) : 0,
+      }))
+      .reverse();
+  }
+
+  useEffect(() => {
+    async function fetchRatingsData() {
+      // Buscar os reviews do produto
+      const { data: reviews, error: errorReviews } = await supabase
+        .from("reviews")
+        .select("id, rating")
+        .eq("product_id", product.id);
+
+      if (errorReviews || !reviews || reviews.length === 0) {
+        console.error("Erro ao buscar reviews:", errorReviews);
+        return;
+      }
+
+      setRatingBreakdown(calculateRatingBreakdown(reviews));
+    }
+
+    fetchRatingsData();
+  }, [product.id]);
 
   const getRankingText = (rank: number, category: string) => {
     switch (category.toLowerCase()) {
@@ -146,26 +175,7 @@ const ProductReviewView = ({
               </div>
             </div>
           </div>
-
-          <div className="flex flex-col gap-4">
-            <h2 className="text-2xl font-bold text-[#010b62] dark:text-white">
-              Avaliações por características
-            </h2>
-
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 divide-x divide-[#010b62]/50 dark:divide-white/50">
-              {characteristics.map((c) => (
-                <div
-                  key={c.name}
-                  className="flex flex-col items-center px-2 text-center first:pl-0"
-                >
-                  <span className="text-xs font-medium text-[#010b62] dark:text-white mb-1 leading-tight">
-                    {c.name}
-                  </span>
-                  <StarRating rating={c.rating} size={16} />
-                </div>
-              ))}
-            </div>
-          </div>
+          <ProductCriteriaStars productId={product.id} />
         </div>
 
         <ReviewForm product={product} />

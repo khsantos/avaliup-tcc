@@ -6,6 +6,7 @@ import { Button } from "../ui/button";
 import { supabase } from "@/src/lib/supabase";
 import { Product } from "@/src/types/Product";
 import { useSupabase } from "@/src/contexts/supabase-provider";
+import { toast } from "sonner";
 
 type RatingKey =
   | "performance"
@@ -24,14 +25,21 @@ interface FormData {
 
 interface ReviewFormProps {
   product: Product;
+  onProductUpdate?: (updatedProduct: Product) => void; // opcional, para notificar pai
 }
 
-export default function ReviewForm({ product }: ReviewFormProps) {
+export default function ReviewForm({
+  product,
+  onProductUpdate,
+}: ReviewFormProps) {
   const { session } = useSupabase();
   const [errorMessages, setErrorMessages] = useState<
     Partial<Record<keyof FormData | "ratings", string>>
   >({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Estado local do produto atualizado
+  const [currentProduct, setCurrentProduct] = useState<Product>(product);
 
   const [formData, setFormData] = useState<FormData>({
     title: "",
@@ -73,6 +81,25 @@ export default function ReviewForm({ product }: ReviewFormProps) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Função para buscar produto atualizado
+  async function fetchUpdatedProduct() {
+    const { data, error } = await supabase
+      .from("products")
+      .select("*")
+      .eq("id", product.id)
+      .single();
+
+    if (error) {
+      console.error("Erro ao buscar produto atualizado:", error);
+      return;
+    }
+
+    if (data) {
+      setCurrentProduct(data);
+      if (onProductUpdate) onProductUpdate(data);
+    }
+  }
+
   async function submitReview(e: React.FormEvent) {
     e.preventDefault();
     if (!session) return;
@@ -104,12 +131,11 @@ export default function ReviewForm({ product }: ReviewFormProps) {
 
     const { title, description, store, price, usage_time } = formData;
 
-    // Média das notas
     const rating =
       Object.values(ratings).reduce((a, b) => a + b, 0) /
       Object.values(ratings).length;
 
-    // Inserir a review principal na tabela reviews
+    // Inserir review principal
     const { data: insertedReview, error: insertError } = await supabase
       .from("reviews")
       .insert([
@@ -130,7 +156,6 @@ export default function ReviewForm({ product }: ReviewFormProps) {
           likes: 0,
           dislikes: 0,
           comments: 0,
-          // images não enviado no momento
         },
       ])
       .select("id")
@@ -138,16 +163,11 @@ export default function ReviewForm({ product }: ReviewFormProps) {
 
     if (insertError) {
       console.error("Erro ao enviar avaliação:", insertError);
-      console.error("Erro ao enviar avaliação:");
-      console.error("Mensagem:", insertError.message);
-      console.error("Detalhes:", insertError.details);
-      console.error("Código:", insertError.code);
-      console.error("Hint:", insertError.hint);
       setIsSubmitting(false);
       return;
     }
 
-    // Agora inserir os ratings individuais na tabela review_criteria_rating
+    // Inserir ratings individuais
     const review_id = insertedReview.id;
 
     const criteriaInsertData = Object.entries(ratings).map(([key, value]) => ({
@@ -166,39 +186,30 @@ export default function ReviewForm({ product }: ReviewFormProps) {
       return;
     }
 
-    // Atualizar média geral do produto e quantidade de avaliações
-    const { data: allReviews, error: fetchError } = await supabase
-      .from("reviews")
-      .select("rating")
-      .eq("product_id", product_id);
-
-    if (fetchError || !allReviews) {
-      console.error("Erro ao buscar avaliações:", fetchError?.message);
-      setIsSubmitting(false);
-      return;
-    }
-
-    const totalReviews = allReviews.length;
-    const totalRating = allReviews.reduce(
-      (sum, review) => sum + review.rating,
-      0
-    );
-    const averageRating = totalRating / totalReviews;
-
-    const { error: updateError } = await supabase
-      .from("products")
-      .update({
-        rating: averageRating,
-        review_count: totalReviews,
-      })
-      .eq("id", product_id);
-
-    if (updateError) {
-      console.error("Erro ao atualizar produto:", updateError.message);
-    }
+    await fetchUpdatedProduct();
 
     setIsSubmitting(false);
-    // Opcional: limpar formulário ou avisar sucesso
+    toast.success("Avaliação enviada com sucesso!");
+
+    // Resetar formulário
+    setFormData({
+      title: "",
+      description: "",
+      store: "",
+      price: 0,
+      usage_time: "",
+    });
+    setRatings({
+      performance: 0,
+      costBenefit: 0,
+      comfort: 0,
+      weight: 0,
+      durability: 0,
+    });
+
+    setTimeout(() => {
+      window.location.reload();
+    }, 3000);
   }
 
   return (
@@ -206,6 +217,17 @@ export default function ReviewForm({ product }: ReviewFormProps) {
       <h2 className="text-3xl font-medium text-[#010b62] dark:text-white">
         Avaliar Produto
       </h2>
+
+      <div>
+        <p className="text-[#010b62]">
+          Nota atual do produto:{" "}
+          <strong>
+            {currentProduct.rating?.toFixed(2) ?? "Sem avaliações"}
+          </strong>
+          {" | "}
+          Total avaliações: <strong>{currentProduct.review_count ?? 0}</strong>
+        </p>
+      </div>
 
       {!session && (
         <div className="absolute inset-0 z-10 flex items-center justify-center backdrop-blur-xs bg-white/20 dark:bg-black/50 rounded-md">
