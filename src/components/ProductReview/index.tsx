@@ -168,7 +168,7 @@ const ProductReviewView = ({
           </div>
         </div>
 
-        <ReviewForm />
+        <ReviewForm product={product} />
       </div>
     </div>
   );

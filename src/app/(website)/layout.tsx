@@ -4,8 +4,7 @@ import Link from "next/link";
 import { Search } from "lucide-react";
 import ThemeSwitch from "@/src/components/ThemeSwitch";
 import { useEffect, useState } from "react";
-import { supabase } from "@/src/lib/supabase";
-import type { Session } from "@supabase/supabase-js";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,15 +19,45 @@ import LogoTecladoDark from "@/public/logo-teclado-dark.svg";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback } from "@/src/components/ui/avatar";
+import { useSupabase } from "@/src/contexts/supabase-provider";
 
 export default function SiteLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { session, supabase } = useSupabase();
   const { theme, systemTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const [session, setSession] = useState<Session | null>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+
+  interface UserProfile {
+    name?: string;
+  }
+
+  useEffect(() => {
+    if (!session?.user?.id) {
+      setProfile(null);
+      return;
+    }
+
+    async function loadProfile() {
+      const { data, error } = await supabase
+        .from("users")
+        .select("name")
+        .eq("id", session?.user.id)
+        .single();
+
+      if (error) {
+        console.error("Erro ao carregar perfil:", error);
+      } else {
+        setProfile(data);
+      }
+    }
+
+    loadProfile();
+  }, [session?.user?.id, supabase]);
+
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -36,12 +65,6 @@ export default function SiteLayout({
 
   const currentTheme = theme === "system" ? systemTheme : theme;
   const logo = currentTheme === "dark" ? LogoTecladoDark : LogoTeclado;
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
-  }, []);
 
   if (!mounted) return null;
 
@@ -170,7 +193,7 @@ export default function SiteLayout({
                 <DropdownMenuLabel>
                   <div className="flex flex-col">
                     <span className="text-sm font-medium">
-                      {session.user.user_metadata?.name ?? "Usuário"}
+                      {profile?.name ?? "Usuário"}
                     </span>
                     <span className="text-xs text-muted-foreground">
                       {session.user.email}
