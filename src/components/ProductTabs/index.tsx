@@ -11,7 +11,7 @@ type ProductTabsProps = {
 };
 
 export default function ProductTabs({ productId }: ProductTabsProps) {
-  const [activeTab, setActiveTab] = useState("especificacoes");
+  const [activeTab, setActiveTab] = useState("avaliacoes");
 
   const tabs = [
     { id: "avaliacoes", label: "Avaliações" },
