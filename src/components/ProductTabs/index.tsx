@@ -32,13 +32,6 @@ export default function ProductTabs({ productId }: ProductTabsProps) {
       case "precos":
         return (
           <div>
-            <h2 className="text-2xl font-bold mb-1 text-[#010b62] dark:text-white">
-              Histórico de preços
-            </h2>
-            <p className="text-sm text-[#010b62]/50 mb-4 dark:text-white/50">
-              Acompanhe a variação do preço deste produto ao longo do tempo.
-            </p>
-            {/* <PriceHistoryChart /> */}
             <PriceMarketplaceComparison />
           </div>
         );

@@ -68,12 +68,15 @@ export default function ProductCriteriaStars({
 
   return (
     <div>
-      <h2 className="text-[#010b62] text-2xl mb-2">
+      <h2 className="text-[#010b62] text-2xl mb-2 dark:text-white">
         Avaliações por características
       </h2>
       <div className="flex gap-4">
         {characteristics.map(({ name, rating }) => (
-          <div key={name} className="text-center text-[#010b62]">
+          <div
+            key={name}
+            className="text-center text-[#010b62] dark:text-white"
+          >
             <div>{name}</div>
             <StarRating rating={rating} size={16} />
           </div>

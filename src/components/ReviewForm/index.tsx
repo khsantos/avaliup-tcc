@@ -219,7 +219,7 @@ export default function ReviewForm({
       </h2>
 
       <div>
-        <p className="text-[#010b62]">
+        <p className="text-[#010b62] dark:text-white">
           Nota atual do produto:{" "}
           <strong>
             {currentProduct.rating?.toFixed(2) ?? "Sem avaliações"}

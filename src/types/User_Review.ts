@@ -1,13 +1,21 @@
-export type User_Review = {
-    id: string;
-    user_id: string;
-    product_id: string;
-    title: string;
-    description: string;
-    performance: number;
-    costBenefit: number;
-    comfort: number;
-    weight: number;
-    durability: number;
-    created_at: Date;
-}
+export type UserReview = {
+  id: string;
+  title: string;
+  text: string;
+  time_of_use: string;
+  price_paid: string;
+  rating: number;
+  rating_performance: number;
+  rating_cost_benefit: number;
+  rating_comfort: number;
+  rating_weight: number;
+  rating_durability: number;
+  likes: number;
+  dislikes: number;
+  comments: number;
+  images: string[];
+  user_profile_img: string;
+  user_name: string;
+  store: string;
+  badges: string[];
+};

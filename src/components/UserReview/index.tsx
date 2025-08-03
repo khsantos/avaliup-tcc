@@ -14,57 +14,68 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/src/components/ui/avatar";
-import { useState } from "react";
-
-interface UserReview {
-  id: string;
-  title: string;
-  text: string;
-  userName: string;
-  userAvatar?: string;
-  timeOfUse: string;
-  pricePaid: string;
-  rating: number;
-  likes: number;
-  dislikes: number;
-  comments: number;
-  badges: string[];
-}
+import { useEffect, useState } from "react";
+import { supabase } from "@/src/lib/supabase";
+import { UserReview } from "@/src/types/User_Review";
 
 export default function UserReviews() {
+  const [reviews, setReviews] = useState<UserReview[]>([]);
+  const [loading, setLoading] = useState(true);
   const [expandedIds, setExpandedIds] = useState<string[]>([]);
 
-  const defaultReview: UserReview = {
-    id: "1",
-    title: "Excelente mouse para gaming",
-    text: "Estou usando há 6 meses e posso dizer que é um dos melhores mouses que já tive. A precisão é incrível, o design é ergonômico e a bateria dura bastante. Recomendo para quem busca qualidade e custo-benefício. O sensor é muito responsivo e não tive problemas de conectividade.",
-    userName: "João Silva",
-    userAvatar: "/placeholder.svg?height=40&width=40",
-    timeOfUse: "6 meses de uso",
-    pricePaid: "R$320,00",
-    rating: 4,
-    likes: 12,
-    dislikes: 1,
-    comments: 3,
-    badges: ["Top Reviewer", "Compra Verificada", "Frequent Buyer"],
-  };
+  useEffect(() => {
+    const fetchReviews = async () => {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from("reviews")
+        .select(
+          `
+    *,
+    users (
+      id,
+      name,
+      profile_img
+    )
+  `
+        )
+        .order("created_at", { ascending: false });
 
-  const secondReview: UserReview = {
-    id: "2",
-    title: "Bom custo-benefício",
-    text: "O mouse é leve e preciso, mas achei o cabo um pouco rígido. No geral, vale a pena pelo preço.",
-    userName: "Maria Souza",
-    userAvatar: "/placeholder.svg?height=40&width=40",
-    timeOfUse: "3 meses de uso",
-    pricePaid: "R$280,00",
-    rating: 5,
-    likes: 8,
-    dislikes: 0,
-    comments: 1,
-    badges: ["Compra Verificada"],
-  };
+      if (error) {
+        console.error(
+          "Erro ao buscar reviews:",
+          JSON.stringify(error, null, 2)
+        );
+      } else {
+        const parsed = data.map((item) => ({
+          id: item.id,
+          title: item.title,
+          text: item.text,
+          time_of_use: item.time_of_use,
+          price_paid: `R$${Number(item.price_paid)?.toFixed(2) || "0,00"}`,
+          rating: item.rating,
+          rating_performance: item.rating_performance,
+          rating_cost_benefit: item.rating_cost_benefit,
+          rating_comfort: item.rating_comfort,
+          rating_weight: item.rating_weight,
+          rating_durability: item.rating_durability,
+          likes: item.likes,
+          dislikes: item.dislikes,
+          comments: item.comments,
+          images: item.images ? JSON.parse(item.images) : [],
+          user_profile_img: item.users?.profile_img || "/placeholder.svg",
+          user_name: item.users?.name || "Usuário Anônimo",
+          store: item.store || "Loja Desconhecida",
+          badges: ["Compra Verificada"],
+        }));
 
-  const reviewsToShow = [defaultReview, secondReview];
+        setReviews(parsed);
+      }
+
+      setLoading(false);
+    };
+
+    fetchReviews();
+  }, []);
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, index) => (
@@ -156,8 +167,8 @@ export default function UserReviews() {
       </div>
 
       <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
-        {reviewsToShow.length > 0 ? (
-          reviewsToShow.map((review) => {
+        {reviews.length > 0 ? (
+          reviews.map((review) => {
             const isExpanded = expandedIds.includes(review.id);
             return (
               <Card
@@ -165,34 +176,33 @@ export default function UserReviews() {
                 className="shadow-lg hover:shadow-2xl transition-transform hover:scale-102 dark:bg-[#030712] border border-[#010b62] dark:border-[#ffffff]/20 rounded-sm text-white"
               >
                 <CardContent className="p-4">
-                  {/* Header: Avatar + Info + Rating */}
                   <div className="flex justify-between items-start mb-2 ">
                     <div className="flex items-center gap-3 ">
                       <Avatar className="w-10 h-10 border-[#010b62]  text-[#010b62] dark:text-[#01BAEF]/70 border dark:border-[#01BAEF]/70">
                         <AvatarImage
-                          src={review.userAvatar || "/placeholder.svg"}
-                          alt={review.userName}
+                          src={review.user_profile_img || "/placeholder.svg"}
+                          alt={review.user_name}
                         />
                         <AvatarFallback className="dark:bg-[#030712] bg-[#D9D9D9] border border-[#010b62] dark:border-none">
-                          {review.userName.charAt(0)}
+                          {review.user_name?.charAt(0)}
                         </AvatarFallback>
                       </Avatar>
                       <div>
                         <div className="flex items-center gap-2">
                           <span className="font-bold text-lg text-[#010b62] dark:text-white">
-                            {review.userName}
+                            {review.user_name}
                           </span>
                           <span className="text-xs text-[#010b62]/50 dark:text-gray-400">
                             Avaliado em 28/08/2024
                           </span>
                         </div>
                         <div className="flex gap-1 mt-1">
-                          {review.badges.slice(0, 3).map((badge, i) => (
+                          {review.badges?.slice(0, 3).map((badge, i) => (
                             <span
                               key={i}
-                              className="w-6 h-6 bg-white rounded-full flex items-center justify-center text-[#010b62] text-sm font-bold border border-[#010b62]/50"
+                              className="px-2 py-1 bg-white rounded-full text-[#010b62] text-xs font-semibold border border-[#010b62]/50"
                             >
-                              🏅
+                              {badge}
                             </span>
                           ))}
                         </div>
@@ -231,20 +241,16 @@ export default function UserReviews() {
                     </div>
                   </div>
 
-                  {/* Extra info */}
                   <div className="dark:text-[#00b6f3] text-gray-500 text-sm mb-2">
-                    Tempo de uso: {review.timeOfUse} | Valor pago:{" "}
-                    {review.pricePaid} | Loja: Aliexpress
+                    Tempo de uso: {review.time_of_use} | Valor pago:{" "}
+                    {review.price_paid} | Loja: {review.store}
                   </div>
 
-                  {/* Título */}
                   <div className="font-bold text-lg mb-1 text-[#010b62] dark:text-white">
                     {review.title}
                   </div>
 
-                  {/* Texto e imagens lado a lado */}
                   <div className="flex justify-between gap-4 mb-2">
-                    {/* Texto cortado com fade */}
                     <div className="flex-1 relative">
                       <p
                         className={`dark:text-white text-[#010b62] text-base text-justify leading-snug whitespace-pre-line pr-4 ${
@@ -254,13 +260,11 @@ export default function UserReviews() {
                         {review.text}
                       </p>
 
-                      {/* Efeito de fade */}
                       {!isExpanded && (
                         <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-[#ffffff] dark:from-[#030712] to-transparent pointer-events-none" />
                       )}
                     </div>
 
-                    {/* Bloco de imagens sempre visível */}
                     <div className="w-20 shrink-0 flex items-center justify-center">
                       <div className="bg-gray-500 dark:bg-[#64748b] bg-opacity-30 rounded-lg w-20 h-20 flex items-center justify-center text-2xl text-white font-semibold">
                         +3
@@ -268,7 +272,6 @@ export default function UserReviews() {
                     </div>
                   </div>
 
-                  {/* Botão Ver mais / Ver menos */}
                   <Button
                     variant="ghost"
                     size="sm"
@@ -278,7 +281,6 @@ export default function UserReviews() {
                     {isExpanded ? "Ver menos" : "Ver mais"}
                   </Button>
 
-                  {/* Ações */}
                   <div className="flex items-center gap-6 mt-2">
                     <span className="flex items-center gap-1 text-[#010b62]/50 dark:text-[#b6c2cd] text-base">
                       <ThumbsUp className="w-5 h-5" />
@@ -302,9 +304,13 @@ export default function UserReviews() {
           })
         ) : (
           <div className="text-center py-6 col-span-2">
-            <p className="text-gray-500">
-              Nenhuma avaliação encontrada. Seja o primeiro a avaliar!
-            </p>
+            {loading ? (
+              <p className="text-gray-500">Carregando avaliações...</p>
+            ) : (
+              <p className="text-gray-500">
+                Nenhuma avaliação encontrada. Seja o primeiro a avaliar!
+              </p>
+            )}
           </div>
         )}
       </div>

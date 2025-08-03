@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Star, Heart, Share2, Award } from "lucide-react";
 import Image from "next/image";
@@ -10,6 +10,8 @@ import { formatRating } from "@/src/lib/formatRating";
 import StarRating from "../StarRating";
 import { motion, AnimatePresence } from "framer-motion";
 import ProductReviewView from "../ProductReview";
+import ProductCriteriaStars from "../ProductCriteriaRatings";
+import { supabase } from "@/src/lib/supabase";
 
 export default function ProductLayout({ product }: { product: Product }) {
   const [selectedThumb, setSelectedThumb] = useState(0);
@@ -18,21 +20,42 @@ export default function ProductLayout({ product }: { product: Product }) {
 
   const thumbnails = product.images;
 
-  const ratingBreakdown = [
-    { stars: 5, percentage: 75 },
-    { stars: 4, percentage: 15 },
-    { stars: 3, percentage: 6 },
-    { stars: 2, percentage: 3 },
-    { stars: 1, percentage: 1 },
-  ];
+  const [ratingBreakdown, setRatingBreakdown] = useState<
+    { stars: number; percentage: number }[]
+  >([]);
 
-  const characteristics = [
-    { name: "Performance", rating: 3.5 },
-    { name: "Custo-benefício", rating: 4.8 },
-    { name: "Conforto", rating: 3.7 },
-    { name: "Preço", rating: 4.6 },
-    { name: "Durabilidade", rating: 3.2 },
-  ];
+  useEffect(() => {
+    async function fetchRatingBreakdown() {
+      const { data: reviews, error } = await supabase
+        .from("reviews")
+        .select("rating")
+        .eq("product_id", product.id);
+
+      if (error || !reviews?.length) {
+        setRatingBreakdown([]);
+        return;
+      }
+
+      const total = reviews.length;
+      const countMap: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+
+      reviews.forEach(({ rating }) => {
+        const rounded = Math.round(rating); // arredonda a nota para 1-5
+        if (rounded >= 1 && rounded <= 5) {
+          countMap[rounded]++;
+        }
+      });
+
+      const breakdown = [5, 4, 3, 2, 1].map((stars) => ({
+        stars,
+        percentage: Math.round((countMap[stars] / total) * 100),
+      }));
+
+      setRatingBreakdown(breakdown);
+    }
+
+    fetchRatingBreakdown();
+  }, [product.id]);
 
   const getRankingText = (rank: number, category: string) => {
     switch (category.toLowerCase()) {
@@ -66,10 +89,11 @@ export default function ProductLayout({ product }: { product: Product }) {
                   <button
                     key={index}
                     onClick={() => setSelectedThumb(index)}
-                    className={`w-12 h-12 border rounded-md flex items-center justify-center transition-colors ${selectedThumb === index
-                      ? "border-[#010b62] dark:border-[#01BAEF] dark:bg-gray-800 border-2"
-                      : "border-[#010b62] dark:border-[#01BAEF]"
-                      }`}
+                    className={`w-12 h-12 border rounded-md flex items-center justify-center transition-colors ${
+                      selectedThumb === index
+                        ? "border-[#010b62] dark:border-[#01BAEF] dark:bg-gray-800 border-2"
+                        : "border-[#010b62] dark:border-[#01BAEF]"
+                    }`}
                   >
                     <Image
                       src={thumbUrl}
@@ -146,24 +170,8 @@ export default function ProductLayout({ product }: { product: Product }) {
                   ))}
                 </div>
                 <div className="mt-2">
-                  <h2 className="text-base font-bold text-[#010b62] dark:text-white mb-2">
-                    Avaliações por características
-                  </h2>
                   <div className="flex overflow-x-auto no-scrollbar divide-x divide-[#010b62]/40 dark:divide-[#FFFFFF]/50">
-                    {characteristics.map((c, index) => (
-                      <div
-                        key={c.name}
-                        className={`flex flex-col min-w-[120px] pr-4 ${index === 0 ? "pl-0" : "pl-4"}`}
-                      >
-                        <span className="@max-xs:text-xs text-xs sm:text-sm md:text-xs font-medium text-[#010b62] dark:text-white mb-1">
-                          {c.name}
-                        </span>
-                        <StarRating
-                          rating={c.rating}
-                          size={window.innerWidth < 640 ? 14 : window.innerWidth < 768 ? 18 : 20}
-                        />
-                      </div>
-                    ))}
+                    <ProductCriteriaStars productId={product.id} />
                   </div>
                 </div>
 
@@ -195,8 +203,9 @@ export default function ProductLayout({ product }: { product: Product }) {
                     }
                   >
                     <Heart
-                      className={`w-4 h-4 ${isWishlisted ? "fill-current" : ""
-                        }`}
+                      className={`w-4 h-4 ${
+                        isWishlisted ? "fill-current" : ""
+                      }`}
                     />
                   </Button>
                 </div>
@@ -220,6 +229,6 @@ export default function ProductLayout({ product }: { product: Product }) {
           </motion.div>
         )}
       </AnimatePresence>
-    </div >
+    </div>
   );
 }

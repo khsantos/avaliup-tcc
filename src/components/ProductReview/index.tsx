@@ -7,7 +7,7 @@ import { Award, ChevronLeft, Star } from "lucide-react";
 import Image from "next/image";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Product } from "@/src/types/Product";
-import { supabase } from "@/src/lib/supabase"; // certifique-se de importar
+import { supabase } from "@/src/lib/supabase";
 import ProductCriteriaStars from "../ProductCriteriaRatings";
 
 interface ProductReviewViewProps {
@@ -47,7 +47,6 @@ const ProductReviewView = ({
 
   useEffect(() => {
     async function fetchRatingsData() {
-      // Buscar os reviews do produto
       const { data: reviews, error: errorReviews } = await supabase
         .from("reviews")
         .select("id, rating")
