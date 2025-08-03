@@ -18,6 +18,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/src/lib/supabase";
 import { UserReview } from "@/src/types/User_Review";
 import { cn } from "@/lib/utils";
+import ReviewDetailsModal from "../UserReviewDetails";
 
 export default function UserReviews() {
   const [reviews, setReviews] = useState<UserReview[]>([]);
@@ -27,6 +28,8 @@ export default function UserReviews() {
     Record<string, "like" | "dislike" | null>
   >({});
   const [userId, setUserId] = useState<string | null>(null);
+  const [selectedReview, setSelectedReview] = useState<UserReview | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   type ReviewVote = {
     vote_type: "like" | "dislike";
@@ -340,6 +343,10 @@ export default function UserReviews() {
                       </div>
                       <Button
                         size="sm"
+                        onClick={() => {
+                          setSelectedReview(review);
+                          setIsModalOpen(true);
+                        }}
                         className="-mt-2 dark:bg-[#01BAEF] bg-[#010b62] hover:bg-[#010b62]/70 text-white text-sm rounded-se-lg px-2 dark:over:bg-[#0096c7] transition"
                       >
                         Ver Detalhes
@@ -448,6 +455,13 @@ export default function UserReviews() {
           </div>
         )}
       </div>
+      {selectedReview && (
+        <ReviewDetailsModal
+          review={selectedReview}
+          open={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
+      )}
     </div>
   );
 }
