@@ -189,6 +189,7 @@ export default function UserReviews() {
             user_name: item.users?.name || "Usuário Anônimo",
             store: item.store || "Loja Desconhecida",
             badges: ["Compra Verificada"],
+            created_at: item.created_at,
           };
         });
 
@@ -317,7 +318,10 @@ export default function UserReviews() {
                             {review.user_name}
                           </span>
                           <span className="text-xs text-[#010b62]/50 dark:text-gray-400">
-                            Avaliado em 28/08/2024
+                            Avaliado em{" "}
+                            {new Date(review.created_at).toLocaleDateString(
+                              "pt-BR"
+                            )}
                           </span>
                         </div>
                         <div className="flex gap-1 mt-1">

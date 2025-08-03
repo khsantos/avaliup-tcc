@@ -18,4 +18,5 @@ export type UserReview = {
   user_name: string;
   store: string;
   badges: string[];
+  created_at: string;
 };
