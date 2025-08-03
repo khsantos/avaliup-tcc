@@ -3,9 +3,9 @@
 import {
   Star,
   ThumbsUp,
-  ThumbsDown,
   MessageCircle,
   MoreVertical,
+  ThumbsDown,
 } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { Card, CardContent } from "@/src/components/ui/card";
@@ -17,63 +17,182 @@ import {
 import { useEffect, useState } from "react";
 import { supabase } from "@/src/lib/supabase";
 import { UserReview } from "@/src/types/User_Review";
+import { cn } from "@/lib/utils";
 
 export default function UserReviews() {
   const [reviews, setReviews] = useState<UserReview[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedIds, setExpandedIds] = useState<string[]>([]);
+  const [userVotes, setUserVotes] = useState<
+    Record<string, "like" | "dislike" | null>
+  >({});
+  const [userId, setUserId] = useState<string | null>(null);
+
+  type ReviewVote = {
+    vote_type: "like" | "dislike";
+  };
+
+  useEffect(() => {
+    const getUserId = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) setUserId(user.id);
+    };
+    getUserId();
+  }, []);
+
+  useEffect(() => {
+    const fetchUserVotes = async () => {
+      if (!userId) return;
+      const { data } = await supabase
+        .from("review_votes")
+        .select("review_id, vote_type")
+        .eq("user_id", userId);
+
+      if (data) {
+        const votesMap: Record<string, "like" | "dislike"> = {};
+        data.forEach((v) => (votesMap[v.review_id] = v.vote_type));
+        setUserVotes(votesMap);
+      }
+    };
+    fetchUserVotes();
+  }, [userId]);
+
+  const handleVote = async (reviewId: string, voteType: "like" | "dislike") => {
+    if (!userId) {
+      alert("Você precisa estar logado para votar.");
+      return;
+    }
+
+    const currentVote = userVotes[reviewId];
+
+    if (currentVote === voteType) {
+      const { error: deleteError } = await supabase
+        .from("review_votes")
+        .delete()
+        .eq("review_id", reviewId)
+        .eq("user_id", userId);
+
+      if (deleteError) {
+        console.error("Erro ao remover voto:", deleteError);
+        return;
+      }
+
+      setUserVotes((prev) => ({
+        ...prev,
+        [reviewId]: null,
+      }));
+
+      await updateReviewVoteCounts(reviewId);
+      return;
+    }
+
+    if (currentVote && currentVote !== voteType) {
+      const { error: updateError } = await supabase
+        .from("review_votes")
+        .update({ vote_type: voteType })
+        .eq("review_id", reviewId)
+        .eq("user_id", userId);
+
+      if (updateError) {
+        console.error("Erro ao atualizar voto:", updateError);
+        return;
+      }
+    } else {
+      const { error: insertError } = await supabase
+        .from("review_votes")
+        .insert({
+          review_id: reviewId,
+          user_id: userId,
+          vote_type: voteType,
+        });
+
+      if (insertError) {
+        console.error("Erro ao registrar voto:", insertError);
+        return;
+      }
+    }
+
+    setUserVotes((prev) => ({
+      ...prev,
+      [reviewId]: voteType,
+    }));
+
+    await updateReviewVoteCounts(reviewId);
+  };
+
+  const updateReviewVoteCounts = async (reviewId: string) => {
+    const { data: votes } = await supabase
+      .from("review_votes")
+      .select("vote_type")
+      .eq("review_id", reviewId);
+
+    const likes = votes?.filter((v) => v.vote_type === "like").length || 0;
+    const dislikes =
+      votes?.filter((v) => v.vote_type === "dislike").length || 0;
+
+    await supabase
+      .from("reviews")
+      .update({ likes, dislikes })
+      .eq("id", reviewId);
+
+    setReviews((prev) =>
+      prev.map((r) => (r.id === reviewId ? { ...r, likes, dislikes } : r))
+    );
+  };
 
   useEffect(() => {
     const fetchReviews = async () => {
       setLoading(true);
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from("reviews")
         .select(
           `
-    *,
-    users (
-      id,
-      name,
-      profile_img
-    )
-  `
+          *,
+          users (id, name, profile_img),
+          review_votes (vote_type)
+        `
         )
         .order("created_at", { ascending: false });
 
-      if (error) {
-        console.error(
-          "Erro ao buscar reviews:",
-          JSON.stringify(error, null, 2)
-        );
-      } else {
-        const parsed = data.map((item) => ({
-          id: item.id,
-          title: item.title,
-          text: item.text,
-          time_of_use: item.time_of_use,
-          price_paid: `R$${Number(item.price_paid)?.toFixed(2) || "0,00"}`,
-          rating: item.rating,
-          rating_performance: item.rating_performance,
-          rating_cost_benefit: item.rating_cost_benefit,
-          rating_comfort: item.rating_comfort,
-          rating_weight: item.rating_weight,
-          rating_durability: item.rating_durability,
-          likes: item.likes,
-          dislikes: item.dislikes,
-          comments: item.comments,
-          images: item.images ? JSON.parse(item.images) : [],
-          user_profile_img: item.users?.profile_img || "/placeholder.svg",
-          user_name: item.users?.name || "Usuário Anônimo",
-          store: item.store || "Loja Desconhecida",
-          badges: ["Compra Verificada"],
-        }));
+      if (data) {
+        const parsed = data.map((item) => {
+          const likes =
+            item.review_votes?.filter((v: ReviewVote) => v.vote_type === "like")
+              .length || 0;
+          const dislikes =
+            item.review_votes?.filter(
+              (v: ReviewVote) => v.vote_type === "dislike"
+            ).length || 0;
+
+          return {
+            id: item.id,
+            title: item.title,
+            text: item.text,
+            time_of_use: item.time_of_use,
+            price_paid: `R$${Number(item.price_paid)?.toFixed(2) || "0,00"}`,
+            rating: item.rating,
+            rating_performance: item.rating_performance || 0,
+            rating_cost_benefit: item.rating_cost_benefit || 0,
+            rating_comfort: item.rating_comfort || 0,
+            rating_weight: item.rating_weight || 0,
+            rating_durability: item.rating_durability || 0,
+            likes,
+            dislikes,
+            comments: item.comments,
+            images: item.images ? JSON.parse(item.images) : [],
+            user_profile_img: item.users?.profile_img || "/placeholder.svg",
+            user_name: item.users?.name || "Usuário Anônimo",
+            store: item.store || "Loja Desconhecida",
+            badges: ["Compra Verificada"],
+          };
+        });
 
         setReviews(parsed);
       }
-
       setLoading(false);
     };
-
     fetchReviews();
   }, []);
 
@@ -170,6 +289,8 @@ export default function UserReviews() {
         {reviews.length > 0 ? (
           reviews.map((review) => {
             const isExpanded = expandedIds.includes(review.id);
+            const hasLiked = userVotes[review.id] === "like";
+            const hasDisliked = userVotes[review.id] === "dislike";
             return (
               <Card
                 key={review.id}
@@ -183,7 +304,7 @@ export default function UserReviews() {
                           src={review.user_profile_img || "/placeholder.svg"}
                           alt={review.user_name}
                         />
-                        <AvatarFallback className="dark:bg-[#030712] bg-[#D9D9D9] border border-[#010b62] dark:border-none">
+                        <AvatarFallback className="dark:bg-[#030712] border border-white bg-white dark:border-none">
                           {review.user_name?.charAt(0)}
                         </AvatarFallback>
                       </Avatar>
@@ -266,9 +387,9 @@ export default function UserReviews() {
                     </div>
 
                     <div className="w-20 shrink-0 flex items-center justify-center">
-                      <div className="bg-gray-500 dark:bg-[#64748b] bg-opacity-30 rounded-lg w-20 h-20 flex items-center justify-center text-2xl text-white font-semibold">
+                      {/* <div className="bg-gray-500 dark:bg-[#64748b] bg-opacity-30 rounded-lg w-20 h-20 flex items-center justify-center text-2xl text-white font-semibold">
                         +3
-                      </div>
+                      </div> */}
                     </div>
                   </div>
 
@@ -282,11 +403,24 @@ export default function UserReviews() {
                   </Button>
 
                   <div className="flex items-center gap-6 mt-2">
-                    <span className="flex items-center gap-1 text-[#010b62]/50 dark:text-[#b6c2cd] text-base">
-                      <ThumbsUp className="w-5 h-5" />
+                    <span
+                      className={cn(
+                        "cursor-pointer flex items-center gap-1 text-[#010b62]/50",
+                        hasLiked && "text-green-600"
+                      )}
+                      onClick={() => handleVote(review.id, "like")}
+                    >
+                      <ThumbsUp className="w-6 h-6" />
                       {review.likes}
                     </span>
-                    <span className="flex items-center gap-1 text-[#010b62]/50 dark:text-[#b6c2cd] text-base">
+
+                    <span
+                      className={cn(
+                        "cursor-pointer flex items-center gap-1 text-[#010b62]/50",
+                        hasDisliked && "text-red-500"
+                      )}
+                      onClick={() => handleVote(review.id, "dislike")}
+                    >
                       <ThumbsDown className="w-5 h-5" />
                       {review.dislikes}
                     </span>
