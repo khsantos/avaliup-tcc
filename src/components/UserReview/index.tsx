@@ -34,6 +34,8 @@ export default function UserReviews({ productId }: UserReviewProps) {
   const [userId, setUserId] = useState<string | null>(null);
   const [selectedReview, setSelectedReview] = useState<UserReview | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [sortBy, setSortBy] = useState<"recent" | "high" | "low">("recent");
+  const [filterRating, setFilterRating] = useState<number | null>(null);
 
   type ReviewVote = {
     vote_type: "like" | "dislike";
@@ -154,7 +156,8 @@ export default function UserReviews({ productId }: UserReviewProps) {
       if (!productId) return;
 
       setLoading(true);
-      const { data, error } = await supabase
+
+      let query = supabase
         .from("reviews")
         .select(
           `
@@ -163,8 +166,23 @@ export default function UserReviews({ productId }: UserReviewProps) {
         review_votes (vote_type)
       `
         )
-        .eq("product_id", productId)
-        .order("created_at", { ascending: false });
+        .eq("product_id", productId);
+
+      // Aplica filtro por estrelas
+      if (filterRating) {
+        query = query.eq("rating", filterRating);
+      }
+
+      // Aplica ordenação
+      if (sortBy === "recent") {
+        query = query.order("created_at", { ascending: false });
+      } else if (sortBy === "high") {
+        query = query.order("rating", { ascending: false });
+      } else if (sortBy === "low") {
+        query = query.order("rating", { ascending: true });
+      }
+
+      const { data, error } = await query;
 
       if (error) {
         console.error("Erro ao buscar reviews:", error);
@@ -212,7 +230,7 @@ export default function UserReviews({ productId }: UserReviewProps) {
     };
 
     fetchReviews();
-  }, [productId]);
+  }, [productId, sortBy, filterRating]);
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, index) => (
@@ -264,11 +282,16 @@ export default function UserReviews({ productId }: UserReviewProps) {
               </span>
             </label>
             <div className="relative">
-              <select className="w-48 px-4 py-2 border border-[#010b62]/50 dark:border-[#FFFFFF]/50 rounded-[4px] text-[#64748b] bg-white dark:bg-[#030712] focus:outline-none hover:border-[#010b62] transition-colors appearance-none">
-                <option>Mais recentes</option>
-                <option>Mais úteis</option>
-                <option>Maior nota</option>
-                <option>Menor nota</option>
+              <select
+                value={sortBy}
+                onChange={(e) =>
+                  setSortBy(e.target.value as "recent" | "high" | "low")
+                }
+                className="w-48 px-4 py-2 border border-[#010b62]/50 dark:border-[#FFFFFF]/50 rounded-[4px] text-[#64748b] bg-white dark:bg-[#030712] focus:outline-none hover:border-[#010b62] transition-colors appearance-none"
+              >
+                <option value="recent">Mais recentes</option>
+                <option value="high">Maior nota</option>
+                <option value="low">Menor nota</option>
               </select>
             </div>
           </div>
@@ -279,13 +302,21 @@ export default function UserReviews({ productId }: UserReviewProps) {
               Filtrar por
             </label>
             <div className="relative">
-              <select className="w-48 px-4 py-2 border border-[#010b62]/50 rounded-[4px] dark:border-[#FFFFFF]/50 text-[#64748b] bg-white dark:bg-[#030712] focus:outline-none hover:border-[#010b62] transition-colors appearance-none">
-                <option>Todos</option>
-                <option>5 estrelas</option>
-                <option>4 estrelas</option>
-                <option>3 estrelas</option>
-                <option>2 estrelas</option>
-                <option>1 estrela</option>
+              <select
+                value={filterRating ?? ""}
+                onChange={(e) =>
+                  setFilterRating(
+                    e.target.value === "" ? null : Number(e.target.value)
+                  )
+                }
+                className="w-48 px-4 py-2 border border-[#010b62]/50 rounded-[4px] dark:border-[#FFFFFF]/50 text-[#64748b] bg-white dark:bg-[#030712] focus:outline-none hover:border-[#010b62] transition-colors appearance-none"
+              >
+                <option value="">Todos</option>
+                <option value="5">5 estrelas</option>
+                <option value="4">4 estrelas</option>
+                <option value="3">3 estrelas</option>
+                <option value="2">2 estrelas</option>
+                <option value="1">1 estrela</option>
               </select>
               <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">
                 <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
