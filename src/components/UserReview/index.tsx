@@ -468,8 +468,8 @@ export default function UserReviews({ productId }: UserReviewProps) {
                   <div className="flex items-center gap-6 mt-2">
                     <span
                       className={cn(
-                        "cursor-pointer flex items-center gap-1 text-[#010b62]/50",
-                        hasLiked && "text-green-600"
+                        "cursor-pointer flex items-center gap-1 text-[#010b62]/50 dark:text-white/70",
+                        hasLiked && "text-[#010b62] dark:text-[#01BAEF]"
                       )}
                       onClick={() => handleVote(review.id, "like")}
                     >
@@ -479,8 +479,8 @@ export default function UserReviews({ productId }: UserReviewProps) {
 
                     <span
                       className={cn(
-                        "cursor-pointer flex items-center gap-1 text-[#010b62]/50",
-                        hasDisliked && "text-red-500"
+                        "cursor-pointer flex items-center gap-1 text-[#010b62]/50 dark:text-white/70",
+                        hasDisliked && "text-red-500 dark:text-red-500"
                       )}
                       onClick={() => handleVote(review.id, "dislike")}
                     >
