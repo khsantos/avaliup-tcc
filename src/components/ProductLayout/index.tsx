@@ -22,7 +22,13 @@ export default function ProductLayout({ product }: { product: Product }) {
 
   const [ratingBreakdown, setRatingBreakdown] = useState<
     { stars: number; percentage: number }[]
-  >([]);
+  >([
+    { stars: 5, percentage: 0 },
+    { stars: 4, percentage: 0 },
+    { stars: 3, percentage: 0 },
+    { stars: 2, percentage: 0 },
+    { stars: 1, percentage: 0 },
+  ]);
 
   useEffect(() => {
     async function fetchRatingBreakdown() {
@@ -31,24 +37,23 @@ export default function ProductLayout({ product }: { product: Product }) {
         .select("rating")
         .eq("product_id", product.id);
 
-      if (error || !reviews?.length) {
-        setRatingBreakdown([]);
-        return;
-      }
-
-      const total = reviews.length;
+      const total = reviews?.length || 0;
       const countMap: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
 
-      reviews.forEach(({ rating }) => {
-        const rounded = Math.round(rating); // arredonda a nota para 1-5
-        if (rounded >= 1 && rounded <= 5) {
-          countMap[rounded]++;
-        }
-      });
+      if (!error && reviews) {
+        reviews.forEach(({ rating }) => {
+          const rounded = Math.round(rating);
+          if (rounded >= 1 && rounded <= 5) {
+            countMap[rounded]++;
+          }
+        });
+      }
 
+      // Sempre gera o array de 5 a 1 estrelas
       const breakdown = [5, 4, 3, 2, 1].map((stars) => ({
         stars,
-        percentage: Math.round((countMap[stars] / total) * 100),
+        percentage: total > 0 ? Math.round((countMap[stars] / total) * 100) : 0,
+        count: countMap[stars],
       }));
 
       setRatingBreakdown(breakdown);
@@ -158,7 +163,12 @@ export default function ProductLayout({ product }: { product: Product }) {
                       <div className="flex-1 bg-gray-200 rounded-full h-2">
                         <div
                           className="bg-[#010b62] dark:bg-[#01BAEF] h-2 rounded-full"
-                          style={{ width: `${item.percentage}%` }}
+                          style={{
+                            width:
+                              item.percentage > 0
+                                ? `${item.percentage}%`
+                                : "4px",
+                          }}
                         />
                       </div>
 

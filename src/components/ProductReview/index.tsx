@@ -25,7 +25,13 @@ const ProductReviewView = ({
 }: ProductReviewViewProps) => {
   const [ratingBreakdown, setRatingBreakdown] = useState<
     { stars: number; percentage: number }[]
-  >([]);
+  >([
+    { stars: 5, percentage: 0 },
+    { stars: 4, percentage: 0 },
+    { stars: 3, percentage: 0 },
+    { stars: 2, percentage: 0 },
+    { stars: 1, percentage: 0 },
+  ]);
 
   function calculateRatingBreakdown(reviews: { rating: number }[]) {
     const starCounts = [0, 0, 0, 0, 0];
@@ -52,7 +58,7 @@ const ProductReviewView = ({
         .select("id, rating")
         .eq("product_id", product.id);
 
-      if (errorReviews || !reviews || reviews.length === 0) {
+      if (errorReviews || !reviews) {
         console.error("Erro ao buscar reviews:", errorReviews);
         return;
       }
@@ -161,7 +167,10 @@ const ProductReviewView = ({
                     <div className="flex-1 bg-gray-200 rounded-full h-2 max-w-full">
                       <div
                         className="bg-[#010b62] dark:bg-[#01BAEF] h-2 rounded-full"
-                        style={{ width: `${item.percentage}%` }}
+                        style={{
+                          width:
+                            item.percentage > 0 ? `${item.percentage}%` : "4px",
+                        }}
                       />
                     </div>
 

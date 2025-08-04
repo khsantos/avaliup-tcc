@@ -20,7 +20,11 @@ import { UserReview } from "@/src/types/User_Review";
 import { cn } from "@/lib/utils";
 import ReviewDetailsModal from "../UserReviewDetails";
 
-export default function UserReviews() {
+type UserReviewProps = {
+  productId: number;
+};
+
+export default function UserReviews({ productId }: UserReviewProps) {
   const [reviews, setReviews] = useState<UserReview[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedIds, setExpandedIds] = useState<string[]>([]);
@@ -147,17 +151,26 @@ export default function UserReviews() {
 
   useEffect(() => {
     const fetchReviews = async () => {
+      if (!productId) return;
+
       setLoading(true);
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from("reviews")
         .select(
           `
-          *,
-          users (id, name, profile_img),
-          review_votes (vote_type)
-        `
+        *,
+        users (id, name, profile_img),
+        review_votes (vote_type)
+      `
         )
+        .eq("product_id", productId)
         .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("Erro ao buscar reviews:", error);
+        setLoading(false);
+        return;
+      }
 
       if (data) {
         const parsed = data.map((item) => {
@@ -197,8 +210,9 @@ export default function UserReviews() {
       }
       setLoading(false);
     };
+
     fetchReviews();
-  }, []);
+  }, [productId]);
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, index) => (

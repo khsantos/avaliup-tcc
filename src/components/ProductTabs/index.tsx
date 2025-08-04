@@ -25,7 +25,7 @@ export default function ProductTabs({ productId }: ProductTabsProps) {
       case "avaliacoes":
         return (
           <div className="">
-            <UserReviews />
+            <UserReviews productId={productId} />
           </div>
         );
 

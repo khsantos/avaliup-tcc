@@ -81,7 +81,6 @@ export default function ReviewForm({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Função para buscar produto atualizado
   async function fetchUpdatedProduct() {
     const { data, error } = await supabase
       .from("products")
@@ -135,7 +134,6 @@ export default function ReviewForm({
       Object.values(ratings).reduce((a, b) => a + b, 0) /
       Object.values(ratings).length;
 
-    // Inserir review principal
     const { data: insertedReview, error: insertError } = await supabase
       .from("reviews")
       .insert([
@@ -167,7 +165,6 @@ export default function ReviewForm({
       return;
     }
 
-    // Inserir ratings individuais
     const review_id = insertedReview.id;
 
     const criteriaInsertData = Object.entries(ratings).map(([key, value]) => ({
