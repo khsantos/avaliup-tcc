@@ -34,7 +34,9 @@ export default function UserReviews({ productId }: UserReviewProps) {
   const [userId, setUserId] = useState<string | null>(null);
   const [selectedReview, setSelectedReview] = useState<UserReview | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [sortBy, setSortBy] = useState<"recent" | "high" | "low">("recent");
+  const [sortBy, setSortBy] = useState<"recent" | "high" | "low" | "useful">(
+    "recent"
+  );
   const [filterRating, setFilterRating] = useState<number | null>(null);
 
   type ReviewVote = {
@@ -180,6 +182,8 @@ export default function UserReviews({ productId }: UserReviewProps) {
         query = query.order("rating", { ascending: false });
       } else if (sortBy === "low") {
         query = query.order("rating", { ascending: true });
+      } else if (sortBy === "useful") {
+        query = query.order("likes", { ascending: false }); // <- precisa que likes esteja armazenado na tabela
       }
 
       const { data, error } = await query;
@@ -285,13 +289,16 @@ export default function UserReviews({ productId }: UserReviewProps) {
               <select
                 value={sortBy}
                 onChange={(e) =>
-                  setSortBy(e.target.value as "recent" | "high" | "low")
+                  setSortBy(
+                    e.target.value as "recent" | "high" | "low" | "useful"
+                  )
                 }
                 className="w-48 px-4 py-2 border border-[#010b62]/50 dark:border-[#FFFFFF]/50 rounded-[4px] text-[#64748b] bg-white dark:bg-[#030712] focus:outline-none hover:border-[#010b62] transition-colors appearance-none"
               >
                 <option value="recent">Mais recentes</option>
                 <option value="high">Maior nota</option>
                 <option value="low">Menor nota</option>
+                <option value="useful">Mais úteis</option>
               </select>
             </div>
           </div>

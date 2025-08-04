@@ -7,7 +7,7 @@ import UserReviews from "../UserReview";
 import FAQ from "../FAQ";
 
 type ProductTabsProps = {
-  productId: string;
+  productId: number;
 };
 
 export default function ProductTabs({ productId }: ProductTabsProps) {

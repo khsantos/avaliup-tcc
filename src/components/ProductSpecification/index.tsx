@@ -6,7 +6,7 @@ import { supabase } from "@/src/lib/supabase";
 import { useEffect, useState } from "react";
 
 type SpecificationProductProps = {
-  productId: string;
+  productId: number;
 };
 
 export default function ProductSpecification({
