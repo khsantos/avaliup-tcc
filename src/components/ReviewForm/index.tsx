@@ -38,9 +38,6 @@ export default function ReviewForm({
   >({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Estado local do produto atualizado
-  const [currentProduct, setCurrentProduct] = useState<Product>(product);
-
   const [formData, setFormData] = useState<FormData>({
     title: "",
     description: "",
@@ -214,17 +211,6 @@ export default function ReviewForm({
       <h2 className="text-3xl font-medium text-[#010b62] dark:text-white">
         Avaliar Produto
       </h2>
-
-      <div>
-        <p className="text-[#010b62] dark:text-white">
-          Nota atual do produto:{" "}
-          <strong>
-            {currentProduct.rating?.toFixed(2) ?? "Sem avaliações"}
-          </strong>
-          {" | "}
-          Total avaliações: <strong>{currentProduct.review_count ?? 0}</strong>
-        </p>
-      </div>
 
       {!session && (
         <div className="absolute inset-0 z-10 flex items-center justify-center backdrop-blur-xs bg-white/20 dark:bg-black/50 rounded-md">
