@@ -6,7 +6,7 @@ import { supabase } from "@/src/lib/supabase";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { FiEye, FiEyeOff } from "react-icons/fi";
+import { FiArrowLeft, FiEye, FiEyeOff } from "react-icons/fi";
 import { toast } from "sonner"; // <-- import do sonner
 
 export default function Register() {
@@ -104,6 +104,15 @@ export default function Register() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-[#030712]">
       <div className="w-[345px] space-y-6">
+        <div className="">
+          <Link
+            href="/signIn"
+            className="flex items-center text-[#010B62] dark:text-white hover:underline"
+          >
+            <FiArrowLeft className="mr-2" size={20} />
+            Voltar
+          </Link>
+        </div>
         <div className="mt-8">
           <Logo />
         </div>
