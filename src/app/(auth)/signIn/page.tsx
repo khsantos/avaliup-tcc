@@ -4,7 +4,7 @@ import { supabase } from "@/src/lib/supabase";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { FiEye, FiEyeOff } from "react-icons/fi";
+import { FiEye, FiEyeOff, FiArrowLeft } from "react-icons/fi"; // Adicionando o ícone
 import Logo from "@/src/components/Logo";
 import ThemeSwitch from "@/src/components/ThemeSwitch";
 import { toast } from "sonner";
@@ -57,8 +57,17 @@ export default function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-[#030712]">
+    <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-[#030712] relative">
       <div className="w-[345px] space-y-6">
+        <div className="">
+          <Link
+            href="/"
+            className="flex items-center text-[#010B62] dark:text-white hover:underline"
+          >
+            <FiArrowLeft className="mr-2" size={20} />
+            Voltar
+          </Link>
+        </div>
         <div className="mt-8">
           <Logo />
         </div>

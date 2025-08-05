@@ -7,8 +7,7 @@ import { supabase } from "@/src/lib/supabase";
 import { Product } from "@/src/types/Product";
 import AdSensePlaceholder from "@/src/components/TestAdPlaceholder";
 import LoadingOrEmpty from "@/src/components/LoadingOrEmpty";
-//teste comentário
-// outro comentário
+
 export default function Page() {
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);

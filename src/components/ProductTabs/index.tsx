@@ -50,22 +50,7 @@ export default function ProductTabs({ productId }: ProductTabsProps) {
         );
 
       case "duvidas":
-        return (
-          <div className="">
-            <div className="mb-10">
-              <h3 className="text-2xl font-semibold mb-1 text-[#010b62] dark:text-white">
-                Dúvidas
-              </h3>
-              <span className="text-[#010b62]/50 dark:text-white/50">
-                Observe e interaja com as dúvidas de nossa comunidade
-              </span>
-            </div>
-            <div className="space-y-4">
-              <FAQ />
-              <FAQ />
-            </div>
-          </div>
-        );
+        return <FAQ />;
 
       default:
         return null;
