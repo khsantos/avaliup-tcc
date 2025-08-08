@@ -18,7 +18,6 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/src/components/ui/dialog";
-import { Input } from "@/src/components/ui/input";
 import { Textarea } from "@/src/components/ui/textarea";
 import { Button } from "@/src/components/ui/button";
 import { useSupabase } from "@/src/contexts/supabase-provider";
@@ -34,7 +33,6 @@ export default function FAQ() {
   const [mostrarRespostas, setMostrarRespostas] = useState<string | null>(null);
   const { user, supabase } = useSupabase();
 
-  const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -111,7 +109,7 @@ export default function FAQ() {
     setLoading(true);
     setErrorMsg("");
 
-    if (!title.trim() || !description.trim()) {
+    if (!description.trim()) {
       setErrorMsg("Preencha todos os campos");
       setLoading(false);
       return;
@@ -119,7 +117,6 @@ export default function FAQ() {
 
     try {
       const { error } = await supabase.from("faq_questions").insert({
-        title,
         description,
         user_id: user!.id,
       });
@@ -128,7 +125,6 @@ export default function FAQ() {
         const detalhe = error.details || error.message || JSON.stringify(error);
         setErrorMsg(`Erro ao enviar pergunta: ${detalhe}`);
       } else {
-        setTitle("");
         setDescription("");
         fetchQuestions();
         alert("Pergunta enviada com sucesso!");
@@ -203,17 +199,6 @@ export default function FAQ() {
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
                     <label className="text-sm font-medium text-[#010b62] dark:text-white">
-                      Título
-                    </label>
-                    <Input
-                      placeholder="Ex: Como configurar este produto?"
-                      className="mt-1"
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-[#010b62] dark:text-white">
                       Descrição
                     </label>
                     <Textarea
@@ -253,9 +238,9 @@ export default function FAQ() {
       {questions.map((q) => (
         <div
           key={q.id}
-          className="bg-white dark:bg-[#0c1a3c] shadow-md dark:shadow-none border border-[#010b62]/10 dark:border-white/10 rounded-2xl p-5 mt-8 space-y-3"
+          className="bg-white dark:bg-[#030712] shadow-md dark:shadow-none border border-[#010b62]/10 dark:border-white/10 rounded-2xl p-5 mt-8 space-y-3"
         >
-          <div className="flex items-start gap-4">
+          <div className="flex items-start gap-4 w-full max-w-full break-words">
             <Avatar className="border w-10 h-10">
               <AvatarImage src={q.users?.profile_img} alt={q.users?.name} />
               <AvatarFallback>
@@ -263,7 +248,7 @@ export default function FAQ() {
               </AvatarFallback>
             </Avatar>
 
-            <div className="flex-1">
+            <div className="flex-1 min-w-0">
               <div className="flex justify-between items-start">
                 <div className="flex flex-col">
                   <div className="flex items-center gap-2 text-sm">
@@ -290,7 +275,7 @@ export default function FAQ() {
                 {q.title}
               </h4>
 
-              <p className="text-sm mt-1 leading-relaxed text-[#010b62]/90 dark:text-white/90">
+              <p className="text-md mt-1 leading-relaxed text-[#010b62]/90 dark:text-white/90 break-words whitespace-pre-wrap">
                 {q.description}
               </p>
             </div>
@@ -320,7 +305,7 @@ export default function FAQ() {
           </div>
 
           {mostrarRespostas === q.id && (
-            <div className="ml-4 mt-3 border-l border-[#010b62]/20 pl-4 space-y-3 dark:border-[#01BAEF]/50">
+            <div className="ml-4 mt-3 border-l border-[#010b62]/20 pl-4 space-y-3 ">
               {respostasListadas[q.id]?.map((r) => (
                 <div key={r.id} className="flex items-start gap-3">
                   <Avatar className="w-8 h-8 border">
@@ -332,7 +317,7 @@ export default function FAQ() {
                       <User className="w-4 h-4 text-muted-foreground" />
                     </AvatarFallback>
                   </Avatar>
-                  <div className="flex flex-col">
+                  <div className="flex flex-col min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="font-semibold text-sm text-[#010b62] dark:text-white">
                         <div className="flex items-center gap-1">
@@ -350,7 +335,7 @@ export default function FAQ() {
                         })}
                       </span>
                     </div>
-                    <p className="text-sm mt-1 text-[#010b62]/90 dark:text-white">
+                    <p className="text-sm mt-2 text-[#010b62]/90 dark:text-white/90 break-words whitespace-pre-wrap">
                       {r.content}
                     </p>
                   </div>
@@ -368,7 +353,7 @@ export default function FAQ() {
                         [q.id]: e.target.value,
                       }))
                     }
-                    className="mb-2 dark:text-white"
+                    className="mb-2 dark:text-white text-[#010b62]"
                   />
                   <Button
                     onClick={() => enviarResposta(q.id)}
