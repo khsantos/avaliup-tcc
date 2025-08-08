@@ -1,7 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { ThumbsUp, ThumbsDown, ChevronUp, ChevronDown } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import {
+  ThumbsUp,
+  ThumbsDown,
+  Award,
+  User,
+  ChevronUp,
+  ChevronDown,
+} from "lucide-react";
 import {
   Dialog,
   DialogTrigger,
@@ -15,14 +22,133 @@ import { Input } from "@/src/components/ui/input";
 import { Textarea } from "@/src/components/ui/textarea";
 import { Button } from "@/src/components/ui/button";
 import { useSupabase } from "@/src/contexts/supabase-provider";
+import { Comentario } from "@/src/types/Comentario";
+import { Question } from "@/src/types/Question";
+import {
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+} from "@/src/components/ui/avatar";
 
 export default function FAQ() {
-  const [mostrarRespostas, setMostrarRespostas] = useState(false);
-  const { user } = useSupabase();
+  const [mostrarRespostas, setMostrarRespostas] = useState<string | null>(null);
+  const { user, supabase } = useSupabase();
+
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [respostas, setRespostas] = useState<{ [key: string]: string }>({});
+  const [respostasListadas, setRespostasListadas] = useState<{
+    [key: string]: Comentario[];
+  }>({});
+
+  const fetchQuestions = useCallback(async () => {
+    const { data, error } = await supabase
+      .from("faq_questions")
+      .select(
+        `
+    *,
+    users (
+      name
+    )
+  `
+      )
+      .order("created_at", { ascending: false });
+
+    if (!error) setQuestions(data || []);
+  }, [supabase]);
+
+  const fetchAllAnswers = useCallback(async () => {
+    const { data, error } = await supabase
+      .from("faq_answers")
+      .select(
+        `
+      *,
+      users (
+        name,
+        profile_img
+      )
+    `
+      )
+      .order("created_at");
+
+    if (!error && data) {
+      const agrupadas: { [key: string]: Comentario[] } = {};
+
+      data.forEach((resposta) => {
+        const perguntaId = resposta.faq_questions_id;
+        if (!agrupadas[perguntaId]) {
+          agrupadas[perguntaId] = [];
+        }
+        agrupadas[perguntaId].push(resposta);
+      });
+
+      setRespostasListadas(agrupadas);
+    }
+  }, [supabase]);
+
+  async function enviarResposta(questionId: string) {
+    const resposta = respostas[questionId];
+    if (!resposta?.trim()) return;
+
+    const { error } = await supabase.from("faq_answers").insert({
+      faq_questions_id: questionId,
+      user_id: user?.id,
+      content: resposta,
+    });
+
+    if (!error) {
+      setRespostas((prev) => ({ ...prev, [questionId]: "" }));
+      fetchAllAnswers();
+    }
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    setErrorMsg("");
+
+    if (!title.trim() || !description.trim()) {
+      setErrorMsg("Preencha todos os campos");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const { error } = await supabase.from("faq_questions").insert({
+        title,
+        description,
+        user_id: user!.id,
+      });
+
+      if (error) {
+        const detalhe = error.details || error.message || JSON.stringify(error);
+        setErrorMsg(`Erro ao enviar pergunta: ${detalhe}`);
+      } else {
+        setTitle("");
+        setDescription("");
+        fetchQuestions();
+        alert("Pergunta enviada com sucesso!");
+      }
+    } catch (err) {
+      console.error("Erro inesperado:", err);
+      setErrorMsg("Erro inesperado ao enviar pergunta. Tente novamente.");
+    }
+
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    fetchQuestions().then(() => {
+      fetchAllAnswers();
+    });
+  }, [fetchQuestions, fetchAllAnswers]);
 
   return (
     <div>
-      {/* Cabeçalho com botão */}
       <div className="mb-10 flex items-center justify-between">
         <div>
           <h3 className="text-2xl font-semibold mb-1 text-[#010b62] dark:text-white">
@@ -33,7 +159,6 @@ export default function FAQ() {
           </span>
         </div>
 
-        {/* Dialog sempre abre, mas conteúdo muda */}
         <Dialog>
           <DialogTrigger asChild>
             <Button className="bg-[#010b62] text-white hover:bg-[#019ACF] dark:text-white dark:bg-[#01BAEF]">
@@ -42,22 +167,28 @@ export default function FAQ() {
           </DialogTrigger>
           <DialogContent className="sm:max-w-lg">
             {!user ? (
-              // Exibe mensagem se não logado
-              <div className="flex flex-col items-center justify-center py-10 text-center">
-                <h2 className="text-xl font-semibold text-[#010b62] dark:text-white mb-2">
-                  Você precisa estar logado
-                </h2>
-                <p className="text-sm text-[#010b62]/70 dark:text-white/70 mb-6">
-                  Faça login para enviar uma pergunta e interagir com a
-                  comunidade.
-                </p>
-                <Button
-                  onClick={() => (window.location.href = "/signIn")}
-                  className="bg-[#010b62] hover:bg-[#019ACF] dark:bg-[#01BAEF] dark:hover:bg-[#019ACF] dark:text-white"
-                >
-                  Ir para login
-                </Button>
-              </div>
+              <>
+                <DialogHeader>
+                  <DialogTitle className="sr-only">
+                    Login necessário
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="flex flex-col items-center justify-center py-10 text-center">
+                  <h2 className="text-xl font-semibold text-[#010b62] dark:text-white mb-2">
+                    Você precisa estar logado
+                  </h2>
+                  <p className="text-sm text-[#010b62]/70 dark:text-white/70 mb-6">
+                    Faça login para enviar uma pergunta e interagir com a
+                    comunidade.
+                  </p>
+                  <Button
+                    onClick={() => (window.location.href = "/signIn")}
+                    className="bg-[#010b62] hover:bg-[#019ACF] dark:bg-[#01BAEF] dark:hover:bg-[#019ACF] dark:text-white"
+                  >
+                    Ir para login
+                  </Button>
+                </div>
+              </>
             ) : (
               <>
                 <DialogHeader>
@@ -69,8 +200,7 @@ export default function FAQ() {
                   </DialogDescription>
                 </DialogHeader>
 
-                {/* Formulário */}
-                <form className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
                     <label className="text-sm font-medium text-[#010b62] dark:text-white">
                       Título
@@ -78,6 +208,8 @@ export default function FAQ() {
                     <Input
                       placeholder="Ex: Como configurar este produto?"
                       className="mt-1"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
                     />
                   </div>
                   <div>
@@ -87,92 +219,169 @@ export default function FAQ() {
                     <Textarea
                       placeholder="Explique melhor sua dúvida para ajudar outros a responderem."
                       className="mt-1"
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
                     />
                   </div>
-                </form>
 
-                <DialogFooter>
-                  <Button
-                    type="submit"
-                    className="bg-[#010b62] hover:bg-[#019ACF] dark:bg-[#01BAEF] dark:hover:bg-[#019ACF] dark:text-white"
-                  >
-                    Publicar pergunta
-                  </Button>
-                </DialogFooter>
+                  {errorMsg && (
+                    <p className="text-red-500 text-sm">{errorMsg}</p>
+                  )}
+
+                  <DialogFooter>
+                    <Button
+                      type="submit"
+                      disabled={loading}
+                      className="bg-[#010b62] hover:bg-[#019ACF] dark:bg-[#01BAEF] dark:hover:bg-[#019ACF] dark:text-white"
+                    >
+                      {loading ? "Enviando..." : "Publicar pergunta"}
+                    </Button>
+                  </DialogFooter>
+                </form>
               </>
             )}
           </DialogContent>
         </Dialog>
       </div>
 
-      {/* Exemplo de dúvida */}
-      <div className="text-[#010b62] p-4 rounded-lg space-y-3 mt-8">
-        <div className="flex items-start gap-3">
-          <div className="w-10 h-10 rounded-full border dark:border-[#01BAEF]/70 border-[#010b62]/70 flex items-center justify-center text-[#010b62] text-sm font-bold bg-gray-200">
-            👤
-          </div>
-          <div className="flex flex-col">
-            <div className="flex items-center gap-2">
-              <span className="font-semibold text-sm dark:text-white">
-                Usuário 1
-              </span>
-              <span className="text-xs text-[#010b62]/70 dark:text-white/70">
-                há 28/08/2024
-              </span>
+      {questions.length === 0 && (
+        <p className="text-center text-gray-500 dark:text-gray-400 mt-10">
+          Nenhuma pergunta ainda. Seja o primeiro a perguntar!
+        </p>
+      )}
+
+      {questions.map((q) => (
+        <div
+          key={q.id}
+          className="bg-white dark:bg-[#0c1a3c] shadow-md dark:shadow-none border border-[#010b62]/10 dark:border-white/10 rounded-2xl p-5 mt-8 space-y-3"
+        >
+          <div className="flex items-start gap-4">
+            <Avatar className="border w-10 h-10">
+              <AvatarImage src={q.users?.profile_img} alt={q.users?.name} />
+              <AvatarFallback>
+                <User className="w-4 h-4 text-muted-foreground" />
+              </AvatarFallback>
+            </Avatar>
+
+            <div className="flex-1">
+              <div className="flex justify-between items-start">
+                <div className="flex flex-col">
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="font-semibold text-[#010b62] dark:text-white">
+                      {q.users?.name || q.user_id}
+                    </span>
+                    <span className="text-xs text-[#010b62]/70 dark:text-white/50">
+                      {new Date(q.created_at).toLocaleDateString("pt-BR", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                      })}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1 mt-1">
+                    <Award className="w-4 h-4 text-blue-400" />
+                    <Award className="w-4 h-4 text-blue-300" />
+                    <Award className="w-4 h-4 text-blue-200" />
+                  </div>
+                </div>
+              </div>
+
+              <h4 className="text-lg font-bold mt-2 text-[#010b62] dark:text-white">
+                {q.title}
+              </h4>
+
+              <p className="text-sm mt-1 leading-relaxed text-[#010b62]/90 dark:text-white/90">
+                {q.description}
+              </p>
             </div>
           </div>
-        </div>
 
-        <p className="leading-relaxed dark:text-white">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-        </p>
+          <div className="flex justify-start items-start mt-4 ml-14">
+            <div className="flex flex-col items-center gap-1">
+              <div className="flex gap-2 text-[#010b62] dark:text-white mr-12">
+                <ThumbsUp className="w-4 h-4 cursor-pointer hover:text-[#01BAEF]" />
+                <ThumbsDown className="w-4 h-4 cursor-pointer hover:text-[#01BAEF]" />
+              </div>
 
-        <div className="flex items-center gap-6 text-xs text-[#010b62]/70">
-          <div className="flex items-center gap-1 cursor-pointer hover:text-[#01BAEF] dark:text-white/70">
-            <ThumbsUp className="w-5 h-5 dark:text-white/70" />
-            <span>210</span>
+              <div
+                onClick={() =>
+                  setMostrarRespostas(mostrarRespostas === q.id ? null : q.id)
+                }
+                className="flex items-center gap-1 text-sm text-[#01BAEF] cursor-pointer hover:underline"
+              >
+                <span>{respostasListadas[q.id]?.length || 0} respostas</span>
+                {mostrarRespostas === q.id ? (
+                  <ChevronUp className="w-4 h-4" />
+                ) : (
+                  <ChevronDown className="w-4 h-4" />
+                )}
+              </div>
+            </div>
           </div>
-          <div className="flex items-center gap-1 cursor-pointer hover:text-[#01BAEF] dark:text-white/70">
-            <ThumbsDown className="w-5 h-5 dark:text-white/70" />
-            <span>16</span>
-          </div>
-        </div>
 
-        <div
-          onClick={() => setMostrarRespostas(!mostrarRespostas)}
-          className="flex items-center gap-1 mt-2 text-sm text-[#01BAEF] cursor-pointer hover:underline"
-        >
-          <span>7 respostas</span>
-          {mostrarRespostas ? (
-            <ChevronUp className="w-4 h-4" />
-          ) : (
-            <ChevronDown className="w-4 h-4" />
+          {mostrarRespostas === q.id && (
+            <div className="ml-4 mt-3 border-l border-[#010b62]/20 pl-4 space-y-3 dark:border-[#01BAEF]/50">
+              {respostasListadas[q.id]?.map((r) => (
+                <div key={r.id} className="flex items-start gap-3">
+                  <Avatar className="w-8 h-8 border">
+                    <AvatarImage
+                      src={r.users?.profile_img || ""}
+                      alt={r.users?.name || "Avatar"}
+                    />
+                    <AvatarFallback>
+                      <User className="w-4 h-4 text-muted-foreground" />
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col">
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-sm text-[#010b62] dark:text-white">
+                        <div className="flex items-center gap-1">
+                          <span>{r.users?.name || r.user_id}</span>
+                          <Award className="w-4 h-4 text-blue-400" />
+                          <Award className="w-4 h-4 text-blue-300" />
+                          <Award className="w-4 h-4 text-blue-200" />
+                        </div>
+                      </span>
+                      <span className="text-xs text-[#010b62]/70 dark:text-white/70">
+                        {new Date(r.created_at).toLocaleDateString("pt-BR", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                        })}
+                      </span>
+                    </div>
+                    <p className="text-sm mt-1 text-[#010b62]/90 dark:text-white">
+                      {r.content}
+                    </p>
+                  </div>
+                </div>
+              ))}
+
+              {user && (
+                <div className="mt-4">
+                  <Textarea
+                    placeholder="Responder..."
+                    value={respostas[q.id] || ""}
+                    onChange={(e) =>
+                      setRespostas((prev) => ({
+                        ...prev,
+                        [q.id]: e.target.value,
+                      }))
+                    }
+                    className="mb-2 dark:text-white"
+                  />
+                  <Button
+                    onClick={() => enviarResposta(q.id)}
+                    className="bg-[#010b62] hover:bg-[#019ACF] dark:bg-[#01BAEF] dark:hover:bg-[#019ACF] dark:text-white"
+                  >
+                    Enviar resposta
+                  </Button>
+                </div>
+              )}
+            </div>
           )}
         </div>
-
-        {mostrarRespostas && (
-          <div className="ml-4 mt-3 border-l border-[#010b62]/50 pl-4 space-y-3 dark:border-[#01BAEF]/70">
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full border border-[#010b62]/70 bg-white/20 flex items-center justify-center text-[#010b62] text-sm font-bold">
-                👤
-              </div>
-              <div className="flex flex-col">
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold text-sm text-[#010b62] dark:text-white">
-                    Usuário 2
-                  </span>
-                  <span className="text-xs text-[#010b62]/70 dark:text-white/70">
-                    há 28/08/2024
-                  </span>
-                </div>
-                <p className="text-sm text-[#010b62]/90 mt-1 leading-relaxed dark:text-white">
-                  Concordo! Tive a mesma experiência com esse modelo.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
+      ))}
     </div>
   );
 }
