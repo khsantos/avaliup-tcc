@@ -1,7 +1,9 @@
+// avatar.tsx
 "use client";
 
 import * as React from "react";
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
+import { User } from "lucide-react"; // Ícone
 
 import { cn } from "@/lib/utils";
 
@@ -13,7 +15,7 @@ function Avatar({
     <AvatarPrimitive.Root
       data-slot="avatar"
       className={cn(
-        "relative flex size-9.5 shrink-0 overflow-hidden rounded-md",
+        "relative flex size-9.5 shrink-0 overflow-hidden rounded-md border", // <- borda aqui
         className
       )}
       {...props}
@@ -42,11 +44,14 @@ function AvatarFallback({
     <AvatarPrimitive.Fallback
       data-slot="avatar-fallback"
       className={cn(
-        "bg-muted flex size-full items-center justify-center rounded-full dark:bg-[#030712]",
+        "bg-muted flex size-full items-center justify-center rounded-md dark:bg-[#030712]",
         className
       )}
       {...props}
-    />
+    >
+      <User className="w-4 h-4 text-muted-foreground" />{" "}
+      {/* Ícone de usuário */}
+    </AvatarPrimitive.Fallback>
   );
 }
 
