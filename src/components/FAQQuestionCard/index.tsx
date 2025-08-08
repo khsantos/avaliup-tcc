@@ -130,9 +130,9 @@ export default function FAQQuestionCard({
                       setOpenDialogId(q.id);
                       setOpenMenuId(null);
                     }}
-                    className="text-[#010b62] focus:bg-red-50 dark:focus:bg-gray-800 dark:hover:focus:text-white hover:focus:text-[#010b62] hover:focus:bg-gray-200"
+                    className="flex items-center gap-2 px-3 py-2 text-[#010b62] hover:bg-gray-200 dark:hover:bg-gray-800 w-full overflow-hidden whitespace-nowrap"
                   >
-                    <Trash className="w-4 h-4" />
+                    <Trash className="w-6 h-6" />
                     Deletar pergunta
                   </DropdownMenuItem>
                 </DropdownMenuContent>
