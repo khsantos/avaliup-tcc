@@ -1,14 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import {
-  ThumbsUp,
-  ThumbsDown,
-  Award,
-  User,
-  ChevronUp,
-  ChevronDown,
-} from "lucide-react";
+
 import {
   Dialog,
   DialogTrigger,
@@ -23,11 +16,8 @@ import { Button } from "@/src/components/ui/button";
 import { useSupabase } from "@/src/contexts/supabase-provider";
 import { Comentario } from "@/src/types/Comentario";
 import { Question } from "@/src/types/Question";
-import {
-  Avatar,
-  AvatarImage,
-  AvatarFallback,
-} from "@/src/components/ui/avatar";
+import { toast } from "sonner";
+import FAQQuestionCard from "../FAQQuestionCard";
 
 export default function FAQ() {
   const [mostrarRespostas, setMostrarRespostas] = useState<string | null>(null);
@@ -42,22 +32,47 @@ export default function FAQ() {
   const [respostasListadas, setRespostasListadas] = useState<{
     [key: string]: Comentario[];
   }>({});
+  const [animatedVote, setAnimatedVote] = useState<{
+    [questionId: string]: "like" | "dislike" | null;
+  }>({});
+  const [openDialogId, setOpenDialogId] = useState<string | null>(null);
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
   const fetchQuestions = useCallback(async () => {
     const { data, error } = await supabase
       .from("faq_questions")
       .select(
         `
-    *,
-    users (
-      name
-    )
-  `
+        *,
+        users (
+          name,
+          profile_img
+        ),
+        faq_questions_votes (
+          vote_type,
+          user_id
+        )
+      `
       )
       .order("created_at", { ascending: false });
 
-    if (!error) setQuestions(data || []);
-  }, [supabase]);
+    if (!error && data) {
+      const questionsWithVotes = data.map((q) => ({
+        ...q,
+        likeCount: (q.faq_questions_votes as { vote_type: string }[]).filter(
+          (v) => v.vote_type === "like"
+        ).length,
+        dislikeCount: (q.faq_questions_votes as { vote_type: string }[]).filter(
+          (v) => v.vote_type === "dislike"
+        ).length,
+        userVote: (
+          q.faq_questions_votes as { vote_type: string; user_id: string }[]
+        ).find((v) => v.user_id === user?.id)?.vote_type,
+      }));
+
+      setQuestions(questionsWithVotes);
+    }
+  }, [supabase, user?.id]);
 
   const fetchAllAnswers = useCallback(async () => {
     const { data, error } = await supabase
@@ -101,6 +116,9 @@ export default function FAQ() {
     if (!error) {
       setRespostas((prev) => ({ ...prev, [questionId]: "" }));
       fetchAllAnswers();
+      toast.success("Resposta enviada com sucesso!");
+    } else {
+      toast.error("Erro ao enviar resposta.");
     }
   }
 
@@ -127,7 +145,7 @@ export default function FAQ() {
       } else {
         setDescription("");
         fetchQuestions();
-        alert("Pergunta enviada com sucesso!");
+        toast("Pergunta enviada com sucesso!");
       }
     } catch (err) {
       console.error("Erro inesperado:", err);
@@ -142,6 +160,69 @@ export default function FAQ() {
       fetchAllAnswers();
     });
   }, [fetchQuestions, fetchAllAnswers]);
+
+  async function handleQuestionVote(
+    questionId: string,
+    voteType: "like" | "dislike"
+  ) {
+    if (!user) return;
+
+    const question = questions.find((q) => q.id === questionId);
+    const existingVote = question?.userVote;
+
+    if (existingVote === voteType) {
+      await supabase
+        .from("faq_questions_votes")
+        .delete()
+        .eq("question_id", questionId)
+        .eq("user_id", user.id);
+    } else {
+      await supabase.from("faq_questions_votes").upsert(
+        {
+          question_id: questionId,
+          user_id: user.id,
+          vote_type: voteType,
+        },
+        { onConflict: "question_id,user_id" }
+      );
+    }
+
+    setAnimatedVote((prev) => ({ ...prev, [questionId]: voteType }));
+    setTimeout(() => {
+      setAnimatedVote((prev) => ({ ...prev, [questionId]: null }));
+    }, 400);
+
+    fetchQuestions();
+  }
+
+  async function handleDeleteQuestion(questionId: string) {
+    const confirmed = confirm("Tem certeza que deseja deletar esta pergunta?");
+    if (!confirmed) return;
+
+    const { error } = await supabase
+      .from("faq_questions")
+      .delete()
+      .eq("id", questionId)
+      .eq("user_id", user?.id);
+
+    if (!error) {
+      toast.success("Pergunta deletada com sucesso!");
+      fetchQuestions();
+    } else {
+      toast.error("Erro ao deletar pergunta.");
+    }
+  }
+
+  const userAdapted = user
+    ? {
+        id: user.id,
+        name: user.user_metadata?.name || user.email || "Usuário",
+        profile_img: user.user_metadata?.profile_img || "",
+        email: user.email || "",
+        badges: user.user_metadata?.badges || [],
+        created_at: user.created_at || "",
+      }
+    : null;
 
   return (
     <div>
@@ -236,136 +317,24 @@ export default function FAQ() {
       )}
 
       {questions.map((q) => (
-        <div
+        <FAQQuestionCard
           key={q.id}
-          className="bg-white dark:bg-[#030712] shadow-md dark:shadow-none border border-[#010b62]/10 dark:border-white/10 rounded-2xl p-5 mt-8 space-y-3"
-        >
-          <div className="flex items-start gap-4 w-full max-w-full break-words">
-            <Avatar className="border w-10 h-10">
-              <AvatarImage src={q.users?.profile_img} alt={q.users?.name} />
-              <AvatarFallback>
-                <User className="w-4 h-4 text-muted-foreground" />
-              </AvatarFallback>
-            </Avatar>
-
-            <div className="flex-1 min-w-0">
-              <div className="flex justify-between items-start">
-                <div className="flex flex-col">
-                  <div className="flex items-center gap-2 text-sm">
-                    <span className="font-semibold text-[#010b62] dark:text-white">
-                      {q.users?.name || q.user_id}
-                    </span>
-                    <span className="text-xs text-[#010b62]/70 dark:text-white/50">
-                      {new Date(q.created_at).toLocaleDateString("pt-BR", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "numeric",
-                      })}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1 mt-1">
-                    <Award className="w-4 h-4 text-blue-400" />
-                    <Award className="w-4 h-4 text-blue-300" />
-                    <Award className="w-4 h-4 text-blue-200" />
-                  </div>
-                </div>
-              </div>
-
-              <h4 className="text-lg font-bold mt-2 text-[#010b62] dark:text-white">
-                {q.title}
-              </h4>
-
-              <p className="text-md mt-1 leading-relaxed text-[#010b62]/90 dark:text-white/90 break-words whitespace-pre-wrap">
-                {q.description}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex justify-start items-start mt-4 ml-14">
-            <div className="flex flex-col items-center gap-1">
-              <div className="flex gap-2 text-[#010b62] dark:text-white mr-12">
-                <ThumbsUp className="w-4 h-4 cursor-pointer hover:text-[#01BAEF]" />
-                <ThumbsDown className="w-4 h-4 cursor-pointer hover:text-[#01BAEF]" />
-              </div>
-
-              <div
-                onClick={() =>
-                  setMostrarRespostas(mostrarRespostas === q.id ? null : q.id)
-                }
-                className="flex items-center gap-1 text-sm text-[#01BAEF] cursor-pointer hover:underline"
-              >
-                <span>{respostasListadas[q.id]?.length || 0} respostas</span>
-                {mostrarRespostas === q.id ? (
-                  <ChevronUp className="w-4 h-4" />
-                ) : (
-                  <ChevronDown className="w-4 h-4" />
-                )}
-              </div>
-            </div>
-          </div>
-
-          {mostrarRespostas === q.id && (
-            <div className="ml-4 mt-3 border-l border-[#010b62]/20 pl-4 space-y-3 ">
-              {respostasListadas[q.id]?.map((r) => (
-                <div key={r.id} className="flex items-start gap-3">
-                  <Avatar className="w-8 h-8 border">
-                    <AvatarImage
-                      src={r.users?.profile_img || ""}
-                      alt={r.users?.name || "Avatar"}
-                    />
-                    <AvatarFallback>
-                      <User className="w-4 h-4 text-muted-foreground" />
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold text-sm text-[#010b62] dark:text-white">
-                        <div className="flex items-center gap-1">
-                          <span>{r.users?.name || r.user_id}</span>
-                          <Award className="w-4 h-4 text-blue-400" />
-                          <Award className="w-4 h-4 text-blue-300" />
-                          <Award className="w-4 h-4 text-blue-200" />
-                        </div>
-                      </span>
-                      <span className="text-xs text-[#010b62]/70 dark:text-white/70">
-                        {new Date(r.created_at).toLocaleDateString("pt-BR", {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                        })}
-                      </span>
-                    </div>
-                    <p className="text-sm mt-2 text-[#010b62]/90 dark:text-white/90 break-words whitespace-pre-wrap">
-                      {r.content}
-                    </p>
-                  </div>
-                </div>
-              ))}
-
-              {user && (
-                <div className="mt-4">
-                  <Textarea
-                    placeholder="Responder..."
-                    value={respostas[q.id] || ""}
-                    onChange={(e) =>
-                      setRespostas((prev) => ({
-                        ...prev,
-                        [q.id]: e.target.value,
-                      }))
-                    }
-                    className="mb-2 dark:text-white text-[#010b62]"
-                  />
-                  <Button
-                    onClick={() => enviarResposta(q.id)}
-                    className="bg-[#010b62] hover:bg-[#019ACF] dark:bg-[#01BAEF] dark:hover:bg-[#019ACF] dark:text-white"
-                  >
-                    Enviar resposta
-                  </Button>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
+          q={q}
+          user={userAdapted}
+          respostasListadas={respostasListadas}
+          respostas={respostas}
+          setRespostas={setRespostas}
+          mostrarRespostas={mostrarRespostas}
+          setMostrarRespostas={setMostrarRespostas}
+          openDialogId={openDialogId}
+          setOpenDialogId={setOpenDialogId}
+          openMenuId={openMenuId}
+          setOpenMenuId={setOpenMenuId}
+          handleDeleteQuestion={handleDeleteQuestion}
+          handleQuestionVote={handleQuestionVote}
+          animatedVote={animatedVote}
+          enviarResposta={enviarResposta}
+        />
       ))}
     </div>
   );

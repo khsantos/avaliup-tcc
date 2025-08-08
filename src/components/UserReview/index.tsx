@@ -170,12 +170,10 @@ export default function UserReviews({ productId }: UserReviewProps) {
         )
         .eq("product_id", productId);
 
-      // Aplica filtro por estrelas
       if (filterRating) {
         query = query.eq("rating", filterRating);
       }
 
-      // Aplica ordenação
       if (sortBy === "recent") {
         query = query.order("created_at", { ascending: false });
       } else if (sortBy === "high") {
@@ -183,7 +181,7 @@ export default function UserReviews({ productId }: UserReviewProps) {
       } else if (sortBy === "low") {
         query = query.order("rating", { ascending: true });
       } else if (sortBy === "useful") {
-        query = query.order("likes", { ascending: false }); // <- precisa que likes esteja armazenado na tabela
+        query = query.order("likes", { ascending: false });
       }
 
       const { data, error } = await query;
@@ -450,6 +448,7 @@ export default function UserReviews({ productId }: UserReviewProps) {
                     </div>
 
                     <div className="w-20 shrink-0 flex items-center justify-center">
+                      {/* Images */}
                       {/* <div className="bg-gray-500 dark:bg-[#64748b] bg-opacity-30 rounded-lg w-20 h-20 flex items-center justify-center text-2xl text-white font-semibold">
                         +3
                       </div> */}
