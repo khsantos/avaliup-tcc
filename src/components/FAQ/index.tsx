@@ -9,6 +9,8 @@ import {
   User,
   ChevronUp,
   ChevronDown,
+  MoreVertical,
+  Trash,
 } from "lucide-react";
 import {
   Dialog,
@@ -29,6 +31,13 @@ import {
   AvatarImage,
   AvatarFallback,
 } from "@/src/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { toast } from "sonner";
 
 export default function FAQ() {
   const [mostrarRespostas, setMostrarRespostas] = useState<string | null>(null);
@@ -46,6 +55,7 @@ export default function FAQ() {
   const [animatedVote, setAnimatedVote] = useState<{
     [questionId: string]: "like" | "dislike" | null;
   }>({});
+  const [openDialogId, setOpenDialogId] = useState<string | null>(null);
 
   const fetchQuestions = useCallback(async () => {
     const { data, error } = await supabase
@@ -151,7 +161,7 @@ export default function FAQ() {
       } else {
         setDescription("");
         fetchQuestions();
-        alert("Pergunta enviada com sucesso!");
+        toast("Pergunta enviada com sucesso!");
       }
     } catch (err) {
       console.error("Erro inesperado:", err);
@@ -199,6 +209,24 @@ export default function FAQ() {
     }, 400);
 
     fetchQuestions();
+  }
+
+  async function handleDeleteQuestion(questionId: string) {
+    const confirmed = confirm("Tem certeza que deseja deletar esta pergunta?");
+    if (!confirmed) return;
+
+    const { error } = await supabase
+      .from("faq_questions")
+      .delete()
+      .eq("id", questionId)
+      .eq("user_id", user?.id);
+
+    if (!error) {
+      toast.success("Pergunta deletada com sucesso!");
+      fetchQuestions();
+    } else {
+      toast.error("Erro ao deletar pergunta.");
+    }
   }
 
   return (
@@ -298,6 +326,34 @@ export default function FAQ() {
           key={q.id}
           className="bg-white dark:bg-[#030712] shadow-md dark:shadow-none border border-[#010b62]/10 dark:border-white/10 rounded-2xl p-5 mt-8 space-y-3"
         >
+          <Dialog
+            open={openDialogId === q.id}
+            onOpenChange={(open) => !open && setOpenDialogId(null)}
+          >
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Você tem certeza?</DialogTitle>
+                <DialogDescription>
+                  Essa ação não poderá ser desfeita. A pergunta será removida
+                  permanentemente do sistema.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter className="flex justify-end gap-2">
+                <Button variant="outline" onClick={() => setOpenDialogId(null)}>
+                  Cancelar
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={() => {
+                    handleDeleteQuestion(q.id);
+                    setOpenDialogId(null);
+                  }}
+                >
+                  Deletar
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
           <div className="flex items-start gap-4 w-full max-w-full break-words">
             <Avatar className="border w-10 h-10">
               <AvatarImage src={q.users?.profile_img} alt={q.users?.name} />
@@ -327,6 +383,33 @@ export default function FAQ() {
                     <Award className="w-4 h-4 text-blue-200" />
                   </div>
                 </div>
+
+                {user?.id === q.user_id && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button
+                        className="p-1 rounded-md hover:bg-[#010b62]/10 dark:hover:bg-white/10 transition"
+                        aria-label="Mais opções"
+                      >
+                        <MoreVertical className="w-5 h-5 text-[#010b62]/70 dark:text-white/70" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      align="end"
+                      className="w-40 animate-in fade-in zoom-in-95 duration-200"
+                    >
+                      <DropdownMenuItem
+                        onClick={() => {
+                          setOpenDialogId(q.id);
+                        }}
+                        className="text-[#010b62] focus:bg-red-50 dark:focus:bg-gray-800 dark:hover:focus:text-white hover:focus:text-[#010b62] hover:focus:bg-gray-200"
+                      >
+                        <Trash className="w-4 h-4" />
+                        Deletar pergunta
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
               </div>
 
               <h4 className="text-lg font-bold mt-2 text-[#010b62] dark:text-white">
