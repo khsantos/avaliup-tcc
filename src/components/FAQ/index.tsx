@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import clsx from "clsx";
 import {
   ThumbsUp,
   ThumbsDown,
@@ -42,22 +43,45 @@ export default function FAQ() {
   const [respostasListadas, setRespostasListadas] = useState<{
     [key: string]: Comentario[];
   }>({});
+  const [animatedVote, setAnimatedVote] = useState<{
+    [questionId: string]: "like" | "dislike" | null;
+  }>({});
 
   const fetchQuestions = useCallback(async () => {
     const { data, error } = await supabase
       .from("faq_questions")
       .select(
         `
-    *,
-    users (
-      name
-    )
-  `
+        *,
+        users (
+          name,
+          profile_img
+        ),
+        faq_questions_votes (
+          vote_type,
+          user_id
+        )
+      `
       )
       .order("created_at", { ascending: false });
 
-    if (!error) setQuestions(data || []);
-  }, [supabase]);
+    if (!error && data) {
+      const questionsWithVotes = data.map((q) => ({
+        ...q,
+        likeCount: (q.faq_questions_votes as { vote_type: string }[]).filter(
+          (v) => v.vote_type === "like"
+        ).length,
+        dislikeCount: (q.faq_questions_votes as { vote_type: string }[]).filter(
+          (v) => v.vote_type === "dislike"
+        ).length,
+        userVote: (
+          q.faq_questions_votes as { vote_type: string; user_id: string }[]
+        ).find((v) => v.user_id === user?.id)?.vote_type,
+      }));
+
+      setQuestions(questionsWithVotes);
+    }
+  }, [supabase, user?.id]);
 
   const fetchAllAnswers = useCallback(async () => {
     const { data, error } = await supabase
@@ -142,6 +166,40 @@ export default function FAQ() {
       fetchAllAnswers();
     });
   }, [fetchQuestions, fetchAllAnswers]);
+
+  async function handleQuestionVote(
+    questionId: string,
+    voteType: "like" | "dislike"
+  ) {
+    if (!user) return;
+
+    const question = questions.find((q) => q.id === questionId);
+    const existingVote = question?.userVote;
+
+    if (existingVote === voteType) {
+      await supabase
+        .from("faq_questions_votes")
+        .delete()
+        .eq("question_id", questionId)
+        .eq("user_id", user.id);
+    } else {
+      await supabase.from("faq_questions_votes").upsert(
+        {
+          question_id: questionId,
+          user_id: user.id,
+          vote_type: voteType,
+        },
+        { onConflict: "question_id,user_id" }
+      );
+    }
+
+    setAnimatedVote((prev) => ({ ...prev, [questionId]: voteType }));
+    setTimeout(() => {
+      setAnimatedVote((prev) => ({ ...prev, [questionId]: null }));
+    }, 400);
+
+    fetchQuestions();
+  }
 
   return (
     <div>
@@ -283,16 +341,39 @@ export default function FAQ() {
 
           <div className="flex justify-start items-start mt-4 ml-14">
             <div className="flex flex-col items-center gap-1">
-              <div className="flex gap-2 text-[#010b62] dark:text-white mr-12">
-                <ThumbsUp className="w-4 h-4 cursor-pointer hover:text-[#01BAEF]" />
-                <ThumbsDown className="w-4 h-4 cursor-pointer hover:text-[#01BAEF]" />
+              <div className="flex gap-2 text-[#010b62]/70 dark:text-white mr-12">
+                <Button
+                  onClick={() => handleQuestionVote(q.id, "like")}
+                  variant="ghost"
+                  className={clsx(
+                    "transition-transform duration-150 ease-in-out active:scale-90 transform hover:scale-110 cursor-pointer hover:bg-gray-200 hover:text-[#01BAEF]",
+                    q.userVote === "like" && "text-[#01BAEF]",
+                    animatedVote[q.id] === "like" && "animate-press"
+                  )}
+                >
+                  <ThumbsUp className="h-6 w-6" />
+                  <span className="text-sm">{q.likeCount}</span>
+                </Button>
+
+                <Button
+                  onClick={() => handleQuestionVote(q.id, "dislike")}
+                  variant="ghost"
+                  className={clsx(
+                    "transition-transform duration-150 ease-in-out active:scale-90 transform hover:scale-110 cursor-pointer hover:text-red-600 hover:bg-gray-200",
+                    q.userVote === "dislike" && "text-red-600",
+                    animatedVote[q.id] === "dislike" && "animate-press"
+                  )}
+                >
+                  <ThumbsDown className="h-6 w-6" />
+                  <span className="text-sm">{q.dislikeCount}</span>
+                </Button>
               </div>
 
               <div
                 onClick={() =>
                   setMostrarRespostas(mostrarRespostas === q.id ? null : q.id)
                 }
-                className="flex items-center gap-1 text-sm text-[#01BAEF] cursor-pointer hover:underline"
+                className="flex items-center gap-1 text-sm text-[#01BAEF] cursor-pointer hover:underline -ml-18"
               >
                 <span>{respostasListadas[q.id]?.length || 0} respostas</span>
                 {mostrarRespostas === q.id ? (
