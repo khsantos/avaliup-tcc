@@ -2,6 +2,7 @@
 
 import { useTheme } from "next-themes";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function Footer() {
@@ -68,16 +69,16 @@ export default function Footer() {
           <h4 className="font-semibold mb-3">Empresa</h4>
           <ul className="space-y-2 text-gray-600">
             <li>
-              <a href="#">Sobre nós</a>
+              <a href="about-us">Sobre nós</a>
             </li>
             <li>
-              <a href="#">Segurança</a>
+              <a href="/security">Segurança</a>
             </li>
             <li>
-              <a href="#">Termos de uso</a>
+              <a href="/terms-of-use">Termos de uso</a>
             </li>
             <li>
-              <a href="#">Política de privacidade</a>
+              <a href="/policy-and-privacy">Política de privacidade</a>
             </li>
           </ul>
         </div>
@@ -86,19 +87,19 @@ export default function Footer() {
           <h4 className="font-semibold mb-3">Periféricos</h4>
           <ul className="space-y-2 text-gray-600">
             <li>
-              <a href="#">Mouses</a>
+              <Link href="/categoria/mouses">Mouses</Link>
             </li>
             <li>
-              <a href="#">Teclados</a>
+              <Link href="/categoria/teclados">Teclados</Link>
             </li>
             <li>
-              <a href="#">Mousepads</a>
+              <Link href="/categoria/mousepads">Mousepads</Link>
             </li>
             <li>
-              <a href="#">Headsets</a>
+              <Link href="/categoria/headsets">Headsets</Link>
             </li>
             <li>
-              <a href="#">Cadeiras</a>
+              <Link href="/categoria/cadeiras">Cadeiras</Link>
             </li>
           </ul>
         </div>
@@ -107,16 +108,16 @@ export default function Footer() {
           <h4 className="font-semibold mb-3">Hardware</h4>
           <ul className="space-y-2 text-gray-600">
             <li>
-              <a href="#">Placa de vídeo</a>
+              <Link href="/categoria/placa-de-video">Placa de vídeo</Link>
             </li>
             <li>
-              <a href="#">Processador</a>
+              <Link href="/categoria/processador">Processador</Link>
             </li>
             <li>
-              <a href="#">Memória RAM</a>
+              <Link href="/categoria/memoria ram">Memória RAM</Link>
             </li>
             <li>
-              <a href="#">Placa Mãe</a>
+              <Link href="/categoria/placa-mae">Placa Mãe</Link>
             </li>
           </ul>
         </div>
