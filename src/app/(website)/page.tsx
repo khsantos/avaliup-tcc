@@ -37,8 +37,24 @@ export default function Page() {
     () => allProducts.filter((p) => p.category === "mouse"),
     [allProducts]
   );
+
   const productsKeyboard = useMemo(
     () => allProducts.filter((p) => p.category === "teclado"),
+    [allProducts]
+  );
+
+  const productsHeadset = useMemo(
+    () => allProducts.filter((p) => p.category === "headset"),
+    [allProducts]
+  );
+
+  const productsMousepad = useMemo(
+    () => allProducts.filter((p) => p.category === "mousepad"),
+    [allProducts]
+  );
+
+  const productsController = useMemo(
+    () => allProducts.filter((p) => p.category === "controle"),
     [allProducts]
   );
 
@@ -74,6 +90,54 @@ export default function Page() {
           <LoadingOrEmpty
             loading={loading}
             items={productsKeyboard}
+            renderEmpty="Nenhum produto encontrado."
+            renderContent={(items) => <ProductCarousel products={items} />}
+          />
+        </div>
+      </section>
+
+      <section className="px-4 py-10 flex justify-center">
+        <div className="max-w-7xl w-full p-6">
+          <span className="text-gray-500">Top 10</span>
+          <h2 className="text-[#010b62] text-xl font-semibold mb-6 text-left dark:text-white">
+            Headsets gamers custo-benefício
+          </h2>
+
+          <LoadingOrEmpty
+            loading={loading}
+            items={productsHeadset}
+            renderEmpty="Nenhum produto encontrado."
+            renderContent={(items) => <ProductCarousel products={items} />}
+          />
+        </div>
+      </section>
+
+      <section className="px-4 py-10 flex justify-center">
+        <div className="max-w-7xl w-full p-6">
+          <span className="text-gray-500">Top 10</span>
+          <h2 className="text-[#010b62] text-xl font-semibold mb-6 text-left dark:text-white">
+            Mousepads gamers custo-benefício
+          </h2>
+
+          <LoadingOrEmpty
+            loading={loading}
+            items={productsMousepad}
+            renderEmpty="Nenhum produto encontrado."
+            renderContent={(items) => <ProductCarousel products={items} />}
+          />
+        </div>
+      </section>
+
+      <section className="px-4 py-10 flex justify-center">
+        <div className="max-w-7xl w-full p-6">
+          <span className="text-gray-500">Top 10</span>
+          <h2 className="text-[#010b62] text-xl font-semibold mb-6 text-left dark:text-white">
+            Controles gamers custo-benefício
+          </h2>
+
+          <LoadingOrEmpty
+            loading={loading}
+            items={productsController}
             renderEmpty="Nenhum produto encontrado."
             renderContent={(items) => <ProductCarousel products={items} />}
           />
