@@ -19,7 +19,11 @@ import { Question } from "@/src/types/Question";
 import { toast } from "sonner";
 import FAQQuestionCard from "../FAQQuestionCard";
 
-export default function FAQ() {
+interface FAQProps {
+  productId: number;
+}
+
+export default function FAQ({ productId }: FAQProps) {
   const [mostrarRespostas, setMostrarRespostas] = useState<string | null>(null);
   const { user, supabase } = useSupabase();
 
@@ -54,6 +58,7 @@ export default function FAQ() {
         )
       `
       )
+      .eq("product_id", productId) // <-- Filtrando pelo produto
       .order("created_at", { ascending: false });
 
     if (!error && data) {
@@ -72,7 +77,7 @@ export default function FAQ() {
 
       setQuestions(questionsWithVotes);
     }
-  }, [supabase, user?.id]);
+  }, [supabase, user?.id, productId]);
 
   const fetchAllAnswers = useCallback(async () => {
     const { data, error } = await supabase
@@ -137,6 +142,7 @@ export default function FAQ() {
       const { error } = await supabase.from("faq_questions").insert({
         description,
         user_id: user!.id,
+        product_id: productId,
       });
 
       if (error) {
