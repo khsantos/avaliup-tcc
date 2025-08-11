@@ -114,10 +114,7 @@ export default function SiteLayout({
                   <Link href="/categoria/mousepads">Mousepads</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/categoria/monitores">Monitores</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/categoria/microfones">Microfones</Link>
+                  <Link href="/categoria/controles">Controles</Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -136,6 +133,9 @@ export default function SiteLayout({
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href="/categoria/ssds">SSDs</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/categoria/memorias-ram">Memorias RAM</Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

@@ -25,7 +25,7 @@ interface FormData {
 
 interface ReviewFormProps {
   product: Product;
-  onProductUpdate?: (updatedProduct: Product) => void; // opcional, para notificar pai
+  onProductUpdate?: (updatedProduct: Product) => void;
 }
 
 export default function ReviewForm({
@@ -90,9 +90,8 @@ export default function ReviewForm({
       return;
     }
 
-    if (data) {
-      setCurrentProduct(data);
-      if (onProductUpdate) onProductUpdate(data);
+    if (data && onProductUpdate) {
+      onProductUpdate(data);
     }
   }
 

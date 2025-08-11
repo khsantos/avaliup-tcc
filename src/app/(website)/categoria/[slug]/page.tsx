@@ -15,9 +15,10 @@ const slugToCategoryMap: Record<string, string> = {
   headsets: "headset",
   monitores: "monitor",
   mousepads: "mousepad",
-  microfones: "microfone",
+  controles: "controle",
   processadores: "processador",
   ssds: "ssd",
+  "memorias-ram": "memoria-ram",
   "placas-de-video": "placa de vídeo",
 };
 
