@@ -42,9 +42,9 @@ function DropdownMenuContent({
         sideOffset={sideOffset}
         className={cn(
           "bg-white dark:bg-[#030712] text-[#010b62] dark:text-white rounded-md border border-[#010b62] dark:border-[#01BAEF] shadow-lg p-1 min-w-[10rem] max-h-[var(--radix-dropdown-menu-content-available-height)] overflow-auto z-50 " +
-            "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 " +
-            "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 " +
-            "data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+          "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 " +
+          "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 " +
+          "data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
           className
         )}
         {...props}
@@ -75,14 +75,14 @@ function DropdownMenuItem({
       data-inset={inset}
       data-variant={variant}
       className={cn(
-        "relative flex items-center gap-2 px-3 py-2  text-sm cursor-pointer select-none " +
-          "focus:outline-none focus:bg-[#010b62] dark:focus:bg-[#01BAEF] focus:text-white " +
-          "data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed " +
-          (variant === "destructive"
-            ? "text-red-600 focus:bg-red-300 focus:text-red-900 dark:focus:bg-red-800 dark:focus:text-red-400"
-            : "text-[#010b62] dark:text-white") +
-          (inset ? " pl-8" : "") +
-          " transition-colors duration-150 ease-in-out",
+        "relative flex items-center gap-2 px-3 py-2 rounded-sm text-sm cursor-pointer select-none " +
+        "focus:outline-none focus:rounded-sm focus:bg-[#010b62] dark:focus:bg-[#01BAEF] focus:text-white " +
+        "data-[disabled]:opacity-50 data-[disabled]:cursor-not-allowed " +
+        (variant === "destructive"
+          ? "text-red-600 focus:bg-red-300 focus:text-red-900 dark:focus:bg-red-800 dark:focus:text-red-400"
+          : "text-[#010b62] dark:text-white") +
+        (inset ? " pl-8" : "") +
+        " transition-colors duration-150 ease-in-out",
         className
       )}
       {...props}
@@ -103,7 +103,7 @@ function DropdownMenuCheckboxItem({
   return (
     <DropdownMenuPrimitive.CheckboxItem
       className={cn(
-        "focus:bg-[#01BAEF] text-red-500 focus:text-[#010B62]relative flex cursor-default items-center gap-2 rounded-md py-1.5 pr-3 pl-8 text-sm outline-none select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 transition-colors duration-150",
+        "focus:bg-[#01BAEF] text-red-500 focus:text-[#010B62] relative flex cursor-default items-center gap-2 rounded-md py-1.5 pr-3 pl-8 text-sm outline-none select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 transition-colors duration-150",
         className
       )}
       checked={checked}
