@@ -44,12 +44,12 @@ function AvatarFallback({
     <AvatarPrimitive.Fallback
       data-slot="avatar-fallback"
       className={cn(
-        "bg-muted flex size-full items-center justify-center rounded-md dark:bg-[#030712]",
+        "bg-muted flex size-full items-center justify-center rounded-md dark:bg-[#030712] hover:bg-[#0969da]/15 dark:hover:bg-[#00afd3]/30",
         className
       )}
       {...props}
     >
-      <User className="w-4 h-4 text-muted-foreground" />{" "}
+      <User className="w-5 h-5 text-[#010b62] dark:text-white" />{" "}
       {/* Ícone de usuário */}
     </AvatarPrimitive.Fallback>
   );
