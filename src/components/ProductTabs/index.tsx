@@ -50,7 +50,7 @@ export default function ProductTabs({ productId }: ProductTabsProps) {
         );
 
       case "duvidas":
-        return <FAQ />;
+        return <FAQ productId={productId} />;
 
       default:
         return null;
