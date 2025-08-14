@@ -6,14 +6,14 @@ import { NavSection } from "./nav-section";
 import { Logo } from "./logo";
 import { UserMenu } from "./user-menu";
 import { useLockBodyScroll } from "../../hooks/useLockBodyScroll";
-import { SupabaseClient } from "@supabase/supabase-js";
+import { Session, SupabaseClient } from "@supabase/supabase-js";
 
 type Props = {
   open: boolean;
   setOpen: (v: boolean) => void;
   dropdownOpen: false | string;
   setDropdownOpen: (k: false | string) => void;
-  session: SupabaseClient;
+  session: Session | null; // agora aceita null
   profileName?: string | null;
   supabase: SupabaseClient;
   logoSize?: { w: number; h: number };

@@ -1,4 +1,3 @@
-// src/components/layout/Header/Header.tsx
 "use client";
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
@@ -36,9 +35,11 @@ export default function Header() {
         .eq("id", session.user.id)
         .single();
       if (!alive) return;
-      error
-        ? console.error("Erro ao carregar perfil:", error)
-        : setProfile(data);
+      if (error) {
+        console.error("Erro ao carregar perfil:", error);
+      } else {
+        setProfile(data);
+      }
     })();
     return () => {
       alive = false;

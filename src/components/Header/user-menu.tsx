@@ -12,12 +12,14 @@ import {
   DropdownMenuTrigger,
 } from "@/src/components/ui/dropdown-menu";
 
+import type { Session, SupabaseClient } from "@supabase/supabase-js";
+
 type Props = {
-  session: any;
+  session: Session | null;
   profileName?: string | null;
-  supabase: any;
+  supabase: SupabaseClient;
   variant?: "desktop" | "mobile";
-  onAfterAction?: () => void; // fechar menu mobile
+  onAfterAction?: () => void;
 };
 
 export function UserMenu({
