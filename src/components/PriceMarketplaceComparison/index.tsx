@@ -134,7 +134,7 @@ export default function PriceMarketplaceComparison({
                         <>
                           ou{" "}
                           <span className="font-semibold text-[#010b62]/70 dark:text-white/70">
-                            R${store.old_price}
+                            R${store.old_price} à prazo
                           </span>
                         </>
                       ) : (
