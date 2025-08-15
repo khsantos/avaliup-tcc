@@ -32,7 +32,7 @@ export default function ProductTabs({ productId }: ProductTabsProps) {
       case "precos":
         return (
           <div>
-            <PriceMarketplaceComparison />
+            <PriceMarketplaceComparison productId={productId} />
           </div>
         );
 
