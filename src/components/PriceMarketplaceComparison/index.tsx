@@ -77,14 +77,15 @@ export default function PriceMarketplaceComparison({
   }, [productId]);
 
   return (
-    <div className="mt-6">
+    <div className="mt-6 max-w-[1600px] mx-auto px-2 sm:px-4">
       <h2 className="text-2xl font-bold text-[#010b62] mb-0 dark:text-white">
         Opções de lojas
       </h2>
       <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
         Encontre a melhor opção para o seu bolso.
       </p>
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {stores.map((store, index) => (
           <Card
             key={index}
@@ -104,8 +105,8 @@ export default function PriceMarketplaceComparison({
             )}
 
             <CardContent className="pt-6 px-3 pb-3 flex flex-col">
-              <div className="flex gap-3 items-start">
-                <div className="w-20 h-28 flex items-center justify-center shrink-0 mt-6">
+              <div className="flex flex-col sm:flex-row gap-3 items-start">
+                <div className="w-full sm:w-24 h-32 flex items-center justify-center shrink-0 mt-4 sm:mt-0">
                   <Image
                     src={store.product_image!}
                     alt={store.name}
@@ -115,21 +116,18 @@ export default function PriceMarketplaceComparison({
                   />
                 </div>
                 <div className="flex flex-col justify-start w-full">
-                  <h1 className="mb-5 font-bold text-[#010b62] dark:text-white">
+                  <h1 className="mb-2 font-bold text-[#010b62] dark:text-white text-base sm:text-lg">
                     {capitalizeWords(store.marketplace)}
                   </h1>
-                  <h3
-                    className="font-normal text-md leading-tight text-left mb-1 text-[#010b62] dark:text-white
-  line-clamp-3 overflow-hidden"
-                  >
+                  <h3 className="font-normal text-sm sm:text-md leading-tight text-left mb-1 text-[#010b62] dark:text-white line-clamp-2 overflow-hidden">
                     {store.name}
                   </h3>
-                  <div>
-                    <div className="text-lg font-bold text-[#010b62] dark:text-white leading-snug mt-2">
+                  <div className="mt-2">
+                    <div className="text-lg sm:text-xl font-bold text-[#010b62] dark:text-white leading-snug">
                       R${store.price}{" "}
                       <span className="text-sm font-normal">à vista</span>
                     </div>
-                    <div className="text-[14px] text-gray-400 leading-tight">
+                    <div className="text-[12px] sm:text-[14px] text-gray-400 leading-tight">
                       {store.old_price !== null ? (
                         <>
                           ou{" "}
@@ -148,7 +146,7 @@ export default function PriceMarketplaceComparison({
               </div>
               <div className="pt-3 mt-auto">
                 <a href={store.href} target="_blank" rel="noopener noreferrer">
-                  <Button className="w-full dark:bg-[#01BAEF] dark:hover:bg-[#00a3e6] bg-[#010b62] hover:bg-[#010A24] text-white font-semibold text-md h-8">
+                  <Button className="w-full dark:bg-[#01BAEF] dark:hover:bg-[#00a3e6] bg-[#010b62] hover:bg-[#010A24] text-white font-semibold text-sm sm:text-md h-8">
                     Acessar
                   </Button>
                 </a>
