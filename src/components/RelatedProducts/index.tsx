@@ -5,6 +5,7 @@ import { supabase } from "@/src/lib/supabase";
 import Image from "next/image";
 import Link from "next/link";
 import { Star } from "lucide-react";
+import { Card } from "@/src/components/ui/card";
 
 interface RelatedProductsProps {
   productId: number;
@@ -23,7 +24,6 @@ export const RelatedProducts = ({ productId }: RelatedProductsProps) => {
 
   useEffect(() => {
     async function fetchRelated() {
-      // Buscar categoria do produto atual
       const { data: currentProduct } = await supabase
         .from("products")
         .select("category")
@@ -32,7 +32,6 @@ export const RelatedProducts = ({ productId }: RelatedProductsProps) => {
 
       if (!currentProduct) return;
 
-      // Buscar produtos da mesma categoria (exclui o atual)
       const { data, error } = await supabase
         .from("products")
         .select("id, name, image, category, rating")
@@ -40,9 +39,8 @@ export const RelatedProducts = ({ productId }: RelatedProductsProps) => {
         .neq("id", productId);
 
       if (!error && data) {
-        // Embaralhar no client-side
         const shuffled = data.sort(() => 0.5 - Math.random());
-        setProducts(shuffled.slice(0, 5)); // pega só 5
+        setProducts(shuffled.slice(0, 5));
       }
     }
 
@@ -53,18 +51,23 @@ export const RelatedProducts = ({ productId }: RelatedProductsProps) => {
 
   return (
     <div className="mt-12">
-      <h2 className="text-xl font-bold mb-6 text-white">
+      <h2 className="text-xl font-bold mb-6 dark:text-white text-[#010b62]">
         Produtos relacionados
       </h2>
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
         {products.map((product) => (
-          <div
+          <Card
             key={product.id}
-            className="bg-[#0A0A12] rounded-xl shadow-md flex flex-col items-center p-4"
+            className="flex flex-col items-center justify-between border border-[#010b62] dark:border-white dark:bg-[#030712] rounded-xl shadow-md p-4"
           >
+            {/* Nome */}
+            <h3 className="text-sm font-semibold text-left dark:text-white text-[#010b62] line-clamp-2 mb-3">
+              {product.name}
+            </h3>
+
             {/* Imagem */}
-            <div className="w-28 h-28 flex items-center justify-center">
+            <div className="w-28 h-28 flex items-center justify-center mb-3">
               <Image
                 src={product.image || "/placeholder.svg"}
                 alt={product.name}
@@ -74,28 +77,27 @@ export const RelatedProducts = ({ productId }: RelatedProductsProps) => {
               />
             </div>
 
-            {/* Nome */}
-            <h3 className="mt-4 text-sm font-semibold text-center text-white line-clamp-2">
-              {product.name}
-            </h3>
-
             {/* Nota */}
-            <div className="flex items-center gap-1 mt-2">
-              <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-              <span className="text-sm font-bold text-yellow-400">
-                {product.rating?.toFixed(1) || "0"}
-              </span>
+            <div className="flex flex-col items-start self-start">
+              <div className="flex items-center gap-1">
+                <Star className="w-4 h-4 text-[#FFB24B] fill-[#FFB24B]" />
+                <span className="text-sm font-bold text-[#FFB24B]">
+                  {product.rating?.toFixed(1) || "Sem nota"}
+                </span>
+              </div>
+              <p className="text-sm text-[#010b62]/70 dark:text-white/50">
+                Nota Avali.up
+              </p>
             </div>
-            <p className="text-xs text-gray-400 -mt-1">Nota Avali.up</p>
 
             {/* Botão */}
             <Link
               href={`/produto/${product.id}`}
-              className="mt-3 w-full bg-[#01BAEF] hover:bg-[#009FCC] text-white text-sm font-medium py-2 rounded-md text-center transition"
+              className="w-full bg-[#010b62] hover:bg-[#021052] text-white text-sm dark:bg-[#01BAEF] hover:dark:bg-[#01BAFE] font-medium py-2 rounded-md text-center transition -mt-2"
             >
               Ver avaliações
             </Link>
-          </div>
+          </Card>
         ))}
       </div>
     </div>
