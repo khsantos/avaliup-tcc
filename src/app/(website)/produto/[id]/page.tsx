@@ -20,7 +20,6 @@ export default async function ProductPage(props: {
     <div className="w-[80%] mx-auto text-white">
       <ProductLayout product={product} />
       <ProductTabs productId={product.id} />
-
       <RelatedProducts productId={product.id} />
     </div>
   );

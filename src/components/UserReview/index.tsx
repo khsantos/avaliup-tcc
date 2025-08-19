@@ -19,6 +19,7 @@ import { supabase } from "@/src/lib/supabase";
 import { UserReview } from "@/src/types/User_Review";
 import { cn } from "@/lib/utils";
 import ReviewDetailsModal from "../UserReviewDetails";
+import { Pagination } from "../Pagination";
 
 type UserReviewProps = {
   productId: number;
@@ -38,6 +39,10 @@ export default function UserReviews({ productId }: UserReviewProps) {
     "recent"
   );
   const [filterRating, setFilterRating] = useState<number | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const REVIEWS_PER_PAGE = 8;
 
   type ReviewVote = {
     vote_type: "like" | "dislike";
@@ -159,6 +164,19 @@ export default function UserReviews({ productId }: UserReviewProps) {
 
       setLoading(true);
 
+      let countQuery = supabase
+        .from("reviews")
+        .select("*", { count: "exact", head: true })
+        .eq("product_id", productId);
+
+      if (filterRating) {
+        countQuery = countQuery.eq("rating", filterRating);
+      }
+      const { count } = await countQuery;
+      if (count) {
+        setTotalPages(Math.ceil(count / REVIEWS_PER_PAGE));
+      }
+
       let query = supabase
         .from("reviews")
         .select(
@@ -183,6 +201,10 @@ export default function UserReviews({ productId }: UserReviewProps) {
       } else if (sortBy === "useful") {
         query = query.order("likes", { ascending: false });
       }
+
+      const from = (currentPage - 1) * REVIEWS_PER_PAGE;
+      const to = from + REVIEWS_PER_PAGE - 1;
+      query = query.range(from, to);
 
       const { data, error } = await query;
 
@@ -232,7 +254,11 @@ export default function UserReviews({ productId }: UserReviewProps) {
     };
 
     fetchReviews();
-  }, [productId, sortBy, filterRating]);
+  }, [productId, sortBy, filterRating, currentPage]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, index) => (
@@ -510,6 +536,13 @@ export default function UserReviews({ productId }: UserReviewProps) {
           </div>
         )}
       </div>
+
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
+
       {selectedReview && (
         <ReviewDetailsModal
           review={selectedReview}
