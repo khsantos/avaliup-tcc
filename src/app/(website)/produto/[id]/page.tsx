@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { supabase } from "@/src/lib/supabase";
 import ProductTabs from "@/src/components/ProductTabs";
 import ProductLayout from "@/src/components/ProductLayout";
+import { RelatedProducts } from "@/src/components/RelatedProducts";
 
 export default async function ProductPage(props: {
   params: Promise<{ id: string }>;
@@ -20,7 +21,7 @@ export default async function ProductPage(props: {
       <ProductLayout product={product} />
       <ProductTabs productId={product.id} />
 
-      {/* <RelatedProducts productId={product.id} /> */}
+      <RelatedProducts productId={product.id} />
     </div>
   );
 }
