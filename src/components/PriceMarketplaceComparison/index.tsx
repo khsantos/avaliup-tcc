@@ -47,6 +47,16 @@ export default function PriceMarketplaceComparison({
         return;
       }
 
+      const { data: productData, error: productError } = await supabase
+        .from("products")
+        .select("id, name, price, old_price, href, image, marketplace")
+        .eq("id", productId)
+        .single();
+
+      if (productError) {
+        console.error("Erro ao buscar produto: ", productError);
+      }
+
       const typedData = data as unknown as {
         name: string;
         marketplace: string;
@@ -63,14 +73,42 @@ export default function PriceMarketplaceComparison({
         product_image: item.products?.image || "/logo-menu.svg",
       }));
 
-      mapped.sort((a, b) => {
+      let allStores = mapped;
+
+      if (productData) {
+        const exists = mapped.some(
+          (item) =>
+            item.marketplace.toLowerCase().trim() ===
+            (productData.marketplace?.toLowerCase().trim() || "")
+        );
+
+        if (!exists) {
+          allStores = [
+            {
+              name: productData.name,
+              marketplace: productData.marketplace || "Produto Principal",
+              price: productData.price,
+              old_price: productData.old_price,
+              href: productData.href,
+              is_on_sale:
+                productData.old_price !== null &&
+                productData.old_price > productData.price,
+              products_id: productData.id,
+              product_image: productData.image || "/logo-menu.svg",
+            },
+            ...mapped,
+          ];
+        }
+      }
+
+      allStores.sort((a, b) => {
         if (a.is_on_sale === b.is_on_sale) {
           return a.price - b.price;
         }
         return a.is_on_sale ? -1 : 1;
       });
 
-      setStores(mapped);
+      setStores(allStores);
     }
 
     fetchPrices();
