@@ -52,7 +52,7 @@ export const Pagination = ({
           disabled={page === "..."}
           className={`px-3 py-1 rounded border text-[#010b62] dark:text-white ${
             page === currentPage
-              ? "border-[#010b62] font-bold"
+              ? "border-[#010b62] dark:border-[#01BAEF] font-bold"
               : "border-transparent"
           }`}
         >
