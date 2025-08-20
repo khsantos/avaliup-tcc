@@ -2,19 +2,23 @@ import { Dispatch, SetStateAction, useCallback } from "react";
 import { toast } from "sonner";
 import { Comentario } from "@/src/types/Comentario";
 import { Question } from "@/src/types/Question";
-import { supabase } from "../lib/supabase";
 import { User } from "../types/User";
+import { SupabaseClient } from "@supabase/supabase-js";
 
 interface UseFAQActionsProps {
-  supabase: supabase;
+  supabase: SupabaseClient;
   user: User;
   setQuestions: Dispatch<SetStateAction<Question[]>>;
-  setRespostasListadas: Dispatch<SetStateAction<{ [key: string]: Comentario[] }>>;
+  setRespostasListadas: Dispatch<
+    SetStateAction<{ [key: string]: Comentario[] }>
+  >;
   setRespostas: Dispatch<SetStateAction<{ [key: string]: string }>>;
   setErrorMsg: Dispatch<SetStateAction<string>>;
   setLoading: Dispatch<SetStateAction<boolean>>;
   setDescription: Dispatch<SetStateAction<string>>;
-  setAnimatedVote: Dispatch<SetStateAction<{ [key: string]: "like" | "dislike" | null }>>;
+  setAnimatedVote: Dispatch<
+    SetStateAction<{ [key: string]: "like" | "dislike" | null }>
+  >;
   respostas: { [key: string]: string };
   questions: Question[];
 }
@@ -60,7 +64,10 @@ export function useFAQActions({
           (v) => v.vote_type === "dislike"
         ).length,
         userVote: (
-          q.faq_questions_votes as { vote_type: string; user_id: string }[]
+          q.faq_questions_votes as {
+            vote_type: "like" | "dislike";
+            user_id: string;
+          }[]
         ).find((v) => v.user_id === user?.id)?.vote_type,
       }));
 
@@ -108,7 +115,7 @@ export function useFAQActions({
     });
 
     if (!error) {
-      setRespostas((prev: any) => ({ ...prev, [questionId]: "" }));
+      setRespostas((prev) => ({ ...prev, [questionId]: "" }));
       fetchAllAnswers();
       toast.success("Resposta enviada com sucesso!");
     } else {
@@ -175,9 +182,9 @@ export function useFAQActions({
       );
     }
 
-    setAnimatedVote((prev: any) => ({ ...prev, [questionId]: voteType }));
+    setAnimatedVote((prev) => ({ ...prev, [questionId]: voteType }));
     setTimeout(() => {
-      setAnimatedVote((prev: any) => ({ ...prev, [questionId]: null }));
+      setAnimatedVote((prev) => ({ ...prev, [questionId]: null }));
     }, 400);
 
     fetchQuestions();

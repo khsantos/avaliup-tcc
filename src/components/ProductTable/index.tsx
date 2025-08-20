@@ -10,19 +10,19 @@ import {
 } from "../ui/table";
 import { Checkbox } from "../ui/checkbox";
 import { Star, ArrowDown, ArrowUp } from "lucide-react";
-import { Products } from "@/src/types/Product";
+import { Product } from "@/src/types/Product";
 import Image from "next/image";
 import { useState } from "react";
 
 type ProdutoTableProps = {
-  produtos: Products[];
+  produtos: Product[];
 };
 
 export function ProdutoTable({ produtos }: ProdutoTableProps) {
-  const [sortColumn, setSortColumn] = useState<keyof Products | null>(null);
+  const [sortColumn, setSortColumn] = useState<keyof Product | null>(null);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
-  const handleSort = (column: keyof Products) => {
+  const handleSort = (column: keyof Product) => {
     if (sortColumn === column) {
       setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
     } else {
@@ -52,7 +52,7 @@ export function ProdutoTable({ produtos }: ProdutoTableProps) {
     return 0;
   });
 
-  const renderSortIcon = (column: keyof Products) => {
+  const renderSortIcon = (column: keyof Product) => {
     if (sortColumn !== column) return null;
 
     return sortDirection === "asc" ? (
@@ -71,27 +71,27 @@ export function ProdutoTable({ produtos }: ProdutoTableProps) {
           </TableHead>
           <TableHead
             className="text-[#010B62] dark:text-white cursor-pointer select-none"
-            onClick={() => handleSort("nome")}
+            onClick={() => handleSort("name")}
           >
-            Nome {renderSortIcon("nome")}
+            Nome {renderSortIcon("name")}
           </TableHead>
           <TableHead
             className="text-[#010B62] dark:text-white cursor-pointer select-none"
-            onClick={() => handleSort("categoria")}
+            onClick={() => handleSort("category")}
           >
-            Categoria {renderSortIcon("categoria")}
+            Categoria {renderSortIcon("category")}
           </TableHead>
           <TableHead
             className="text-[#010B62] dark:text-white cursor-pointer select-none"
-            onClick={() => handleSort("subcategoria")}
+            onClick={() => handleSort("subcategory")}
           >
-            Subcategoria {renderSortIcon("subcategoria")}
+            Subcategoria {renderSortIcon("subcategory")}
           </TableHead>
           <TableHead
             className="text-[#010B62] dark:text-white cursor-pointer select-none"
-            onClick={() => handleSort("nota")}
+            onClick={() => handleSort("rating")}
           >
-            Nota Geral {renderSortIcon("nota")}
+            Nota Geral {renderSortIcon("rating")}
           </TableHead>
           <TableHead className="text-[#010B62] dark:text-white">
             Ativo
@@ -104,23 +104,23 @@ export function ProdutoTable({ produtos }: ProdutoTableProps) {
           <TableRow key={produto.id}>
             <TableCell>
               <Image
-                src={produto.imagem}
-                alt={produto.categoria}
+                src={produto.image}
+                alt={produto.category}
                 width={60}
                 height={40}
                 className="rounded w-16 h-16 object-cover"
               />
             </TableCell>
-            <TableCell className="pl-10">{produto.nome}</TableCell>
-            <TableCell>{produto.categoria}</TableCell>
-            <TableCell>{produto.subcategoria}</TableCell>
+            <TableCell className="pl-10">{produto.name}</TableCell>
+            <TableCell>{produto.category}</TableCell>
+            <TableCell>{produto.subcategory}</TableCell>
             <TableCell className="flex items-center gap-1">
               <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-              {produto.nota}
+              {produto.rating}
             </TableCell>
             <TableCell>
               <Checkbox
-                checked={produto.ativo}
+                checked={produto.isActive}
                 className="border-gray-800 dark:border-gray-50"
               />
             </TableCell>

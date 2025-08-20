@@ -1,38 +1,37 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { supabase } from "@/src/lib/supabase";
 import ProductCard from "@/src/components/ProductCard";
 import { Product } from "@/src/types/Product";
 
 export default function SearchPage() {
-  const searchParams = useSearchParams();
-  const query = searchParams.get("query");
+  const [query, setQuery] = useState<string | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!query) return;
+    const params = new URLSearchParams(window.location.search);
+    const q = params.get("query");
+    setQuery(q);
+
+    if (!q) return;
+
     const fetchProducts = async () => {
       setLoading(true);
-
       const { data, error } = await supabase
         .from("products")
         .select("*")
-        .ilike("name", `%${query}%`);
+        .ilike("name", `%${q}%`);
 
-      if (error) {
-        console.error("Error fetching products:", error);
-      } else {
-        setProducts(data as Product[]);
-      }
+      if (error) console.error("Error fetching products:", error);
+      else setProducts(data as Product[]);
+
       setLoading(false);
     };
 
     fetchProducts();
-  }, [query]);
-
+  }, []);
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold text-[#010b62] dark:text-white mb-6">

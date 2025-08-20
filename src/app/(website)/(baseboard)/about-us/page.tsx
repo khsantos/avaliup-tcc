@@ -1,8 +1,8 @@
 "use client";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 
 export default function Page() {
-  const router = useRouter();
+  // const router = useRouter();
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-[#030712] px-4">
