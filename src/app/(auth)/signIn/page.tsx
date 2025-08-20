@@ -2,12 +2,13 @@
 
 import { supabase } from "@/src/lib/supabase";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { FiEye, FiEyeOff, FiArrowLeft } from "react-icons/fi"; // Adicionando o ícone
+import { FiEye, FiEyeOff, FiArrowLeft } from "react-icons/fi";
 import Logo from "@/src/components/Logo";
 import ThemeSwitch from "@/src/components/ThemeSwitch";
 import { toast } from "sonner";
+import Image from "next/image";
 
 export default function Login() {
   const router = useRouter();
@@ -15,20 +16,18 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const searchParams = useSearchParams();
+
   const hasShownToast = useRef(false);
   const [loading, setLoading] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
 
   useEffect(() => {
-    if (!hasShownToast.current && searchParams.get("success") === "1") {
-      toast.success("Conta criada com sucesso! Faça login para continuar.", {
-        description: "Seja bem-vindo(a) ao Avali.up!",
-        duration: 4000,
-      });
+    const params = new URLSearchParams(window.location.search);
+    if (!hasShownToast.current && params.get("success") === "1") {
+      toast.success("Conta criada com sucesso!");
       hasShownToast.current = true;
     }
-  }, [searchParams]);
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -171,7 +170,7 @@ export default function Login() {
           type="button"
           className="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-[#010B62] border rounded-md border-[#010B62] hover:bg-gray-300 cursor-pointer dark:text-white dark-border-white dark:hover:bg-[#202766] dark:border-white"
         >
-          <img src="/google-icon.svg" alt="Google" className="w-5 h-5 mr-2" />
+          <Image src="/google-icon.svg" alt="Google" className="w-5 h-5 mr-2" />
           Google
         </button>
         <div className="text-center justify-center text-sm text-gray-500">

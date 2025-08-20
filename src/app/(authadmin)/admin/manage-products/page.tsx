@@ -1,5 +1,5 @@
-import { ProdutoTable } from "@/src/components/ProductTable";
-import { produtos } from "@/src/data/products";
+// import { ProdutoTable } from "@/src/components/ProductTable";
+// import { produtos } from "@/src/data/products";
 
 export const metadata = {
   title: "Gerenciar Produtos",
@@ -20,7 +20,7 @@ function Page() {
 
       <div>
         <div className="overflow-x-auto mt-4">
-          <ProdutoTable produtos={produtos} />
+          {/* <ProdutoTable produtos={produtos} /> */}
         </div>
       </div>
     </div>
