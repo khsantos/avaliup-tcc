@@ -39,5 +39,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/profile-page"], // você pode expandir isso, ex: "/dashboard/:path*"
+  matcher: ["/profile-general", "/profile-edit"], // você pode expandir isso, ex: "/dashboard/:path*"
 };
