@@ -144,8 +144,8 @@ export default function Login() {
             {loading
               ? "Entrando..."
               : redirecting
-              ? "Redirecionando..."
-              : "Entrar"}
+                ? "Redirecionando..."
+                : "Entrar"}
           </button>
         </form>
         <div className="text-center">
