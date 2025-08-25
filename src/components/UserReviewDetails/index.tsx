@@ -61,7 +61,7 @@ export default function ReviewDetailsModal({
                     <Star
                       key={i}
                       className={`w-6 h-6 ${
-                        i < char.value
+                        i < (char.value ?? 0)
                           ? "fill-[#FFB24B] text-[#FFB24B]"
                           : "text-gray-300"
                       }`}
