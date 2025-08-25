@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import ThemeSwitch from "@/src/components/ThemeSwitch";
 import { SearchBar } from "./search-bar";
-import { Logo } from "./logo";
+import Logo from "../Logo";
 import { DesktopNav } from "./desktop-nav";
 import { UserMenu } from "./user-menu";
 import { MobileDrawer } from "./mobile-drawer";

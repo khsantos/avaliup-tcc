@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { NAV } from "@/src/components/Header/nav/nav.config";
-import { Logo } from "@/src/components/Header/logo";
+import Logo from "../Logo";
 import { SiInstagram, SiYoutube, SiLinkedin } from "react-icons/si";
 
 function SocialLinks() {
@@ -43,7 +43,9 @@ function SocialLinks() {
 }
 
 export default function Footer() {
-  const menuGroups = NAV.filter((g) => Array.isArray(g.items) && g.items.length > 0);
+  const menuGroups = NAV.filter(
+    (g) => Array.isArray(g.items) && g.items.length > 0
+  );
   const year = new Date().getFullYear();
 
   return (
@@ -59,23 +61,54 @@ export default function Footer() {
         {/* centralizado, com wrap, sem sobras */}
         <div className="flex flex-wrap items-start justify-center gap-x-16 gap-y-10">
           {/* Logo + redes (centralizados) */}
-          <section aria-labelledby="footer-brand" className="flex flex-col items-center gap-4 basis-64 shrink-0">
-            <div id="footer-brand" className="relative w-[60px] h-[38px] sm:w-[78px] sm:h-[49px]">
+          <section
+            aria-labelledby="footer-brand"
+            className="flex flex-col items-center gap-4 basis-64 shrink-0"
+          >
+            <div
+              id="footer-brand"
+              className="relative w-[60px] h-[38px] sm:w-[78px] sm:h-[49px]"
+            >
               <Logo />
             </div>
             <SocialLinks />
           </section>
 
           {/* Empresa */}
-          <nav aria-labelledby="footer-company" className="basis-40 shrink-0 flex flex-col items-center md:items-start">
-            <h4 id="footer-company" className="mb-3 text-sm font-semibold tracking-tight text-center md:text-left">
+          <nav
+            aria-labelledby="footer-company"
+            className="basis-40 shrink-0 flex flex-col items-center md:items-start"
+          >
+            <h4
+              id="footer-company"
+              className="mb-3 text-sm font-semibold tracking-tight text-center md:text-left"
+            >
               Empresa
             </h4>
-            <ul role="list" className="space-y-2 text-gray-600 dark:text-gray-300 text-center md:text-left">
-              <li><Link href="/about-us" className="hover:underline">Sobre nós</Link></li>
-              <li><Link href="/security" className="hover:underline">Segurança</Link></li>
-              <li><Link href="/terms-of-use" className="hover:underline">Termos de uso</Link></li>
-              <li><Link href="/policy-and-privacy" className="hover:underline">Política de privacidade</Link></li>
+            <ul
+              role="list"
+              className="space-y-2 text-gray-600 dark:text-gray-300 text-center md:text-left"
+            >
+              <li>
+                <Link href="/about-us" className="hover:underline">
+                  Sobre nós
+                </Link>
+              </li>
+              <li>
+                <Link href="/security" className="hover:underline">
+                  Segurança
+                </Link>
+              </li>
+              <li>
+                <Link href="/terms-of-use" className="hover:underline">
+                  Termos de uso
+                </Link>
+              </li>
+              <li>
+                <Link href="/policy-and-privacy" className="hover:underline">
+                  Política de privacidade
+                </Link>
+              </li>
             </ul>
           </nav>
 
@@ -86,13 +119,21 @@ export default function Footer() {
               aria-labelledby={`footer-${group.key}`}
               className="basis-40 shrink-0 flex flex-col items-center md:items-start"
             >
-              <h4 id={`footer-${group.key}`} className="mb-3 text-sm font-semibold tracking-tight text-center md:text-left">
+              <h4
+                id={`footer-${group.key}`}
+                className="mb-3 text-sm font-semibold tracking-tight text-center md:text-left"
+              >
                 {group.label}
               </h4>
-              <ul role="list" className="space-y-2 text-gray-600 dark:text-gray-300 text-center md:text-left">
+              <ul
+                role="list"
+                className="space-y-2 text-gray-600 dark:text-gray-300 text-center md:text-left"
+              >
                 {group.items!.map((it) => (
                   <li key={it.href}>
-                    <Link href={it.href} className="hover:underline">{it.label}</Link>
+                    <Link href={it.href} className="hover:underline">
+                      {it.label}
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -100,12 +141,25 @@ export default function Footer() {
           ))}
 
           {/* Ranking */}
-          <nav aria-labelledby="footer-ranking" className="basis-40 shrink-0 flex flex-col items-center md:items-start">
-            <h4 id="footer-ranking" className="mb-3 text-sm font-semibold tracking-tight text-center md:text-left">
+          <nav
+            aria-labelledby="footer-ranking"
+            className="basis-40 shrink-0 flex flex-col items-center md:items-start"
+          >
+            <h4
+              id="footer-ranking"
+              className="mb-3 text-sm font-semibold tracking-tight text-center md:text-left"
+            >
               Ranking
             </h4>
-            <ul role="list" className="space-y-2 text-gray-600 dark:text-gray-300 text-center md:text-left">
-              <li><Link href="/ranking" className="hover:underline">Ver ranking</Link></li>
+            <ul
+              role="list"
+              className="space-y-2 text-gray-600 dark:text-gray-300 text-center md:text-left"
+            >
+              <li>
+                <Link href="/ranking" className="hover:underline">
+                  Ver ranking
+                </Link>
+              </li>
             </ul>
           </nav>
         </div>
@@ -115,7 +169,6 @@ export default function Footer() {
       <div className="px-4 sm:px-6 md:px-8 py-4 text-xs text-center text-gray-600 dark:text-gray-400">
         <p>&copy; {year} Avali.up. Todos os direitos reservados.</p>
       </div>
-
     </footer>
   );
 }
