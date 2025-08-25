@@ -5,15 +5,16 @@ import { supabase } from "@/src/lib/supabase";
 import { UserReview } from "@/src/types/User_Review";
 
 import ReviewDetailsModal from "../UserReviewDetails";
-import { Pagination } from "../Pagination";
 import { ReviewCard } from "../ReviewCard";
 import { toast } from "sonner";
+import { Pagination } from "../Pagination";
 
-type UserReviewProps = {
+type ProfileReviewProps = {
   productId: number;
+  userId?: string;
 };
 
-export default function UserReviews({ productId }: UserReviewProps) {
+export default function ProfileReview({ productId }: ProfileReviewProps) {
   const [reviews, setReviews] = useState<UserReview[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedIds, setExpandedIds] = useState<string[]>([]);
@@ -23,18 +24,15 @@ export default function UserReviews({ productId }: UserReviewProps) {
   const [userId, setUserId] = useState<string | null>(null);
   const [selectedReview, setSelectedReview] = useState<UserReview | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [sortBy, setSortBy] = useState<"recent" | "high" | "low" | "useful">(
     "recent"
   );
   const [filterRating, setFilterRating] = useState<number | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
 
   const REVIEWS_PER_PAGE = 8;
-
-  type ReviewVote = {
-    vote_type: "like" | "dislike";
-  };
+  type ReviewVote = { vote_type: "like" | "dislike" };
 
   useEffect(() => {
     const getUserId = async () => {
@@ -145,52 +143,49 @@ export default function UserReviews({ productId }: UserReviewProps) {
 
   useEffect(() => {
     const fetchReviews = async () => {
-      if (!productId) return;
+      if (!productId || !userId) return;
 
       setLoading(true);
 
       let countQuery = supabase
         .from("reviews")
         .select("*", { count: "exact", head: true })
-        .eq("product_id", productId);
+        .eq("product_id", productId)
+        .eq("users_id", userId);
 
-      if (filterRating) {
-        countQuery = countQuery.eq("rating", filterRating);
-      }
+      if (filterRating) countQuery = countQuery.eq("rating", filterRating);
+
       const { count } = await countQuery;
-      if (count) {
-        setTotalPages(Math.ceil(count / REVIEWS_PER_PAGE));
-      }
+      if (count) setTotalPages(Math.ceil(count / REVIEWS_PER_PAGE));
+
+      const from = (currentPage - 1) * REVIEWS_PER_PAGE;
+      const to = from + REVIEWS_PER_PAGE - 1;
 
       let query = supabase
         .from("reviews")
         .select(
           `
-      *,
-      users (id, name, profile_img),
-      review_votes (vote_type),
-      products (id, name, image)
-    `
+    *,
+    users (id, name, profile_img),
+    review_votes (vote_type),
+    products (id, name, image)
+  `
         )
-        .eq("product_id", productId);
+        .range(from, to);
 
-      if (filterRating) {
-        query = query.eq("rating", filterRating);
-      }
+      if (productId) query = query.eq("product_id", productId);
+      if (userId) query = query.eq("users_id", userId);
 
-      if (sortBy === "recent") {
+      if (filterRating) query = query.eq("rating", filterRating);
+
+      if (sortBy === "recent")
         query = query.order("created_at", { ascending: false });
-      } else if (sortBy === "high") {
+      else if (sortBy === "high")
         query = query.order("rating", { ascending: false });
-      } else if (sortBy === "low") {
+      else if (sortBy === "low")
         query = query.order("rating", { ascending: true });
-      } else if (sortBy === "useful") {
+      else if (sortBy === "useful")
         query = query.order("likes", { ascending: false });
-      }
-
-      const from = (currentPage - 1) * REVIEWS_PER_PAGE;
-      const to = from + REVIEWS_PER_PAGE - 1;
-      query = query.range(from, to);
 
       const { data, error } = await query;
 
@@ -199,8 +194,6 @@ export default function UserReviews({ productId }: UserReviewProps) {
         setLoading(false);
         return;
       }
-
-      console.log("Reviews fetched:", data);
 
       if (data) {
         const parsed = data.map((item) => {
@@ -241,25 +234,26 @@ export default function UserReviews({ productId }: UserReviewProps) {
 
         setReviews(parsed);
       }
+
       setLoading(false);
     };
 
     fetchReviews();
-  }, [productId, sortBy, filterRating, currentPage]);
+  }, [productId, userId, currentPage, sortBy, filterRating]);
+
+  const handleToggleExpand = (id: string) => {
+    setExpandedIds((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
+  };
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
-  const handleToggleExpand = (id: string) => {
-    setExpandedIds((prev) =>
-      prev.includes(id) ? prev.filter((itemId) => itemId !== id) : [...prev, id]
-    );
-  };
-
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center ">
+      <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold text-[#010b62] dark:text-white mt-6">
           Avaliações dos usuários
         </h2>
@@ -340,48 +334,36 @@ export default function UserReviews({ productId }: UserReviewProps) {
           </div>
         </div>
       </div>
-
+      {loading && <p className="text-gray-500">Carregando avaliações...</p>}
       <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
-        {reviews.length > 0 ? (
-          reviews.map((review) => {
-            const hasLiked = userVotes[review.id] === "like";
-            const hasDisliked = userVotes[review.id] === "dislike";
-            return (
+        {reviews.length > 0
+          ? reviews.map((review) => (
               <ReviewCard
                 key={review.id}
                 review={review}
-                variant="user"
+                variant="product"
                 onOpenDetails={(rev) => {
                   setSelectedReview(rev);
                   setIsModalOpen(true);
                 }}
                 onVote={handleVote}
-                hasLiked={hasLiked}
-                hasDisliked={hasDisliked}
+                hasLiked={userVotes[review.id] === "like"}
+                hasDisliked={userVotes[review.id] === "dislike"}
                 isExpanded={expandedIds.includes(review.id)}
                 onToggleExpand={handleToggleExpand}
               />
-            );
-          })
-        ) : (
-          <div className="text-center py-6 col-span-2">
-            {loading ? (
-              <p className="text-gray-500">Carregando avaliações...</p>
-            ) : (
-              <p className="text-gray-500">
-                Nenhuma avaliação encontrada. Seja o primeiro a avaliar!
-              </p>
+            ))
+          : !loading && (
+              <p className="text-gray-500">Nenhuma avaliação encontrada.</p>
             )}
-          </div>
-        )}
       </div>
-
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />
-
+      <div className="flex justify-center mt-4 md:col-span-2">
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      </div>
       {selectedReview && (
         <ReviewDetailsModal
           review={selectedReview}
