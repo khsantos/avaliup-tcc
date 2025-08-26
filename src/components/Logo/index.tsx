@@ -1,28 +1,43 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useTheme } from "next-themes";
 import Image from "next/image";
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 
 export default function Logo() {
-    const { theme } = useTheme();
-    const [mounted, setMounted] = useState(false);
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
-    useEffect(() => {
-        setMounted(true);
-    }, []);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-    if (!mounted) {
-        return <div className="h-[69px] w-[120px] mx-auto" />;
-    }
-
+  if (!mounted) {
     return (
+      <Link href="/">
         <Image
-            src={theme === "dark" ? "/logo-dark.svg" : "/logo-light.svg"}
-            alt="Logo"
-            width={120}
-            height={69}
-            className="mx-auto"
+          src="/logo-menu.svg"
+          alt="Logo"
+          width={78}
+          height={49}
+          className="w-full h-full"
         />
+      </Link>
     );
+  }
+
+  return (
+    <Link href="/">
+      <Image
+        src={
+          resolvedTheme === "dark" ? "/logo-menu-dark.svg" : "/logo-menu.svg"
+        }
+        alt="Logo"
+        width={78}
+        height={49}
+        className="w-full h-full"
+      />
+    </Link>
+  );
 }
