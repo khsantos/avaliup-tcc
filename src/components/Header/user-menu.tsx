@@ -74,7 +74,7 @@ export function UserMenu({
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href="/profile" onClick={onAfterAction}>
+          <Link href="/profile-general" onClick={onAfterAction}>
             Meu perfil
           </Link>
         </DropdownMenuItem>
