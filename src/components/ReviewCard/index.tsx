@@ -63,8 +63,8 @@ export function ReviewCard({
         {showComments && (
           <ReviewComments
             reviewId={review.id}
+            setReviews={setReviews}
             onCommentAdded={() => {
-              // Atualiza apenas este review no estado de reviews do pai
               setReviews?.((prev) =>
                 prev.map((r) =>
                   r.id === review.id

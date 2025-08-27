@@ -3,46 +3,76 @@ import { useSupabase } from "@/src/contexts/supabase-provider";
 import { useFetchComments } from "@/src/hooks/useFetchComments";
 import { Button } from "../ui/button";
 import Image from "next/image";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { toast } from "sonner";
+import { UserReview } from "@/src/types/UserReview";
 
 interface ReviewCommentsProps {
   reviewId: string;
   onCommentAdded?: () => void;
+  setReviews?: React.Dispatch<React.SetStateAction<UserReview[]>>;
 }
 
 export function ReviewComments({
   reviewId,
   onCommentAdded,
+  setReviews,
 }: ReviewCommentsProps) {
   const { supabase } = useSupabase();
   const { comments, loading, setComments } = useFetchComments(reviewId);
   const [newComment, setNewComment] = useState("");
-  const newCommentsCount = (comments?.length || 0) + 1;
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleAddComment = async () => {
-    if (!newComment.trim()) return;
+    if (!newComment.trim()) {
+      toast.error("Digite algo antes de comentar.");
+      return;
+    }
+
+    setIsSubmitting(true);
 
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
-    if (!user) return;
+    if (!user) {
+      setIsSubmitting(false);
+      toast.error("Você precisa estar logado para comentar.");
+      return;
+    }
 
     const { data, error } = await supabase
       .from("review_comments")
       .insert([{ review_id: reviewId, user_id: user.id, text: newComment }])
       .select("*, users(name, profile_img)");
 
-    if (!error && data) {
-      setComments((prev) => [data[0], ...prev]);
+    if (error) {
+      toast.error("Erro ao adicionar comentário. Tente novamente.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (data) {
+      const updatedComments = [data[0], ...comments];
+      setComments(updatedComments);
       setNewComment("");
 
-      if (onCommentAdded) onCommentAdded();
+      setReviews?.((prev) =>
+        prev.map((r) =>
+          r.id === reviewId ? { ...r, comments: updatedComments.length } : r
+        )
+      );
 
       await supabase
         .from("reviews")
-        .update({ comments: newCommentsCount })
+        .update({ comments: updatedComments.length })
         .eq("id", reviewId);
+
+      if (onCommentAdded) onCommentAdded();
+      toast.success("Comentário adicionado com sucesso!");
     }
+
+    setIsSubmitting(false);
   };
 
   return (
@@ -53,13 +83,15 @@ export function ReviewComments({
           placeholder="Escreva um comentário..."
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
+          disabled={isSubmitting}
         />
         <Button
           size="sm"
-          className="dark:bg-[#01BAEF] bg-[#010b62] hover:bg-[]"
+          disabled={isSubmitting}
+          className="dark:bg-[#01BAEF] bg-[#010b62] hover:bg-[#1c2ca3] dark:text-white dark:hover:bg-[#33C9F2]"
           onClick={handleAddComment}
         >
-          Comentar
+          {isSubmitting ? "Enviando..." : "Comentar"}
         </Button>
       </div>
 
@@ -79,15 +111,13 @@ export function ReviewComments({
                 height={40}
               />
             ) : (
-              <div className="w-10 h-10 flex items-center justify-center bg-gray-200 border-2 border-[#010b62] rounded">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="#010b62"
-                  className="w-6 h-6"
-                >
-                  <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z" />
-                </svg>
+              <div className="w-10 h-10 flex items-center justify-center">
+                <Avatar className="w-10 h-10 border-[#010b62] text-[#010b62] dark:text-[#01BAEF]/70 border dark:border-[#01BAEF]/70">
+                  <AvatarImage
+                    src={c.users?.profile_img || "/placeholder.svg"}
+                  />
+                  <AvatarFallback>{c.users?.name?.charAt(0)}</AvatarFallback>
+                </Avatar>
               </div>
             )}
 

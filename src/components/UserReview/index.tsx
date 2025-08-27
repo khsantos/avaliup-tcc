@@ -356,6 +356,7 @@ export default function UserReviews({ productId }: UserReviewProps) {
                 key={review.id}
                 review={review}
                 variant="user"
+                setReviews={setReviews}
                 onOpenDetails={(rev) => {
                   setSelectedReview(rev);
                   setIsModalOpen(true);
