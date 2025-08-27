@@ -1,5 +1,5 @@
 // ReviewProductHeader.tsx
-import { UserReview } from "@/src/types/User_Review";
+import { UserReview } from "@/src/types/UserReview";
 import Image from "next/image";
 import RatingAndButton from "../RatingAndMoreDetails";
 

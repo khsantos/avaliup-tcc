@@ -1,10 +1,12 @@
-import { UserReview } from "@/src/types/User_Review";
+import { UserReview } from "@/src/types/UserReview";
 import { Card, CardContent } from "../ui/card";
 import { ReviewUserHeader } from "../ReviewUserHeader";
 import ReviewProductHeader from "../ReviewProductHeader";
 import ReviewMeta from "../ReviewMeta";
 import { ReviewContent } from "../ReviewContent";
 import ReviewActions from "../ReviewActions";
+import { ReviewComments } from "../ReviewComments";
+import { useState } from "react";
 
 type ReviewCardProps = {
   review: UserReview;
@@ -15,6 +17,7 @@ type ReviewCardProps = {
   hasDisliked?: boolean;
   isExpanded?: boolean;
   onToggleExpand: (id: string) => void;
+  setReviews?: React.Dispatch<React.SetStateAction<UserReview[]>>;
 };
 
 export function ReviewCard({
@@ -26,7 +29,10 @@ export function ReviewCard({
   hasDisliked,
   isExpanded,
   onToggleExpand,
+  setReviews,
 }: ReviewCardProps) {
+  const [showComments, setShowComments] = useState(false);
+
   return (
     <Card className="shadow-lg hover:shadow-2xl transition-transform hover:scale-102 dark:bg-[#030712] border border-[#010b62] dark:border-[#ffffff]/20 rounded-sm text-white">
       <CardContent className="p-4">
@@ -50,7 +56,24 @@ export function ReviewCard({
           hasLiked={hasLiked}
           hasDisliked={hasDisliked}
           onVote={onVote}
+          onToggleComments={() => setShowComments((prev) => !prev)}
         />
+
+        {showComments && setReviews && (
+          <ReviewComments
+            reviewId={review.id}
+            onCommentAdded={() => {
+              if (!setReviews) return;
+              setReviews((prev) =>
+                prev.map((r) =>
+                  r.id === review.id
+                    ? { ...r, comments: (r.comments || 0) + 1 }
+                    : r
+                )
+              );
+            }}
+          />
+        )}
       </CardContent>
     </Card>
   );

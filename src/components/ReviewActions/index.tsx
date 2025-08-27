@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { UserReview } from "@/src/types/User_Review";
+import { UserReview } from "@/src/types/UserReview";
 import {
   MessageCircle,
   MoreVertical,
@@ -12,11 +12,13 @@ export default function ReviewActions({
   hasLiked,
   hasDisliked,
   onVote,
+  onToggleComments,
 }: {
   review: UserReview;
   hasLiked?: boolean;
   hasDisliked?: boolean;
   onVote: (id: string, type: "like" | "dislike") => void;
+  onToggleComments: (id: string) => void;
 }) {
   return (
     <div className="flex items-center gap-6 mt-2">
@@ -42,7 +44,10 @@ export default function ReviewActions({
         {review.dislikes}
       </span>
 
-      <span className="flex items-center gap-1 text-[#010b62]/50 dark:text-[#b6c2cd] text-base">
+      <span
+        className="cursor-pointer flex items-center gap-1 text-[#010b62]/50 dark:text-[#b6c2cd] text-base"
+        onClick={() => onToggleComments(review.id)}
+      >
         <MessageCircle className="w-5 h-5" />
         {review.comments}
       </span>

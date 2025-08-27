@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/src/lib/supabase";
-import { UserReview } from "@/src/types/User_Review";
+import { UserReview } from "@/src/types/UserReview";
 
 import ReviewDetailsModal from "../UserReviewDetails";
 import { Pagination } from "../Pagination";
@@ -350,6 +350,7 @@ export default function UserReviews({ productId }: UserReviewProps) {
               <ReviewCard
                 key={review.id}
                 review={review}
+                setReviews={setReviews}
                 variant="user"
                 onOpenDetails={(rev) => {
                   setSelectedReview(rev);

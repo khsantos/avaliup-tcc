@@ -1,4 +1,4 @@
-import { UserReview } from "@/src/types/User_Review";
+import { UserReview } from "@/src/types/UserReview";
 import { Star } from "lucide-react";
 import { Button } from "../ui/button";
 

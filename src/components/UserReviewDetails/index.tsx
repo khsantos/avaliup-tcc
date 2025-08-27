@@ -9,7 +9,7 @@ import {
 } from "@/src/components/ui/dialog";
 import { Button } from "@/src/components/ui/button";
 import { Star } from "lucide-react";
-import { UserReview } from "@/src/types/User_Review";
+import { UserReview } from "@/src/types/UserReview";
 
 type ReviewDetailsModalProps = {
   review: UserReview;

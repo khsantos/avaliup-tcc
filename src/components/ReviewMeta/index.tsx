@@ -1,4 +1,4 @@
-import { UserReview } from "@/src/types/User_Review";
+import { UserReview } from "@/src/types/UserReview";
 
 export default function ReviewMeta({ review }: { review: UserReview }) {
   return (

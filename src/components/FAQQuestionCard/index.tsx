@@ -25,7 +25,7 @@ import clsx from "clsx";
 import FAQAnswerList from "../FAQAnswerList";
 import { Question } from "@/src/types/Question";
 import { User } from "@/src/types/User";
-import { Comentario } from "@/src/types/Comentario";
+import { Comentario } from "@/src/types/FAQComment";
 import DeleteDialog from "../DeleteDialog";
 
 interface FAQQuestionCardProps {
