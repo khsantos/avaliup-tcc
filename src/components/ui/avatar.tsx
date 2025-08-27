@@ -1,9 +1,8 @@
-// avatar.tsx
 "use client";
 
 import * as React from "react";
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
-import { User } from "lucide-react"; // Ícone
+import { User } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -15,7 +14,7 @@ function Avatar({
     <AvatarPrimitive.Root
       data-slot="avatar"
       className={cn(
-        "relative flex size-9.5 shrink-0 overflow-hidden rounded-md border", // <- borda aqui
+        "relative flex size-9.5 shrink-0 overflow-hidden rounded-md border",
         className
       )}
       {...props}

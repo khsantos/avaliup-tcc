@@ -1,4 +1,4 @@
-import { UserReview } from "@/src/types/User_Review";
+import { UserReview } from "@/src/types/UserReview";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import RatingAndButton from "../RatingAndMoreDetails";
 

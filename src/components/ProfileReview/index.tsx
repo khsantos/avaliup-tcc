@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/src/lib/supabase";
-import { UserReview } from "@/src/types/User_Review";
+import { UserReview } from "@/src/types/UserReview";
 
 import ReviewDetailsModal from "../UserReviewDetails";
 import { ReviewCard } from "../ReviewCard";

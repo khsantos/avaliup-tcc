@@ -6,7 +6,7 @@ import {
 import { User as UserIcon, Award } from "lucide-react";
 import { Textarea } from "@/src/components/ui/textarea";
 import { Button } from "@/src/components/ui/button";
-import { Comentario } from "@/src/types/Comentario";
+import { Comentario } from "@/src/types/FAQComment";
 import { Question } from "@/src/types/Question";
 import { User } from "@/src/types/User";
 

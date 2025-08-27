@@ -1,4 +1,4 @@
-import { UserReview } from "@/src/types/User_Review";
+import { UserReview } from "@/src/types/UserReview";
 import { Star } from "lucide-react";
 import { Button } from "../ui/button";
 
@@ -32,7 +32,7 @@ export default function RatingAndButton({
       <Button
         size="sm"
         onClick={() => onOpenDetails(review)}
-        className="-mt-2 dark:bg-[#01BAEF] bg-[#010b62] hover:bg-[#010b62]/70 text-white text-sm rounded-se-lg px-2"
+        className="-mt-2 dark:bg-[#01BAEF] dark:hover:bg-[#33C9F2] bg-[#010b62] hover:bg-[#1C2CA3]/70 text-white text-sm rounded-se-lg px-2"
       >
         Ver Detalhes
       </Button>

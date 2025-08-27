@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { UserReview } from "@/src/types/User_Review";
+import { UserReview } from "@/src/types/UserReview";
 import {
   MessageCircle,
   MoreVertical,
@@ -12,17 +12,19 @@ export default function ReviewActions({
   hasLiked,
   hasDisliked,
   onVote,
+  onToggleComments,
 }: {
   review: UserReview;
   hasLiked?: boolean;
   hasDisliked?: boolean;
   onVote: (id: string, type: "like" | "dislike") => void;
+  onToggleComments: (id: string) => void;
 }) {
   return (
     <div className="flex items-center gap-6 mt-2">
       <span
         className={cn(
-          "cursor-pointer flex items-center gap-1 text-[#010b62]/50 dark:text-white/70",
+          "cursor-pointer flex items-center gap-1 text-[#010b62]/50 hover:text-[#010b62] dark:hover:text-[#01BAEF] dark:text-white/70 transition-transform duration-150 hover:scale-110",
           hasLiked && "text-[#010b62] dark:text-[#01BAEF]"
         )}
         onClick={() => onVote(review.id, "like")}
@@ -33,7 +35,7 @@ export default function ReviewActions({
 
       <span
         className={cn(
-          "cursor-pointer flex items-center gap-1 text-[#010b62]/50 dark:text-white/70",
+          "cursor-pointer flex items-center gap-1 text-[#010b62]/50 hover:text-red-500 dark:hover:text-red-500 dark:text-white/70 transition-transform duration-150 hover:scale-110",
           hasDisliked && "text-red-500 dark:text-red-500"
         )}
         onClick={() => onVote(review.id, "dislike")}
@@ -42,7 +44,10 @@ export default function ReviewActions({
         {review.dislikes}
       </span>
 
-      <span className="flex items-center gap-1 text-[#010b62]/50 dark:text-[#b6c2cd] text-base">
+      <span
+        className="cursor-pointer flex items-center gap-1 text-[#010b62]/50 hover:text-[#010b62] dark:hover:text-[#01BAEF] dark:text-[#b6c2cd] text-base transition-transform duration-150 hover:scale-110"
+        onClick={() => onToggleComments(review.id)}
+      >
         <MessageCircle className="w-5 h-5" />
         {review.comments}
       </span>

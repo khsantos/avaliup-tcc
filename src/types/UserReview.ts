@@ -32,4 +32,5 @@ export type UserReview = {
   user_profile_img?: string;
   product_image: string,
   product_name: string,
+  setReviews?: React.Dispatch<React.SetStateAction<UserReview[]>>;
 };
