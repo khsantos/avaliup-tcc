@@ -6,7 +6,6 @@ import ReviewMeta from "../ReviewMeta";
 import { ReviewContent } from "../ReviewContent";
 import ReviewActions from "../ReviewActions";
 import { ReviewComments } from "../ReviewComments";
-import { useState } from "react";
 
 type ReviewCardProps = {
   review: UserReview;
@@ -18,6 +17,8 @@ type ReviewCardProps = {
   isExpanded?: boolean;
   onToggleExpand: (id: string) => void;
   setReviews?: React.Dispatch<React.SetStateAction<UserReview[]>>;
+  showComments?: boolean;
+  onToggleComments?: (id: string) => void;
 };
 
 export function ReviewCard({
@@ -30,9 +31,9 @@ export function ReviewCard({
   isExpanded,
   onToggleExpand,
   setReviews,
+  onToggleComments,
+  showComments = false,
 }: ReviewCardProps) {
-  const [showComments, setShowComments] = useState(false);
-
   return (
     <Card className="shadow-lg hover:shadow-2xl transition-transform hover:scale-102 dark:bg-[#030712] border border-[#010b62] dark:border-[#ffffff]/20 rounded-sm text-white">
       <CardContent className="p-4">
@@ -56,15 +57,15 @@ export function ReviewCard({
           hasLiked={hasLiked}
           hasDisliked={hasDisliked}
           onVote={onVote}
-          onToggleComments={() => setShowComments((prev) => !prev)}
+          onToggleComments={() => onToggleComments?.(review.id)}
         />
 
-        {showComments && setReviews && (
+        {showComments && (
           <ReviewComments
             reviewId={review.id}
             onCommentAdded={() => {
-              if (!setReviews) return;
-              setReviews((prev) =>
+              // Atualiza apenas este review no estado de reviews do pai
+              setReviews?.((prev) =>
                 prev.map((r) =>
                   r.id === review.id
                     ? { ...r, comments: (r.comments || 0) + 1 }

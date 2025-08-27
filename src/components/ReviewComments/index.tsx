@@ -21,10 +21,16 @@ export function ReviewComments({
   const handleAddComment = async () => {
     if (!newComment.trim()) return;
 
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) return;
+
     const { data, error } = await supabase
       .from("review_comments")
-      .insert([{ review_id: reviewId, content: newComment }])
-      .select("*, user:users(name, profile_img)");
+      .insert([{ review_id: reviewId, user_id: user.id, text: newComment }])
+      .select("*, users(name, profile_img)");
 
     if (!error && data) {
       setComments((prev) => [data[0], ...prev]);
