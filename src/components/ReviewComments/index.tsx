@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useEffect, useState } from "react";
 import { useSupabase } from "@/src/contexts/supabase-provider";
@@ -8,8 +8,14 @@ import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { toast } from "sonner";
 import { UserReview } from "@/src/types/UserReview";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 import { MoreVertical } from "lucide-react";
+import type { User } from "@supabase/supabase-js";
 
 interface ReviewCommentsProps {
   reviewId: string;
@@ -25,7 +31,8 @@ export function ReviewComments({
   const { comments, loading, setComments } = useFetchComments(reviewId);
   const [newComment, setNewComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [currentUser, setCurrentUser] = useState<any>(null)
+
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   useEffect(() => {
     const getUser = async () => {
@@ -89,14 +96,17 @@ export function ReviewComments({
     } = await supabase.auth.getUser();
 
     if (!user) {
-      toast.error("Você precisa estar logado para deletar comentários próprios.")
+      toast.error(
+        "Você precisa estar logado para deletar comentários próprios."
+      );
       return;
     }
 
-    const { error } = await supabase.from("review_comments")
+    const { error } = await supabase
+      .from("review_comments")
       .delete()
       .eq("id", commentId)
-      .eq("user_id", user.id)
+      .eq("user_id", user.id);
 
     if (error) {
       toast.error("Ocorreu um problema ao tentar deletar seu comentário.");
@@ -109,10 +119,10 @@ export function ReviewComments({
     await supabase
       .from("reviews")
       .update({ comments: updatedComments.length })
-      .eq("id", reviewId)
+      .eq("id", reviewId);
 
     toast.success("Comentário deletado com sucesso");
-  }
+  };
 
   return (
     <div className="mt-4 pt-4 border-t border-[#010b62]/20 dark:border-white/20 space-y-3">
@@ -165,7 +175,9 @@ export function ReviewComments({
                 <p className="text-sm font-semibold text-[#010b62] dark:text-white">
                   {c.users?.name}
                 </p>
-                <p className="text-sm text-[#010b62] dark:text-white">{c.text}</p>
+                <p className="text-sm text-[#010b62] dark:text-white">
+                  {c.text}
+                </p>
                 <span className="text-xs dark:text-gray-400 text-gray-500">
                   {new Date(c.created_at).toLocaleString()}
                 </span>
@@ -191,9 +203,7 @@ export function ReviewComments({
             )}
           </div>
         ))
-
       )}
-
     </div>
   );
 }
