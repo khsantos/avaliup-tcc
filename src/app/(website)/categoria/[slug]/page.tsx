@@ -1,3 +1,4 @@
+// src/app/(website)/categoria/[slug]/page.tsx
 import type { Metadata } from "next";
 import CategoryPage from "@/src/components/CategoryPage";
 
