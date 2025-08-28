@@ -1,4 +1,6 @@
-import { useState } from "react";
+"use client"
+
+import { useEffect, useState } from "react";
 import { useSupabase } from "@/src/contexts/supabase-provider";
 import { useFetchComments } from "@/src/hooks/useFetchComments";
 import { Button } from "../ui/button";
@@ -18,12 +20,22 @@ interface ReviewCommentsProps {
 export function ReviewComments({
   reviewId,
   onCommentAdded,
-  setReviews,
 }: ReviewCommentsProps) {
   const { supabase } = useSupabase();
   const { comments, loading, setComments } = useFetchComments(reviewId);
   const [newComment, setNewComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [currentUser, setCurrentUser] = useState<any>(null)
+
+  useEffect(() => {
+    const getUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      setCurrentUser(user);
+    };
+    getUser();
+  }, [supabase]);
 
   const handleAddComment = async () => {
     if (!newComment.trim()) {
@@ -59,12 +71,6 @@ export function ReviewComments({
       setComments(updatedComments);
       setNewComment("");
 
-      setReviews?.((prev) =>
-        prev.map((r) =>
-          r.id === reviewId ? { ...r, comments: updatedComments.length } : r
-        )
-      );
-
       await supabase
         .from("reviews")
         .update({ comments: updatedComments.length })
@@ -90,7 +96,7 @@ export function ReviewComments({
     const { error } = await supabase.from("review_comments")
       .delete()
       .eq("id", commentId)
-      .eq("user_id", user.id) // Deletar apenas seus comentários
+      .eq("user_id", user.id)
 
     if (error) {
       toast.error("Ocorreu um problema ao tentar deletar seu comentário.");
@@ -99,8 +105,6 @@ export function ReviewComments({
 
     const updatedComments = comments.filter((c) => c.id !== commentId);
     setComments(updatedComments);
-
-    setReviews?.((prev) => prev.map((r) => r.id === reviewId ? { ...r, comments: updatedComments.length } : r))
 
     await supabase
       .from("reviews")
@@ -168,21 +172,23 @@ export function ReviewComments({
               </div>
             </div>
 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700">
-                  <MoreVertical size={16} />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem
-                  className="text-red-600 cursor-pointer"
-                  onClick={() => handleDeleteComment(c.id)}
-                >
-                  Deletar comentário
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            {currentUser?.id === c.user_id && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700">
+                    <MoreVertical size={16} />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem
+                    className="text-red-600 cursor-pointer"
+                    onClick={() => handleDeleteComment(c.id)}
+                  >
+                    Deletar comentário
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
           </div>
         ))
 
