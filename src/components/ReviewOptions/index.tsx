@@ -28,13 +28,19 @@ export function ReviewOptions({ review, setReviews }: ReviewOptionsProps) {
       .eq("id", review.id);
 
     if (!error) {
+      // remove do state local
       setReviews?.((prev) => prev.filter((r) => r.id !== review.id));
     } else {
       console.error("Erro ao deletar review:", error.message);
     }
-
-    if (session?.user?.id !== review.users_id) return null;
   };
+
+  // 🔎 debug
+  console.log("Review:", review);
+  console.log("Usuário logado:", session?.user?.id);
+
+  // Só renderiza o menu se o usuário logado for o dono da review
+  if (session?.user?.id !== review.users_id) return null;
 
   return (
     <div className="flex justify-end">
