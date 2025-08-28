@@ -196,7 +196,7 @@ export default function ProductLayout({ product }: { product: Product }) {
                 </div>
                 <div className="flex gap-2 mt-4">
                   <Button
-                    className="bg-[#010b62] hover:bg-[#0060B1] text-white px-6 cursor-pointer dark:bg-[#01BAEF]"
+                    className="bg-[#010b62] hover:bg-[#1C2CA3] text-white px-6 cursor-pointer dark:bg-[#01BAEF] dark:hover:bg-[#33C9F2]"
                     onClick={() => setShowForm(true)}
                   >
                     Avaliar Produto
@@ -208,7 +208,7 @@ export default function ProductLayout({ product }: { product: Product }) {
                     onClick={() => setIsWishlisted(!isWishlisted)}
                     className={
                       isWishlisted
-                        ? "text-white bg-[#010b62] dark:text-[#01BAEF] dark:bg-white dark:border-[#01BAEF]"
+                        ? "text-white bg-[#010b62] dark:text-[#01BAEF]  dark:border-[#01BAEF]"
                         : "text-[#010b62] border border-[#010b62] hover:text-white hover:bg-[#010b62] dark:bg-[#030712] dark:text-white dark:border-white"
                     }
                   >

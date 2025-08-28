@@ -6,6 +6,7 @@ import ReviewMeta from "../ReviewMeta";
 import { ReviewContent } from "../ReviewContent";
 import ReviewActions from "../ReviewActions";
 import { ReviewComments } from "../ReviewComments";
+import { ReviewOptions } from "../ReviewOptions";
 
 type ReviewCardProps = {
   review: UserReview;
@@ -52,13 +53,17 @@ export function ReviewCard({
           onToggleExpand={() => onToggleExpand(review.id)}
         />
 
-        <ReviewActions
-          review={review}
-          hasLiked={hasLiked}
-          hasDisliked={hasDisliked}
-          onVote={onVote}
-          onToggleComments={() => onToggleComments?.(review.id)}
-        />
+        <div className="flex items-center justify-between">
+          <ReviewActions
+            review={review}
+            hasLiked={hasLiked}
+            hasDisliked={hasDisliked}
+            onVote={onVote}
+            onToggleComments={() => onToggleComments?.(review.id)}
+          />
+
+          <ReviewOptions review={review} setReviews={setReviews} />
+        </div>
 
         {showComments && (
           <ReviewComments

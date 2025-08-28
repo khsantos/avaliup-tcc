@@ -1,11 +1,6 @@
 import { cn } from "@/lib/utils";
 import { UserReview } from "@/src/types/UserReview";
-import {
-  MessageCircle,
-  MoreVertical,
-  ThumbsDown,
-  ThumbsUp,
-} from "lucide-react";
+import { MessageCircle, ThumbsDown, ThumbsUp } from "lucide-react";
 
 export default function ReviewActions({
   review,
@@ -50,10 +45,6 @@ export default function ReviewActions({
       >
         <MessageCircle className="w-5 h-5" />
         {review.comments}
-      </span>
-
-      <span className="ml-auto text-[#010b62]/50 dark:text-[#b6c2cd]">
-        <MoreVertical className="w-5 h-5" />
       </span>
     </div>
   );
