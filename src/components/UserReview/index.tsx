@@ -154,60 +154,72 @@ export default function UserReviews({ productId }: UserReviewProps) {
 
       setLoading(true);
 
-      let countQuery = supabase
-        .from("reviews")
-        .select("*", { count: "exact", head: true })
-        .eq("product_id", productId);
+      try {
+        // 1️⃣ Contagem total de reviews para paginação
+        let countQuery = supabase
+          .from("reviews")
+          .select("*", { count: "exact", head: true })
+          .eq("product_id", productId);
 
-      if (filterRating) {
-        countQuery = countQuery.eq("rating", filterRating);
-      }
-      const { count } = await countQuery;
-      if (count) {
-        setTotalPages(Math.ceil(count / REVIEWS_PER_PAGE));
-      }
+        if (filterRating) {
+          countQuery = countQuery.eq("rating", filterRating);
+        }
 
-      let query = supabase
-        .from("reviews")
-        .select(
-          `
-      *,
-      users (id, name, profile_img),
-      review_votes (vote_type),
-      products (id, name, image)
-    `
-        )
-        .eq("product_id", productId);
+        const { count } = await countQuery;
+        if (count) {
+          setTotalPages(Math.ceil(count / REVIEWS_PER_PAGE));
+        }
 
-      if (filterRating) {
-        query = query.eq("rating", filterRating);
-      }
+        // 2️⃣ Busca das reviews
+        let query = supabase
+          .from("reviews")
+          .select(
+            `
+          *,
+          users_id,
+          users (id, name, profile_img),
+          review_votes (vote_type),
+          products (id, name, image)
+        `
+          )
+          .eq("product_id", productId);
 
-      if (sortBy === "recent") {
-        query = query.order("created_at", { ascending: false });
-      } else if (sortBy === "high") {
-        query = query.order("rating", { ascending: false });
-      } else if (sortBy === "low") {
-        query = query.order("rating", { ascending: true });
-      } else if (sortBy === "useful") {
-        query = query.order("likes", { ascending: false });
-      }
+        if (filterRating) {
+          query = query.eq("rating", filterRating);
+        }
 
-      const from = (currentPage - 1) * REVIEWS_PER_PAGE;
-      const to = from + REVIEWS_PER_PAGE - 1;
-      query = query.range(from, to);
+        // 3️⃣ Ordenação
+        if (sortBy === "recent") {
+          query = query.order("created_at", { ascending: false });
+        } else if (sortBy === "high") {
+          query = query.order("rating", { ascending: false });
+        } else if (sortBy === "low") {
+          query = query.order("rating", { ascending: true });
+        } else if (sortBy === "useful") {
+          query = query.order("likes", { ascending: false });
+        }
 
-      const { data, error } = await query;
+        // 4️⃣ Paginação
+        const from = (currentPage - 1) * REVIEWS_PER_PAGE;
+        const to = from + REVIEWS_PER_PAGE - 1;
+        query = query.range(from, to);
 
-      if (error) {
-        console.error("Erro ao buscar reviews:", error);
-        setLoading(false);
-        return;
-      }
+        // 5️⃣ Execução da query
+        const { data, error } = await query;
 
-      console.log("Reviews fetched:", data);
+        if (error) {
+          console.error("Erro ao buscar reviews:", error);
+          setLoading(false);
+          return;
+        }
 
-      if (data) {
+        if (!data) {
+          setReviews([]);
+          setLoading(false);
+          return;
+        }
+
+        // 6️⃣ Mapeamento para UserReview
         const parsed = data.map((item) => {
           const likes =
             item.review_votes?.filter((v: ReviewVote) => v.vote_type === "like")
@@ -235,6 +247,7 @@ export default function UserReviews({ productId }: UserReviewProps) {
             images: item.images ? JSON.parse(item.images) : [],
             user_profile_img: item.users?.profile_img || "/placeholder.svg",
             user_name: item.users?.name || "Usuário Anônimo",
+            users_id: item.users_id || item.users?.id || null,
             store: item.store || "Loja Desconhecida",
             badges: ["Compra Verificada"],
             created_at: item.created_at,
@@ -245,12 +258,16 @@ export default function UserReviews({ productId }: UserReviewProps) {
         });
 
         setReviews(parsed);
+      } catch (err) {
+        console.error("Erro ao buscar reviews:", err);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     fetchReviews();
   }, [productId, sortBy, filterRating, currentPage]);
+
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
