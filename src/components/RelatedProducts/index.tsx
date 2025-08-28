@@ -2,10 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/src/lib/supabase";
-import Image from "next/image";
-import Link from "next/link";
-import { Star } from "lucide-react";
-import { Card } from "@/src/components/ui/card";
+import ProductCard from "@/src/components/ProductCard";
 
 interface RelatedProductsProps {
   productId: number;
@@ -57,47 +54,14 @@ export const RelatedProducts = ({ productId }: RelatedProductsProps) => {
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
         {products.map((product) => (
-          <Card
+          <ProductCard
             key={product.id}
-            className="flex flex-col items-center justify-between border border-[#010b62] dark:border-white dark:bg-[#030712] rounded-xl shadow-md p-4"
-          >
-            {/* Nome */}
-            <h3 className="text-sm font-semibold text-left dark:text-white text-[#010b62] line-clamp-2 mb-3">
-              {product.name}
-            </h3>
-
-            {/* Imagem */}
-            <div className="w-28 h-28 flex items-center justify-center mb-3">
-              <Image
-                src={product.image || "/placeholder.svg"}
-                alt={product.name}
-                width={112}
-                height={112}
-                className="object-contain"
-              />
-            </div>
-
-            {/* Nota */}
-            <div className="flex flex-col items-start self-start">
-              <div className="flex items-center gap-1">
-                <Star className="w-4 h-4 text-[#FFB24B] fill-[#FFB24B]" />
-                <span className="text-sm font-bold text-[#FFB24B]">
-                  {product.rating?.toFixed(1) || "Sem nota"}
-                </span>
-              </div>
-              <p className="text-sm text-[#010b62]/70 dark:text-white/50">
-                Nota Avali.up
-              </p>
-            </div>
-
-            {/* Botão */}
-            <Link
-              href={`/produto/${product.id}`}
-              className="w-full bg-[#010b62] hover:bg-[#021052] text-white text-sm dark:bg-[#01BAEF] hover:dark:bg-[#01BAFE] font-medium py-2 rounded-md text-center transition -mt-2"
-            >
-              Ver avaliações
-            </Link>
-          </Card>
+            id={product.id}
+            name={product.name}
+            image={product.image}
+            rating={product.rating}
+            // rank não é usado aqui, então podemos omitir
+          />
         ))}
       </div>
     </div>

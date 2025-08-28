@@ -13,7 +13,8 @@ export default function ProductCard({
   image,
 }: Product) {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const [cardLoading, setCardLoading] = useState(false);
+  const [btnLoading, setBtnLoading] = useState(false);
 
   const getMedal = (rank?: number) => {
     if (rank === 1) return "🥇";
@@ -22,15 +23,29 @@ export default function ProductCard({
     return null;
   };
 
-  async function handleClick() {
-    setLoading(true);
-    // pequena espera para mostrar o feedback visual (opcional)
-    await new Promise((r) => setTimeout(r, 300));
+  async function navigateToProduct() {
+    await new Promise((r) => setTimeout(r, 300)); // pequeno delay para feedback visual
     router.push(`/produto/${id}`);
   }
 
+  async function handleCardClick() {
+    setCardLoading(true);
+    await navigateToProduct();
+  }
+
+  async function handleButtonClick(e: React.MouseEvent) {
+    e.stopPropagation(); // evita disparar clique do card
+    setBtnLoading(true);
+    await navigateToProduct();
+  }
+
   return (
-    <div className="border border-[#010b62] dark:border-white rounded-xl p-4 text-white w-full min-h-[380px] flex flex-col justify-between">
+    <div
+      onClick={handleCardClick}
+      className={`border border-[#010b62] dark:border-white rounded-xl p-4 text-white w-full min-h-[380px] flex flex-col justify-between cursor-pointer hover:border-3 hover:shadow-lg
+        ${cardLoading ? "opacity-70 pointer-events-none" : ""}
+      `}
+    >
       {rank && rank <= 10 && (
         <div className="text-[#010b62] dark:text-white mb-2 text-sm font-semibold flex items-center gap-1">
           {rank <= 3 && <span className="text-lg">{getMedal(rank)}</span>}
@@ -51,7 +66,7 @@ export default function ProductCard({
         />
       </div>
 
-      <div className="flex flex-col items-start">
+      <div className="flex flex-col items-start mt-auto">
         <div className="flex items-center gap-1 text-[#FFB24B] font-semibold text-md">
           <span>⭐</span>
           <span>{rating != null ? rating.toFixed(1) : "0.0"}</span>
@@ -61,15 +76,14 @@ export default function ProductCard({
         </p>
       </div>
 
-      {/* Botão */}
       <button
-        disabled={loading}
-        onClick={handleClick}
-        className={`bg-[#010b62] hover:bg-cyan-600 transition text-white text-sm px-4 py-2 rounded w-full cursor-pointer flex justify-center items-center
-          ${loading ? "opacity-70 cursor-not-allowed" : ""}
+        disabled={btnLoading}
+        onClick={handleButtonClick}
+        className={`bg-[#010b62] hover:bg-cyan-600 transition text-white text-sm px-4 py-2 rounded w-full mt-4 flex justify-center items-center cursor-pointer
+          ${btnLoading ? "opacity-70 cursor-not-allowed" : ""}
         `}
       >
-        {loading ? (
+        {btnLoading ? (
           <>
             <svg
               className="animate-spin h-5 w-5 mr-2 text-white"
