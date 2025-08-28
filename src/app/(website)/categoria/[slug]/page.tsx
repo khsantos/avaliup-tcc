@@ -2,14 +2,16 @@
 import type { Metadata } from "next";
 import CategoryPage from "@/src/components/CategoryPage";
 
-interface Params {
+// Tipagem explícita dos parâmetros da rota
+interface PageParams {
   slug: string;
 }
 
+// Função de metadata para a página
 export async function generateMetadata({
   params,
 }: {
-  params: Params;
+  params: PageParams;
 }): Promise<Metadata> {
   const slug = params.slug;
   const categoryName =
@@ -21,6 +23,7 @@ export async function generateMetadata({
   };
 }
 
-export default function CategoriaPage({ params }: { params: Params }) {
+// Página principal da categoria
+export default function CategoriaPage({ params }: { params: PageParams }) {
   return <CategoryPage slug={params.slug} />;
 }
