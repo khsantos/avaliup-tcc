@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
 import CategoryPage from "@/src/components/CategoryPage";
 
-interface PageProps {
-  params: { slug: string };
-  searchParams?: Record<string, string | string[] | undefined>;
+interface Params {
+  slug: string;
 }
 
 export async function generateMetadata({
   params,
-}: PageProps): Promise<Metadata> {
+}: {
+  params: Params;
+}): Promise<Metadata> {
   const slug = params.slug;
   const categoryName =
     slug.charAt(0).toUpperCase() + slug.slice(1).replace("-", " ");
@@ -19,6 +20,6 @@ export async function generateMetadata({
   };
 }
 
-export default function CategoriaPage({ params }: PageProps) {
+export default function CategoriaPage({ params }: { params: Params }) {
   return <CategoryPage slug={params.slug} />;
 }
