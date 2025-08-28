@@ -19,9 +19,9 @@ export default function Logo() {
         <Image
           src="/logo-menu.svg"
           alt="Logo"
-          width={78}
-          height={49}
-          className="w-full h-full"
+          width={32}
+          height={32}
+          className="w-32 h-auto mx-auto"
         />
       </Link>
     );
@@ -34,9 +34,9 @@ export default function Logo() {
           resolvedTheme === "dark" ? "/logo-menu-dark.svg" : "/logo-menu.svg"
         }
         alt="Logo"
-        width={78}
-        height={49}
-        className="w-full h-full"
+        width={16}
+        height={16}
+        className="w-32 h-auto mx-auto"
       />
     </Link>
   );

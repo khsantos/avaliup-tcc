@@ -14,7 +14,7 @@ import {
 import { Textarea } from "@/src/components/ui/textarea";
 import { Button } from "@/src/components/ui/button";
 import { useSupabase } from "@/src/contexts/supabase-provider";
-import { Comentario } from "@/src/types/Comentario";
+import { Comentario } from "@/src/types/FAQComment";
 import { Question } from "@/src/types/Question";
 import { toast } from "sonner";
 import FAQQuestionCard from "../FAQQuestionCard";

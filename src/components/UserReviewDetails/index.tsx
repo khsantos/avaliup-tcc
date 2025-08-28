@@ -9,7 +9,7 @@ import {
 } from "@/src/components/ui/dialog";
 import { Button } from "@/src/components/ui/button";
 import { Star } from "lucide-react";
-import { UserReview } from "@/src/types/User_Review";
+import { UserReview } from "@/src/types/UserReview";
 
 type ReviewDetailsModalProps = {
   review: UserReview;
@@ -75,10 +75,10 @@ export default function ReviewDetailsModal({
 
         <DialogFooter className="justify-start mt-6">
           <Button
-            className="bg-[#010b62] text-white hover:bg-[#010b62]/80 dark:bg-[#01BAEF] dark:hover:bg-[#0096c7] px-6 py-2 text-lg rounded"
+            className="bg-[#010b62] text-white hover:bg-[#010b62]/80 dark:bg-[#01BAEF] dark:hover:bg-[#33C9F2] px-6 py-2 text-lg rounded"
             onClick={onClose}
           >
-            Ok
+            Fechar
           </Button>
         </DialogFooter>
       </DialogContent>

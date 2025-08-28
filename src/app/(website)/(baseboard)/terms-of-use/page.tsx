@@ -11,7 +11,7 @@ export default function Page() {
           Termos de Uso
         </h1>
         <p className="text-sm text-[#010B62] dark:text-white">
-          Última atualização: [Data]
+          Última atualização: 26 de junho de 2025
         </p>
         <p className="text-sm text-[#010B62] dark:text-white">
           Bem-vindo ao Avali.up! Ao acessar este site, você concorda com os

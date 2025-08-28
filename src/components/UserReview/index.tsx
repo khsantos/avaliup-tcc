@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/src/lib/supabase";
-import { UserReview } from "@/src/types/User_Review";
+import { UserReview } from "@/src/types/UserReview";
 
 import ReviewDetailsModal from "../UserReviewDetails";
 import { Pagination } from "../Pagination";
@@ -29,6 +29,11 @@ export default function UserReviews({ productId }: UserReviewProps) {
   const [filterRating, setFilterRating] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [openCommentsId, setOpenCommentsId] = useState<string | null>(null);
+
+  const handleToggleComments = (id: string) => {
+    setOpenCommentsId((prev) => (prev === id ? null : id));
+  };
 
   const REVIEWS_PER_PAGE = 8;
 
@@ -253,7 +258,7 @@ export default function UserReviews({ productId }: UserReviewProps) {
 
   const handleToggleExpand = (id: string) => {
     setExpandedIds((prev) =>
-      prev.includes(id) ? prev.filter((itemId) => itemId !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
     );
   };
 
@@ -341,7 +346,7 @@ export default function UserReviews({ productId }: UserReviewProps) {
         </div>
       </div>
 
-      <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
         {reviews.length > 0 ? (
           reviews.map((review) => {
             const hasLiked = userVotes[review.id] === "like";
@@ -351,6 +356,7 @@ export default function UserReviews({ productId }: UserReviewProps) {
                 key={review.id}
                 review={review}
                 variant="user"
+                setReviews={setReviews}
                 onOpenDetails={(rev) => {
                   setSelectedReview(rev);
                   setIsModalOpen(true);
@@ -360,6 +366,8 @@ export default function UserReviews({ productId }: UserReviewProps) {
                 hasDisliked={hasDisliked}
                 isExpanded={expandedIds.includes(review.id)}
                 onToggleExpand={handleToggleExpand}
+                showComments={openCommentsId === review.id}
+                onToggleComments={handleToggleComments}
               />
             );
           })

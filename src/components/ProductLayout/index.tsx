@@ -49,7 +49,6 @@ export default function ProductLayout({ product }: { product: Product }) {
         });
       }
 
-      // Sempre gera o array de 5 a 1 estrelas
       const breakdown = [5, 4, 3, 2, 1].map((stars) => ({
         stars,
         percentage: total > 0 ? Math.round((countMap[stars] / total) * 100) : 0,
@@ -86,9 +85,7 @@ export default function ProductLayout({ product }: { product: Product }) {
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.4 }}
           >
-            {/* Layout do produto */}
             <div className="flex gap-10 items-start w-full px-2 max-w-6xl mx-auto">
-              {/* Thumbnails */}
               <div className="flex flex-col gap-2 min-w-[56px]">
                 {thumbnails.map((thumbUrl, index) => (
                   <button
@@ -110,7 +107,6 @@ export default function ProductLayout({ product }: { product: Product }) {
                   </button>
                 ))}
               </div>
-              {/* Main Image */}
               <div className="w-[320px] h-[320px] flex items-center justify-center rounded-lg mt-[15%]">
                 <Image
                   src={
@@ -187,7 +183,11 @@ export default function ProductLayout({ product }: { product: Product }) {
 
                 <div className="mt-2">
                   <div className="text-2xl font-bold text-[#010b62] dark:text-white">
-                    R${product.price.toFixed(2)}{" "}
+                    {new Intl.NumberFormat("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                      minimumFractionDigits: 2,
+                    }).format(product.price)}{" "}
                     <span className="text-base">à vista</span>
                   </div>
                   <div className="text-sm text-gray-600 dark:text-gray-300 font-light">
@@ -196,7 +196,7 @@ export default function ProductLayout({ product }: { product: Product }) {
                 </div>
                 <div className="flex gap-2 mt-4">
                   <Button
-                    className="bg-[#010b62] hover:bg-[#0060B1] text-white px-6 cursor-pointer dark:bg-[#01BAEF]"
+                    className="bg-[#010b62] hover:bg-[#1C2CA3] text-white px-6 cursor-pointer dark:bg-[#01BAEF] dark:hover:bg-[#33C9F2]"
                     onClick={() => setShowForm(true)}
                   >
                     Avaliar Produto
@@ -208,7 +208,7 @@ export default function ProductLayout({ product }: { product: Product }) {
                     onClick={() => setIsWishlisted(!isWishlisted)}
                     className={
                       isWishlisted
-                        ? "text-white bg-[#010b62] dark:text-[#01BAEF] dark:bg-white dark:border-[#01BAEF]"
+                        ? "text-white bg-[#010b62] dark:text-[#01BAEF]  dark:border-[#01BAEF]"
                         : "text-[#010b62] border border-[#010b62] hover:text-white hover:bg-[#010b62] dark:bg-[#030712] dark:text-white dark:border-white"
                     }
                   >

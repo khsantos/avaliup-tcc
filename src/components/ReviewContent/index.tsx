@@ -21,17 +21,19 @@ export function ReviewContent({
 
       <div className="flex justify-between gap-4 mb-2">
         <div className="flex-1 relative">
-          <p
-            className={`dark:text-white text-[#010b62] text-base text-justify leading-snug whitespace-pre-line pr-4 ${
-              isExpanded ? "" : "line-clamp-[4]"
-            }`}
-          >
-            {text}
-          </p>
+          <div className="relative">
+            <p
+              className={`dark:text-white text-[#010b62] text-base text-justify leading-snug whitespace-pre-line pr-4 ${
+                isExpanded ? "" : "line-clamp-4 overflow-hidden"
+              }`}
+            >
+              {text}
+            </p>
 
-          {!isExpanded && (
-            <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-[#ffffff] dark:from-[#030712] to-transparent pointer-events-none" />
-          )}
+            {!isExpanded && (
+              <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-[#ffffff] dark:from-[#030712] to-transparent pointer-events-none" />
+            )}
+          </div>
         </div>
 
         {/* Futuro: espaço reservado para imagens */}

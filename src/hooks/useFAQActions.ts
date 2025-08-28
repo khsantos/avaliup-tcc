@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useCallback } from "react";
 import { toast } from "sonner";
-import { Comentario } from "@/src/types/Comentario";
+import { Comentario } from "@/src/types/FAQComment";
 import { Question } from "@/src/types/Question";
 import { User } from "../types/User";
 import { SupabaseClient } from "@supabase/supabase-js";

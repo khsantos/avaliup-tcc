@@ -3,11 +3,35 @@ import { supabase } from "@/src/lib/supabase";
 import ProductTabs from "@/src/components/ProductTabs";
 import ProductLayout from "@/src/components/ProductLayout";
 import { RelatedProducts } from "@/src/components/RelatedProducts";
+import type { Metadata } from "next";
 
-export default async function ProductPage(props: {
-  params: Promise<{ id: string }>;
-}) {
-  const params = await props.params;
+// Tipagem dos parâmetros da rota
+type PageParams = { id: string };
+
+// Tipagem correta do props do generateMetadata
+type GenerateMetadataProps = { params: PageParams };
+
+export async function generateMetadata(
+  props: GenerateMetadataProps
+): Promise<Metadata> {
+  const { params } = props; // NÃO usar await
+
+  const { data: product } = await supabase
+    .from("products")
+    .select("name")
+    .eq("id", params.id)
+    .single();
+
+  return {
+    title: product ? `${product.name} | Avali.up` : "Produto | Avali.up",
+    description: product
+      ? `Veja avaliações e detalhes do produto ${product.name}`
+      : "Detalhes do produto",
+  };
+}
+
+// Página principal — params já resolvido
+export default async function ProductPage({ params }: { params: PageParams }) {
   const { data: product, error } = await supabase
     .from("products")
     .select("*")
