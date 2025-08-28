@@ -30,6 +30,7 @@ export type UserReview = {
   } | null;
   user_name?: string;
   user_profile_img?: string;
+  users_id?: string;
   product_image: string,
   product_name: string,
   setReviews?: React.Dispatch<React.SetStateAction<UserReview[]>>;
