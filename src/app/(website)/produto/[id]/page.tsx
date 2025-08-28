@@ -5,11 +5,17 @@ import ProductLayout from "@/src/components/ProductLayout";
 import { RelatedProducts } from "@/src/components/RelatedProducts";
 import type { Metadata } from "next";
 
-type Props = {
-  params: { id: string };
-};
+// Tipagem dos parâmetros da rota
+type PageParams = { id: string };
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+// Tipagem correta do props do generateMetadata
+type GenerateMetadataProps = { params: PageParams };
+
+export async function generateMetadata(
+  props: GenerateMetadataProps
+): Promise<Metadata> {
+  const { params } = props; // NÃO usar await
+
   const { data: product } = await supabase
     .from("products")
     .select("name")
@@ -24,10 +30,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function ProductPage(props: {
-  params: Promise<{ id: string }>;
-}) {
-  const params = await props.params;
+// Página principal — params já resolvido
+export default async function ProductPage({ params }: { params: PageParams }) {
   const { data: product, error } = await supabase
     .from("products")
     .select("*")

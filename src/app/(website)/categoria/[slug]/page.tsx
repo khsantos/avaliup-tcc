@@ -1,11 +1,18 @@
+// src/app/(website)/categoria/[slug]/page.tsx
 import type { Metadata } from "next";
 import CategoryPage from "@/src/components/CategoryPage";
 
-type Props = {
-  params: { slug: string };
-};
+// Tipagem explícita dos parâmetros da rota
+interface PageParams {
+  slug: string;
+}
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+// Função de metadata para a página
+export async function generateMetadata({
+  params,
+}: {
+  params: PageParams;
+}): Promise<Metadata> {
   const slug = params.slug;
   const categoryName =
     slug.charAt(0).toUpperCase() + slug.slice(1).replace("-", " ");
@@ -16,6 +23,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default function CategoriaPage() {
-  return <CategoryPage />;
+// Página principal da categoria
+export default function CategoriaPage({ params }: { params: PageParams }) {
+  return <CategoryPage slug={params.slug} />;
 }

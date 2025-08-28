@@ -1,13 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
 import { supabase } from "@/src/lib/supabase";
 import { Product } from "@/src/types/Product";
 import ProductCard from "@/src/components/ProductCard";
 import dynamic from "next/dynamic";
 import { Pagination } from "@/src/components/Pagination";
 import AdSensePlaceholder from "@/src/components/TestAdPlaceholder";
+
+interface CategoryPageProps {
+  slug: string;
+}
 
 const slugToCategoryMap: Record<string, string> = {
   mouses: "mouse",
@@ -22,7 +25,7 @@ const slugToCategoryMap: Record<string, string> = {
   "placas-de-video": "placa de vídeo",
 };
 
-export default function CategoryPage() {
+export default function CategoryPage({ slug }: CategoryPageProps) {
   const ProductCarousel = dynamic(
     () => import("@/src/components/ProductCarousel"),
     {
@@ -32,8 +35,7 @@ export default function CategoryPage() {
 
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const params = useParams();
-  const slug = typeof params?.slug === "string" ? params.slug : "";
+
   const category = slugToCategoryMap[slug];
 
   useEffect(() => {
@@ -45,9 +47,7 @@ export default function CategoryPage() {
         .eq("category", category)
         .order("rank", { ascending: true });
 
-      if (!error && data) {
-        setProducts(data);
-      }
+      if (!error && data) setProducts(data);
 
       setLoading(false);
     }
@@ -60,9 +60,7 @@ export default function CategoryPage() {
 
   const PRODUCTS_PER_PAGE = 25;
   const [currentPage, setCurrentPage] = useState(1);
-
   const totalPages = Math.ceil(otherProducts.length / PRODUCTS_PER_PAGE);
-
   const paginatedProducts = otherProducts.slice(
     (currentPage - 1) * PRODUCTS_PER_PAGE,
     currentPage * PRODUCTS_PER_PAGE
