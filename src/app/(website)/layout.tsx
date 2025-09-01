@@ -1,6 +1,5 @@
-// src/app/(website)/layout.tsx
 import type { Metadata } from "next";
-import Header from "@/src/components/Header/header"; // <- novo
+import Header from "@/src/components/Header/header";
 import "@/src/app/globals.css";
 import Footer from "@/src/components/Footer";
 

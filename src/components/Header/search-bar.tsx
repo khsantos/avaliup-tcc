@@ -18,18 +18,29 @@ export function SearchBar() {
     }
 
     return (
-        <form onSubmit={onSubmit} className="flex items-center max-w-[180px] sm:max-w-xs md:max-w-sm">
+        <form
+            onSubmit={onSubmit}
+            // mobile: 180px | md: 260px | lg+: 320px, e não deixa encolher
+            className="shrink-0 w-[180px] md:w-[260px] lg:w-[320px]"
+        >
             <div className="relative w-full">
-                <label htmlFor="site-search" className="sr-only">Buscar produtos</label>
+                <label htmlFor="site-search" className="sr-only">
+                    Buscar produtos
+                </label>
                 <input
                     id="site-search"
-                    type="text"
+                    type="search"
                     placeholder="Buscar produtos"
                     value={term}
                     onChange={(e) => setTerm(e.target.value)}
-                    className="border border-[#010B62] rounded-sm h-10 text-xs sm:text-sm pl-8 focus:outline-none focus:ring-2 focus:ring-[#0969DA] dark:border-white w-full"
+                    autoComplete="off"
+                    enterKeyHint="search"
+                    className="w-full h-10 pl-8 text-xs sm:text-sm border border-[#010B62] dark:border-white rounded-sm focus:outline-none focus:ring-2 focus:ring-[#0969DA]"
                 />
-                <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4 text-[#010b62] dark:text-white" />
+                <Search
+                    className="pointer-events-none absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-[#010b62] dark:text-white"
+                    aria-hidden
+                />
             </div>
         </form>
     );
