@@ -10,7 +10,10 @@ export default function ProfileEditPage() {
     return <div className="text-white">Carregando...</div>;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const userName = user?.user_metadata?.name || "Usuário";
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const userEmail = user?.email || "Seu e-mail";
 
   return (
@@ -42,15 +45,15 @@ export default function ProfileEditPage() {
 
       {/* Conteúdo principal */}
       <div className="max-w-4xl mx-auto p-8 shadow-md rounded-md">
-        <h2 className="text-2xl font-bold text-blue-900 mb-6 dark:text-white">Perfil</h2>
+        <h2 className="text-2xl font-bold text-blue-900 mb-6 dark:text-white">
+          Perfil
+        </h2>
         <div className="flex items-center mb-6">
           <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center">
             {/* Placeholder para imagem do perfil */}
           </div>
           <div className="ml-4">
-            <p className="text-lg font-semibold">
-              Bem vindo(a)
-            </p>
+            <p className="text-lg font-semibold">Bem vindo(a)</p>
             <p className="text-sm text-gray-600">igormatheus@hotmail.com</p>
           </div>
         </div>
