@@ -1,10 +1,11 @@
 "use client";
-import React, { useState, useEffect } from "react";
+
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { useSupabase } from "@/src/contexts/supabase-provider";
 
 export default function Page() {
-  const supabase = createClientComponentClient();
+  const { user, loading } = useSupabase();
 
   const [notifications, setNotifications] = useState(true);
   const [tab, setTab] = useState(3);
@@ -13,20 +14,22 @@ export default function Page() {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    const getUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+    if (!loading && user) {
+      setUsername(user.user_metadata?.username || "Usuário");
+      setEmail(user.email || "");
+      setAvatarUrl(user.user_metadata?.avatar_url || null);
+    }
+  }, [loading, user]);
 
-      if (user) {
-        setUsername(user.user_metadata?.username || "Usuário");
-        setEmail(user.email || "");
-        setAvatarUrl(user.user_metadata?.avatar_url || null);
-      }
-    };
-
-    getUser();
-  }, [supabase]);
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-lg text-gray-600 dark:text-white">
+          Carregando perfil...
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen pt-8 pb-6">
@@ -45,7 +48,14 @@ export default function Page() {
               // Avatar padrão
               <svg width="64" height="64" viewBox="0 0 80 80">
                 <circle cx="40" cy="32" r="24" fill="#bfc8e6" />
-                <rect x="16" y="56" width="48" height="18" rx="9" fill="#bfc8e6" />
+                <rect
+                  x="16"
+                  y="56"
+                  width="48"
+                  height="18"
+                  rx="9"
+                  fill="#bfc8e6"
+                />
               </svg>
             )}
           </div>
@@ -53,26 +63,37 @@ export default function Page() {
             <div className="text-2xl font-bold text-[#010B62] dark:text-white">
               {username}
             </div>
-            <div className="text-base text-gray-600 mb-3">{email || "Nada informado."}</div>
+            <div className="text-base text-gray-600 mb-3">
+              {email || "Nada informado."}
+            </div>
             <div className="flex gap-4">
               <div className="bg-white dark:bg-[#030712] border-2 border-[#e3eafc] rounded-lg px-4 py-2 text-center min-w-[90px]">
                 <div className="text-xl font-bold text-[#010B62] dark:text-white">
-                  352 <span role="img" aria-label="Upvotes">👍</span>
+                  352{" "}
+                  <span role="img" aria-label="Upvotes">
+                    👍
+                  </span>
                 </div>
-                <div className="text-sm text-gray-600 dark:text-white">Upvotes</div>
+                <div className="text-sm text-gray-600 dark:text-white">
+                  Upvotes
+                </div>
               </div>
               <div className="bg-white dark:bg-[#030712] border-2 border-[#e3eafc] rounded-lg px-4 py-2 text-center min-w-[90px]">
                 <div className="text-xl font-bold text-[#010B62] dark:text-white">
                   27 <span className="text-[#f7b500]">★</span>
                 </div>
-                <div className="text-sm text-gray-600 dark:text-white">Avaliações</div>
+                <div className="text-sm text-gray-600 dark:text-white">
+                  Avaliações
+                </div>
               </div>
             </div>
           </div>
         </div>
         {/* Insígnias e botões */}
         <div className="text-right">
-          <div className="text-gray-600 text-base mb-2 dark:text-white">Insígnias</div>
+          <div className="text-gray-600 text-base mb-2 dark:text-white">
+            Insígnias
+          </div>
           <div className="mb-4 flex justify-end">
             {Array.from({ length: 3 }).map((_, i) => (
               <span key={i} className="mx-1">
@@ -102,7 +123,7 @@ export default function Page() {
             {/* Botão para trocar a foto */}
             <button
               type="button"
-              onClick={() => alert("Abrir modal de edição de foto")} // aqui você pode abrir um modal ou redirecionar
+              onClick={() => alert("Abrir modal de edição de foto")}
               className="bg-gray-500 cursor-pointer text-white rounded-lg px-6 py-2 font-bold hover:bg-gray-600 transition"
             >
               Editar Foto

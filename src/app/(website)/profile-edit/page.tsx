@@ -26,15 +26,15 @@ export default function ProfileEditPage() {
           <div className="border-b border-gray-700">
             <nav className="-mb-px flex space-x-8" aria-label="Tabs">
               <a
-                href="#"
+                href="/profile-general"
                 className="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm dark:text-white dark:bg-[#030712] text-gray-700 hover:text-gray-700"
                 aria-current="page"
               >
                 Geral
               </a>
               <a
-                href="/profile-general"
-                className="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-blue-600 border-blue-600 "
+                href="#"
+                className="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-blue-600 border-blue-600 cursor-auto"
               >
                 Editar
               </a>
