@@ -55,6 +55,23 @@ export default function Login() {
     }, 1500);
   };
 
+  const handleGoogleLogin = async () => {
+    setLoading(true);
+
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`, // ajuste se necessário
+      },
+    });
+
+    setLoading(false);
+
+    if (error) {
+      toast.error(error.message);
+    }
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-[#030712] relative">
       <div className="w-[345px] space-y-6">
@@ -136,16 +153,16 @@ export default function Login() {
             type="submit"
             disabled={loading || redirecting}
             className={`w-[345px] h-[45px] px-4 py-2 text-white rounded-md cursor-pointer
-    bg-[#010B62] dark:bg-[#01BAEF] hover:bg-[#202766] dark:hover:bg-[#0D91AC] 
-    ${loading || redirecting ? "opacity-70 cursor-not-allowed" : ""}
-  `}
+              bg-[#010B62] dark:bg-[#01BAEF] hover:bg-[#202766] dark:hover:bg-[#0D91AC] 
+              ${loading || redirecting ? "opacity-70 cursor-not-allowed" : ""}
+            `}
             onClick={handleLogin}
           >
             {loading
               ? "Entrando..."
               : redirecting
-                ? "Redirecionando..."
-                : "Entrar"}
+              ? "Redirecionando..."
+              : "Entrar"}
           </button>
         </form>
         <div className="text-center">
@@ -168,10 +185,17 @@ export default function Login() {
         </div>
         <button
           type="button"
-          className="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-[#010B62] border rounded-md border-[#010B62] hover:bg-gray-300 cursor-pointer dark:text-white dark-border-white dark:hover:bg-[#202766] dark:border-white"
+          onClick={handleGoogleLogin}
+          disabled={loading || redirecting}
+          className="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-[#010B62] border rounded-md border-[#010B62] hover:bg-gray-300 cursor-pointer dark:text-white dark:hover:bg-[#202766] dark:border-white"
         >
-          <Image src="/google-icon.svg" alt="Google" className="w-5 h-5 mr-2" width={20}
-            height={20} />
+          <Image
+            src="/google-icon.svg"
+            alt="Google"
+            className="w-5 h-5 mr-2"
+            width={20}
+            height={20}
+          />
           Google
         </button>
         <div className="text-center justify-center text-sm text-gray-500">
