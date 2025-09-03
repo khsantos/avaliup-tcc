@@ -29,7 +29,7 @@ export default function RootLayout({
         <link rel="icon" href="/logo-avaliup.svg" />
         <script
           async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXX"
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8840751358865151"
           crossOrigin="anonymous"
         ></script>
       </head>
