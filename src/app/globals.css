@@ -3,7 +3,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --font-sans: var(--font-ubuntu-sans), system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-sans: 'Ubuntu Sans', system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
 }
 
 /* Oculta scrollbar em navegadores modernos */
@@ -165,5 +165,5 @@
 
 @layer base {
   * { @apply border-border outline-ring/50; }
-  body { @apply bg-background text-foreground font-sans; }
+  body { @apply bg-background text-foreground font-sans; font-family: var(--font-ubuntu-sans), 'Ubuntu Sans', Ubuntu, sans-serif; }
 }

@@ -67,7 +67,7 @@ export default function CategoryPage({ slug }: CategoryPageProps) {
   );
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="py-8 w-full">
       <section className="pb-10">
         <h2 className="text-md text-gray-600 dark:text-white">Top 10</h2>
         <h1 className="text-3xl font-bold text-[#010b62] dark:text-white mb-4">

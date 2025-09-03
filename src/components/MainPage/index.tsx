@@ -64,8 +64,8 @@ export default function MainPage() {
 
       <section className="px-4 py-10 flex justify-center">
         <div className="max-w-7xl w-full p-6">
-          <span className="text-gray-500">Top 10</span>
-          <h2 className="text-[#010b62] text-xl font-semibold mb-6 text-left dark:text-white">
+          <span className="font-medium text-lg text-[#010B62]/60 dark:text-[#FFFFFF]/60">Top 10</span>
+          <h2 className="text-[#010b62] text-3xl font-semibold mb-6 text-left dark:text-white">
             Mouses gamers custo-benefício
           </h2>
 
@@ -82,8 +82,8 @@ export default function MainPage() {
 
       <section className="px-4 py-10 flex justify-center">
         <div className="max-w-7xl w-full p-6">
-          <span className="text-gray-500">Top 10</span>
-          <h2 className="text-[#010b62] text-xl font-semibold mb-6 text-left dark:text-white">
+          <span className="font-medium text-lg text-[#010B62]/60 dark:text-[#FFFFFF]/60">Top 10</span>
+          <h2 className="text-[#010b62] text-3xl font-semibold mb-6 text-left dark:text-white">
             Teclados gamers custo-benefício
           </h2>
 
@@ -98,8 +98,8 @@ export default function MainPage() {
 
       <section className="px-4 py-10 flex justify-center">
         <div className="max-w-7xl w-full p-6">
-          <span className="text-gray-500">Top 10</span>
-          <h2 className="text-[#010b62] text-xl font-semibold mb-6 text-left dark:text-white">
+          <span className="font-medium text-lg text-[#010B62]/60 dark:text-[#FFFFFF]/60">Top 10</span>
+          <h2 className="text-[#010b62] text-3xl font-semibold mb-6 text-left dark:text-white">
             Headsets gamers custo-benefício
           </h2>
 
@@ -114,8 +114,8 @@ export default function MainPage() {
 
       <section className="px-4 py-10 flex justify-center">
         <div className="max-w-7xl w-full p-6">
-          <span className="text-gray-500">Top 10</span>
-          <h2 className="text-[#010b62] text-xl font-semibold mb-6 text-left dark:text-white">
+          <span className="font-medium text-lg text-[#010B62]/60 dark:text-[#FFFFFF]/60">Top 10</span>
+          <h2 className="text-[#010b62] text-3xl font-semibold mb-6 text-left dark:text-white">
             Mousepads gamers custo-benefício
           </h2>
 
@@ -130,8 +130,8 @@ export default function MainPage() {
 
       <section className="px-4 py-10 flex justify-center">
         <div className="max-w-7xl w-full p-6">
-          <span className="text-gray-500">Top 10</span>
-          <h2 className="text-[#010b62] text-xl font-semibold mb-6 text-left dark:text-white">
+          <span className="font-medium text-lg text-[#010B62]/60 dark:text-[#FFFFFF]/60">Top 10</span>
+          <h2 className="text-[#010b62] text-3xl font-semibold mb-6 text-left dark:text-white">
             Controles gamers custo-benefício
           </h2>
 

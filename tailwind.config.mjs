@@ -22,7 +22,7 @@ const config = {
     },
     extend: {
       fontFamily: {
-        ubuntu: ["Ubuntu", "sans-serif"],
+        sans: ["var(--font-ubuntu-sans)", "Ubuntu Sans", "Ubuntu", "sans-serif"],
       },
       keyframes: {
         "accordion-down": {

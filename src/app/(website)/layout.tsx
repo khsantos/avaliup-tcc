@@ -12,7 +12,7 @@ export default function WebsiteLayout({ children }: { children: React.ReactNode 
   return (
     <div className="min-h-dvh bg-white dark:bg-[#030712]">
       <Header />
-      <main className="p-2 sm:p-4">{children}</main>
+      <main className="max-w-[1280px] mx-auto w-full">{children}</main>
       <Footer />
     </div>
   );
