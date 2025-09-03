@@ -22,7 +22,7 @@ export default function AdSense() {
           maxWidth: "970px",
           height: "90px",
         }}
-        data-ad-client="ca-pub-XXXXXXXXXXXXXXX" // <-- substitua com seu ID real
+        data-ad-client="ca-pub-8840751358865151" // <-- substitua com seu ID real
         data-ad-slot="1234567890" // <-- substitua com seu slot real
         data-ad-format="horizontal"
         data-full-width-responsive="true"
