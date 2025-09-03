@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect } from "react";
+import dynamic from "next/dynamic";
 
-export default function AdSense() {
+function AdSenseComponent() {
   useEffect(() => {
     try {
-      // @ts-expect-error: adsbygoogle might not be defined yet
+      // @ts-expect-error adsbygoogle pode não estar definido
       (window.adsbygoogle = window.adsbygoogle || []).push({});
     } catch (e) {
       console.error("Adsense error", e);
@@ -22,11 +23,16 @@ export default function AdSense() {
           maxWidth: "970px",
           height: "90px",
         }}
-        data-ad-client="ca-pub-8840751358865151" // <-- substitua com seu ID real
-        data-ad-slot="1234567890" // <-- substitua com seu slot real
-        data-ad-format="horizontal"
+        data-ad-client="ca-pub-8840751358865151"
+        data-ad-slot="1234567890"
+        data-ad-format="auto"
         data-full-width-responsive="true"
       />
     </div>
   );
 }
+
+// 🔥 Só renderiza no client
+export default dynamic(() => Promise.resolve(AdSenseComponent), {
+  ssr: false,
+});
