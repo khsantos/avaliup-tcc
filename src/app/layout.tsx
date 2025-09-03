@@ -2,6 +2,7 @@ import { Toaster } from "@/src/components/ui/sonner";
 import "./globals.css";
 import { Providers } from "./providers";
 import { Ubuntu_Sans } from "next/font/google";
+import Script from "next/script";
 
 const ubuntu = Ubuntu_Sans({
   subsets: ["latin"],
@@ -27,19 +28,21 @@ export default function RootLayout({
     <html lang="pt-br" suppressHydrationWarning className={ubuntu.variable}>
       <head>
         <link rel="icon" href="/logo-avaliup.svg" />
-        <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8840751358865151"
-          crossOrigin="anonymous"
-        ></script>
       </head>
-      <body>
+      <body suppressHydrationWarning>
         <Providers>
           <main className="flex-grow">
             {children}
             <Toaster />
           </main>
         </Providers>
+
+        <Script
+          async
+          strategy="afterInteractive"
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8840751358865151"
+          crossOrigin="anonymous"
+        />
       </body>
     </html>
   );
