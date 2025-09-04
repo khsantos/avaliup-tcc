@@ -13,12 +13,14 @@ import {
 } from "../ui/table";
 import { useSupabase } from "@/src/contexts/supabase-provider";
 import { User } from "@/src/types/User";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 export default function RankingComponent() {
   const { theme } = useTheme();
   const { supabase } = useSupabase();
   const [ranking, setRanking] = useState<User[]>([]);
   const currentUserName = "Você";
+  const [timeLeft, setTimeLeft] = useState<string>("");
 
   const getTheme = (light: string, dark: string, opacity?: number) => {
     const color = theme === "dark" ? dark : light;
@@ -51,6 +53,31 @@ export default function RankingComponent() {
 
   const podiumUsers = ranking.slice(0, 3);
   const tableUsers = ranking.filter((user) => !podiumUsers.includes(user));
+
+  useEffect(() => {
+    const updateCountdown = () => {
+      const now = new Date();
+      const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+      const diff = nextMonth.getTime() - now.getTime();
+
+      if (diff <= 0) {
+        setTimeLeft("0d 0h 0m 0s");
+        return;
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+
+      setTimeLeft(`${days}d ${hours}h ${minutes}m ${seconds}s`);
+    };
+
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const PodiumBlock = ({
     place,
@@ -85,8 +112,8 @@ export default function RankingComponent() {
           >
             {place}
           </div>
-          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-white text-sm font-semibold">
-            {user.points ?? 0}xp
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-white text-xl font-semibold">
+            {user.points ?? 0} pontos
           </div>
         </div>
 
@@ -111,7 +138,7 @@ export default function RankingComponent() {
               <div className="rounded-full bg-white p-[2px]">
                 <div className="rounded-full overflow-hidden w-16 h-16">
                   <Image
-                    src={user.profile_img || "/placeholder.svg"}
+                    src={user.profile_img || "/default-avatar.svg"}
                     alt={user.name}
                     width={64}
                     height={64}
@@ -141,6 +168,9 @@ export default function RankingComponent() {
       <div className="w-[80%]">
         <h1 className="text-[#010b62] dark:text-white text-2xl font-bold mb-4">
           Ranking
+          <span className="flex text-sm font-medium text-[#010b62] dark:text-[#33C9F2] justify-end">
+            Próximo reset: {timeLeft}
+          </span>
         </h1>
 
         <div className="w-full h-auto rounded-md overflow-hidden shadow-md mb-8">
@@ -220,16 +250,15 @@ export default function RankingComponent() {
                     }
                   >
                     {i + 4}{" "}
-                    {/* rank começa do 4, já que 1,2,3 estão no pódio */}
                   </TableCell>
                   <TableCell className="border-b border-[#010b62] dark:border-white">
-                    <Image
-                      src={user.profile_img || "/placeholder.svg"}
-                      alt={user.name}
-                      width={32}
-                      height={32}
-                      className="rounded-full"
-                    />
+                    <Avatar>
+                      {user.profile_img ? (
+                        <AvatarImage src={user.profile_img} alt={user.name} />
+                      ) : (
+                        <AvatarFallback></AvatarFallback>
+                      )}
+                    </Avatar>
                   </TableCell>
                   <TableCell className="border-b border-[#010b62] dark:border-white text-[#010b62] dark:text-white">
                     {user.name}
