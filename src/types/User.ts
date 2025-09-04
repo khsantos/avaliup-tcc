@@ -5,4 +5,5 @@ export type User = {
   profile_img: string;
   badges: string[];
   created_at: string;
+  points: number;
 };

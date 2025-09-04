@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -10,41 +11,46 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
+import { useSupabase } from "@/src/contexts/supabase-provider";
+import { User } from "@/src/types/User";
 
 export default function RankingComponent() {
   const { theme } = useTheme();
+  const { supabase } = useSupabase();
+  const [ranking, setRanking] = useState<User[]>([]);
+  const currentUserName = "Você";
 
   const getTheme = (light: string, dark: string, opacity?: number) => {
     const color = theme === "dark" ? dark : light;
-
     if (opacity !== undefined) {
       const r = parseInt(color.slice(1, 3), 16);
       const g = parseInt(color.slice(3, 5), 16);
       const b = parseInt(color.slice(5, 7), 16);
       return `rgba(${r}, ${g}, ${b}, ${opacity})`;
     }
-
     return color;
   };
 
-  const currentUserName = "Você"; // ou você pode ter um ID real
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const { data, error } = await supabase
+        .from("users")
+        .select("*")
+        .order("points", { ascending: false });
 
-  const ranking = [
-    { name: "João", points: 450, avatar: "/masculine-avatar.png" },
-    { name: "Ana", points: 445, avatar: "/diverse-female-avatars.png" },
-    { name: "Lívia", points: 350, avatar: "/masculine-avatar.png" },
-    { name: "Rafael Pereira", points: 200, avatar: "/masculine-avatar.png" },
-    { name: "Maria Silva", points: 200, avatar: "/diverse-female-avatars.png" },
-    { name: "Carlos Santos", points: 200, avatar: "/masculine-avatar.png" },
-    { name: "Ana Costa", points: 200, avatar: "/diverse-female-avatars.png" },
-    { name: "Pedro Lima", points: 200, avatar: "/masculine-avatar.png" },
-    {
-      name: "Julia Oliveira",
-      points: 200,
-      avatar: "/diverse-female-avatars.png",
-    },
-    { name: "Você", points: 200, avatar: "/avatar-usuario.jpg" },
-  ];
+      if (error) {
+        console.error("Erro ao buscar usuários:", error);
+        return;
+      }
+
+      setRanking(data || []);
+    };
+
+    fetchUsers();
+  }, [supabase]);
+
+  const podiumUsers = ranking.slice(0, 3);
+  const tableUsers = ranking.filter((user) => !podiumUsers.includes(user));
 
   const PodiumBlock = ({
     place,
@@ -54,7 +60,7 @@ export default function RankingComponent() {
     topColor = "#0ea5a4",
   }: {
     place: number;
-    user: { name: string; points: number; avatar: string };
+    user: User;
     height?: number;
     frontColor?: string;
     topColor?: string;
@@ -64,7 +70,6 @@ export default function RankingComponent() {
 
     return (
       <div className="relative flex flex-col items-center mt-30 w-full">
-        {/* Bloco frontal */}
         <div
           className="relative w-full rounded-t-md"
           style={{
@@ -74,21 +79,17 @@ export default function RankingComponent() {
               "0 6px 0 rgba(0,0,0,0.18), inset 0 -3px 5px rgba(0,0,0,0.1)",
           }}
         >
-          {/* Número do ranking no topo */}
           <div
             className="absolute top-2 left-1/2 -translate-x-1/2 text-white font-bold mt-4"
             style={{ fontSize: "3rem" }}
           >
             {place}
           </div>
-
-          {/* XP na parte inferior */}
           <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-white text-sm font-semibold">
-            {user.points}xp
+            {user.points ?? 0}xp
           </div>
         </div>
 
-        {/* Topo separado (camada sobreposta) */}
         <div
           className="absolute top-0 left-0 w-full rounded-t-md"
           style={{
@@ -98,7 +99,6 @@ export default function RankingComponent() {
           }}
         />
 
-        {/* Avatar */}
         <div
           className="absolute flex flex-col items-center"
           style={{ bottom: height + topHeight - avatarSize / 2 }}
@@ -111,7 +111,7 @@ export default function RankingComponent() {
               <div className="rounded-full bg-white p-[2px]">
                 <div className="rounded-full overflow-hidden w-16 h-16">
                   <Image
-                    src={user.avatar || "/placeholder.svg"}
+                    src={user.profile_img || "/placeholder.svg"}
                     alt={user.name}
                     width={64}
                     height={64}
@@ -143,7 +143,6 @@ export default function RankingComponent() {
           Ranking
         </h1>
 
-        {/* Card prêmio */}
         <div className="w-full h-auto rounded-md overflow-hidden shadow-md mb-8">
           <Image
             src={"/hero-ranking.svg"}
@@ -154,32 +153,32 @@ export default function RankingComponent() {
           />
         </div>
 
-        {/* Pódio */}
-        <div className="grid grid-cols-3 gap-0 items-end mb-12">
-          <PodiumBlock
-            place={2}
-            user={ranking[1]}
-            height={leftHeight}
-            frontColor={getTheme("#010B62", "#01BAEF", 0.7)}
-            topColor={getTheme("#010B62", "#01BAEF", 0.2)}
-          />
-          <PodiumBlock
-            place={1}
-            user={ranking[0]}
-            height={centerHeight}
-            frontColor={getTheme("#010B62", "#01BAEF", 0.9)}
-            topColor={getTheme("#010B62", "#01BAEF")}
-          />
-          <PodiumBlock
-            place={3}
-            user={ranking[2]}
-            height={rightHeight}
-            frontColor={getTheme("#010b62", "#01BAEF", 0.4)}
-            topColor={getTheme("#010b62", "#01BAEF", 0.1)}
-          />
-        </div>
+        {ranking.length >= 3 && (
+          <div className="grid grid-cols-3 gap-0 items-end mb-12">
+            <PodiumBlock
+              place={2}
+              user={ranking[1]}
+              height={leftHeight}
+              frontColor={getTheme("#010B62", "#01BAEF", 0.7)}
+              topColor={getTheme("#010B62", "#01BAEF", 0.2)}
+            />
+            <PodiumBlock
+              place={1}
+              user={ranking[0]}
+              height={centerHeight}
+              frontColor={getTheme("#010B62", "#01BAEF", 0.9)}
+              topColor={getTheme("#010B62", "#01BAEF")}
+            />
+            <PodiumBlock
+              place={3}
+              user={ranking[2]}
+              height={rightHeight}
+              frontColor={getTheme("#010b62", "#01BAEF", 0.4)}
+              topColor={getTheme("#010b62", "#01BAEF", 0.1)}
+            />
+          </div>
+        )}
 
-        {/* Tabela */}
         <Table
           className="rounded-md border border-[#010b62] dark:border-white border-separate"
           style={{ borderSpacing: 0 }}
@@ -201,12 +200,12 @@ export default function RankingComponent() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {ranking.map((user, i) => {
+            {tableUsers.map((user, i) => {
               const isCurrentUser = user.name === currentUserName;
 
               return (
                 <TableRow
-                  key={i}
+                  key={user.id}
                   className={`${
                     isCurrentUser
                       ? "bg-[#010b62]/40 dark:bg-bg-[#010b62]/90 font-semibold text-[#010b62] dark:text-white"
@@ -215,16 +214,17 @@ export default function RankingComponent() {
                 >
                   <TableCell
                     className={
-                      i === ranking.length - 1
+                      i === tableUsers.length - 1
                         ? "rounded-bl-md border-b border-[#010b62] dark:border-white dark:text-white"
                         : "border-b border-[#010b62] dark:border-white dark:text-white"
                     }
                   >
-                    {i + 1}
+                    {i + 4}{" "}
+                    {/* rank começa do 4, já que 1,2,3 estão no pódio */}
                   </TableCell>
                   <TableCell className="border-b border-[#010b62] dark:border-white">
                     <Image
-                      src={user.avatar}
+                      src={user.profile_img || "/placeholder.svg"}
                       alt={user.name}
                       width={32}
                       height={32}
@@ -236,12 +236,12 @@ export default function RankingComponent() {
                   </TableCell>
                   <TableCell
                     className={
-                      i === ranking.length - 1
+                      i === tableUsers.length - 1
                         ? "rounded-br-md border-b border-[#010b62] dark:border-white text-[#010b62] dark:text-white"
                         : "border-b border-[#010b62] dark:border-white text-[#010b62] dark:text-white"
                     }
                   >
-                    {user.points}
+                    {user.points ?? 0}
                   </TableCell>
                 </TableRow>
               );
