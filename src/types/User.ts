@@ -6,4 +6,5 @@ export type User = {
   badges: string[];
   created_at: string;
   points: number;
+  review_count: number;
 };

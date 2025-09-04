@@ -8,6 +8,7 @@ import ReviewDetailsModal from "../UserReviewDetails";
 import { Pagination } from "../Pagination";
 import { ReviewCard } from "../ReviewCard";
 import { toast } from "sonner";
+import { PostgrestError } from "@supabase/supabase-js";
 
 type UserReviewProps = {
   productId: number;
@@ -109,24 +110,36 @@ export default function UserReviews({ productId }: UserReviewProps) {
     );
 
     try {
+      let supabaseError: PostgrestError | null = null;
+
       if (currentVote === voteType) {
-        await supabase
+        const { error } = await supabase
           .from("review_votes")
           .delete()
           .eq("review_id", reviewId)
           .eq("user_id", userId);
+        supabaseError = error;
       } else if (currentVote && currentVote !== voteType) {
-        await supabase
+        const { error } = await supabase
           .from("review_votes")
           .update({ vote_type: voteType })
           .eq("review_id", reviewId)
           .eq("user_id", userId);
+        supabaseError = error;
       } else {
-        await supabase.from("review_votes").insert({
+        const { error } = await supabase.from("review_votes").insert({
           review_id: reviewId,
           user_id: userId,
           vote_type: voteType,
         });
+        supabaseError = error;
+      }
+
+      if (supabaseError) {
+        console.error("Erro ao registrar voto:", supabaseError);
+        toast("Não foi possível registrar seu voto.");
+        setUserVotes((prev) => ({ ...prev, [reviewId]: currentVote }));
+        return;
       }
 
       const { data } = await supabase
@@ -138,13 +151,18 @@ export default function UserReviews({ productId }: UserReviewProps) {
       const newDislikes =
         data?.filter((v) => v.vote_type === "dislike").length || 0;
 
-      await supabase
-        .from("reviews")
-        .update({ likes: newLikes, dislikes: newDislikes })
-        .eq("id", reviewId);
-    } catch (error) {
-      console.error("Erro ao registrar voto:", error);
+      setReviews((prev) =>
+        prev.map((rev) =>
+          rev.id === reviewId
+            ? { ...rev, likes: newLikes, dislikes: newDislikes }
+            : rev
+        )
+      );
+    } catch (err: unknown) {
+      console.error("Erro inesperado ao votar:", err);
       toast("Não foi possível registrar seu voto.");
+
+      setUserVotes((prev) => ({ ...prev, [reviewId]: currentVote }));
     }
   };
 
@@ -267,7 +285,6 @@ export default function UserReviews({ productId }: UserReviewProps) {
 
     fetchReviews();
   }, [productId, sortBy, filterRating, currentPage]);
-
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
