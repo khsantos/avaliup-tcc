@@ -1,8 +1,34 @@
 "use client";
 
 import Image from "next/image";
+import { useTheme } from "next-themes";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../ui/table";
 
 export default function RankingComponent() {
+  const { theme } = useTheme();
+
+  const getTheme = (light: string, dark: string, opacity?: number) => {
+    const color = theme === "dark" ? dark : light;
+
+    if (opacity !== undefined) {
+      const r = parseInt(color.slice(1, 3), 16);
+      const g = parseInt(color.slice(3, 5), 16);
+      const b = parseInt(color.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+    }
+
+    return color;
+  };
+
+  const currentUserName = "Você"; // ou você pode ter um ID real
+
   const ranking = [
     { name: "João", points: 450, avatar: "/masculine-avatar.png" },
     { name: "Ana", points: 445, avatar: "/diverse-female-avatars.png" },
@@ -37,30 +63,40 @@ export default function RankingComponent() {
     const avatarSize = 64;
 
     return (
-      <div className="relative flex flex-col items-center mt-30">
-        {/* Bloco com topo integrado */}
+      <div className="relative flex flex-col items-center mt-30 w-full">
+        {/* Bloco frontal */}
         <div
-          className="flex flex-col justify-end items-center text-white relative w-full rounded-t-md"
+          className="relative w-full rounded-t-md"
           style={{
-            height: `${height + topHeight}px`,
-            background: frontColor,
-            boxShadow: "0 6px 0 rgba(0,0,0,0.18)",
+            height: `${height}px`,
+            backgroundColor: frontColor,
+            boxShadow:
+              "0 6px 0 rgba(0,0,0,0.18), inset 0 -3px 5px rgba(0,0,0,0.1)",
           }}
         >
-          {/* Topo colorido */}
+          {/* Número do ranking no topo */}
           <div
-            className="w-full rounded-t-md"
-            style={{
-              height: `${topHeight}px`,
-              background: topColor,
-              boxShadow: "0 3px 6px rgba(0,0,0,0.25)",
-            }}
-          />
-          <div className="flex flex-col items-center justify-end mt-auto mb-4">
-            <div className="text-4xl font-bold">{place}</div>
-            <div className="text-sm font-semibold">{user.points}xp</div>
+            className="absolute top-2 left-1/2 -translate-x-1/2 text-white font-bold mt-4"
+            style={{ fontSize: "3rem" }}
+          >
+            {place}
+          </div>
+
+          {/* XP na parte inferior */}
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-white text-sm font-semibold">
+            {user.points}xp
           </div>
         </div>
+
+        {/* Topo separado (camada sobreposta) */}
+        <div
+          className="absolute top-0 left-0 w-full rounded-t-md"
+          style={{
+            height: `${topHeight}px`,
+            backgroundColor: topColor,
+            boxShadow: "0 3px 6px rgba(0,0,0,0.25), inset 0 -2px 3px rgba()",
+          }}
+        />
 
         {/* Avatar */}
         <div
@@ -103,33 +139,19 @@ export default function RankingComponent() {
   return (
     <div className="min-h-screen px-4 py-8 flex flex-col items-center">
       <div className="w-[80%]">
-        <h1 className="text-gray-900 text-2xl font-bold mb-4">Ranking</h1>
+        <h1 className="text-[#010b62] dark:text-white text-2xl font-bold mb-4">
+          Ranking
+        </h1>
 
         {/* Card prêmio */}
-        <div className="relative bg-gradient-to-r from-blue-200 to-blue-400 rounded-md p-6 overflow-hidden mb-8 shadow-md">
-          <div className="relative z-10">
-            <h2 className="text-orange-600 text-2xl font-bold mb-2">
-              Prêmio da semana
-            </h2>
-            <p className="text-gray-800 text-sm mb-1">
-              Participe e concorra a um
-            </p>
-            <p className="text-gray-900 text-lg font-semibold mb-1">
-              Mouse Logitech G203
-            </p>
-            <p className="text-gray-600 text-xs">
-              A cada jogada, você ganha a chance.
-            </p>
-          </div>
-          <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-            <Image
-              src="/mouse-gamer-logitech.jpg"
-              alt="Mouse Logitech G203"
-              width={120}
-              height={120}
-              className="object-contain"
-            />
-          </div>
+        <div className="w-full h-auto rounded-md overflow-hidden shadow-md mb-8">
+          <Image
+            src={"/hero-ranking.svg"}
+            alt="Banner do prêmio"
+            width={500}
+            height={100}
+            className="w-full h-auto object-cover"
+          />
         </div>
 
         {/* Pódio */}
@@ -138,75 +160,94 @@ export default function RankingComponent() {
             place={2}
             user={ranking[1]}
             height={leftHeight}
-            frontColor="#3b82f6"
-            topColor="#60a5fa"
+            frontColor={getTheme("#010B62", "#01BAEF", 0.7)}
+            topColor={getTheme("#010B62", "#01BAEF", 0.2)}
           />
           <PodiumBlock
             place={1}
             user={ranking[0]}
             height={centerHeight}
-            frontColor="#2563eb"
-            topColor="#3b82f6"
+            frontColor={getTheme("#010B62", "#01BAEF", 0.9)}
+            topColor={getTheme("#010B62", "#01BAEF")}
           />
           <PodiumBlock
             place={3}
             user={ranking[2]}
             height={rightHeight}
-            frontColor="#1e40af"
-            topColor="#1d4ed8"
+            frontColor={getTheme("#010b62", "#01BAEF", 0.4)}
+            topColor={getTheme("#010b62", "#01BAEF", 0.1)}
           />
         </div>
 
         {/* Tabela */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm bg-white text-gray-900 rounded-lg overflow-hidden shadow-md">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="p-3 text-left">Rank</th>
-                <th className="p-3 text-left">Foto</th>
-                <th className="p-3 text-left">Usuário</th>
-                <th className="p-3 text-left">Pontos</th>
-              </tr>
-            </thead>
-            <tbody>
-              {ranking.slice(3, -1).map((user, i) => (
-                <tr
+        <Table
+          className="rounded-md border border-[#010b62] dark:border-white border-separate"
+          style={{ borderSpacing: 0 }}
+        >
+          <TableHeader>
+            <TableRow>
+              <TableHead className="border-b border-[#010b62] dark:border-white text-[#010b62] dark:text-white">
+                Rank
+              </TableHead>
+              <TableHead className="border-b border-[#010b62] dark:border-white text-[#010b62] dark:text-white">
+                Foto
+              </TableHead>
+              <TableHead className="border-b border-[#010b62] dark:border-white text-[#010b62] dark:text-white">
+                Usuário
+              </TableHead>
+              <TableHead className="border-b border-[#010b62] dark:border-white text-[#010b62] dark:text-white">
+                Pontos
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {ranking.map((user, i) => {
+              const isCurrentUser = user.name === currentUserName;
+
+              return (
+                <TableRow
                   key={i}
-                  className="border-t border-gray-200 hover:bg-gray-50"
+                  className={`${
+                    isCurrentUser
+                      ? "bg-[#010b62]/40 dark:bg-bg-[#010b62]/90 font-semibold text-[#010b62] dark:text-white"
+                      : "text-[#010b62] dark:text-white"
+                  }`}
                 >
-                  <td className="p-3">{i + 4}</td>
-                  <td className="p-3">
+                  <TableCell
+                    className={
+                      i === ranking.length - 1
+                        ? "rounded-bl-md border-b border-[#010b62] dark:border-white dark:text-white"
+                        : "border-b border-[#010b62] dark:border-white dark:text-white"
+                    }
+                  >
+                    {i + 1}
+                  </TableCell>
+                  <TableCell className="border-b border-[#010b62] dark:border-white">
                     <Image
-                      src={user.avatar || "/placeholder.svg"}
+                      src={user.avatar}
                       alt={user.name}
                       width={32}
                       height={32}
                       className="rounded-full"
                     />
-                  </td>
-                  <td className="p-3">{user.name}</td>
-                  <td className="p-3">{user.points}</td>
-                </tr>
-              ))}
-              <tr className="border-t border-gray-200 bg-blue-100">
-                <td className="p-3">—</td>
-                <td className="p-3">
-                  <Image
-                    src={
-                      ranking[ranking.length - 1].avatar || "/placeholder.svg"
+                  </TableCell>
+                  <TableCell className="border-b border-[#010b62] dark:border-white text-[#010b62] dark:text-white">
+                    {user.name}
+                  </TableCell>
+                  <TableCell
+                    className={
+                      i === ranking.length - 1
+                        ? "rounded-br-md border-b border-[#010b62] dark:border-white text-[#010b62] dark:text-white"
+                        : "border-b border-[#010b62] dark:border-white text-[#010b62] dark:text-white"
                     }
-                    alt="Você"
-                    width={32}
-                    height={32}
-                    className="rounded-full"
-                  />
-                </td>
-                <td className="p-3 font-semibold text-blue-700">Você</td>
-                <td className="p-3 font-semibold text-blue-700">200</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+                  >
+                    {user.points}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
       </div>
     </div>
   );
