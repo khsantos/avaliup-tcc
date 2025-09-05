@@ -53,7 +53,7 @@ export default function ProfileEditPage() {
             {/* Placeholder para imagem do perfil */}
           </div>
           <div className="ml-4">
-            <p className="text-lg font-semibold">Bem vindo(a)</p>
+            <p className="text-lg ">Bem vindo(a)</p>
             <p className="text-sm text-gray-600">igormatheus@hotmail.com</p>
           </div>
         </div>
@@ -71,7 +71,7 @@ export default function ProfileEditPage() {
               name="name"
               type="text"
               placeholder="Informe seu Nome completo"
-              className="w-full px-2 py-2 mt-1 border rounded-md focus:outline-none border-white focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
+              className="w-full px-2 py-2 mt-1 border rounded-md focus:outline-none dark:border-white focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
             />
           </div>
           <div>
@@ -86,7 +86,7 @@ export default function ProfileEditPage() {
               name="email"
               type="email"
               placeholder="Informe seu e-mail"
-              className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none border-white focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
+              className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none dark:border-white focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
             />
           </div>
           <div>
@@ -101,7 +101,7 @@ export default function ProfileEditPage() {
               name="cpf"
               type="text"
               placeholder="Informe seu CPF"
-              className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 border-white focus:ring-blue-500 placeholder-gray-400"
+              className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 dark:border-white focus:ring-blue-500 placeholder-gray-400"
             />
           </div>
           <div>
@@ -115,7 +115,7 @@ export default function ProfileEditPage() {
               id="gender"
               name="gender"
               defaultValue="Feminino"
-              className="w-full px-3 py-2 mt-1 border rounded-md border-white dark:bg-[#030712] focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 mt-1 border rounded-md dark:border-white dark:bg-[#030712] focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="Feminino">Feminino</option>
               <option value="Masculino">Masculino</option>
@@ -134,7 +134,7 @@ export default function ProfileEditPage() {
               name="password"
               type="password"
               placeholder="Informe a nova senha"
-              className="w-full px-3 py-2 mt-1 border rounded-md border-white focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
+              className="w-full px-3 py-2 mt-1 border rounded-md dark:border-white focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
             />
           </div>
           <div>
@@ -149,7 +149,7 @@ export default function ProfileEditPage() {
               name="confirm-password"
               type="password"
               placeholder="Confirme a nova senha"
-              className="w-full px-3 py-2 mt-1 border rounded-md border-white focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
+              className="w-full px-3 py-2 mt-1 border rounded-md dark:border-white focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
             />
           </div>
           <div className="flex justify-between">

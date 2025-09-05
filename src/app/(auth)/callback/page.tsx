@@ -18,7 +18,7 @@ export default function AuthCallback() {
       }
 
       if (data.session) {
-        router.replace("/website");
+        router.replace("/");
       } else {
         router.replace("/login");
       }

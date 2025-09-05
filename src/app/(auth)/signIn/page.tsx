@@ -61,7 +61,7 @@ export default function Login() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`, // ajuste se necessário
+        redirectTo: `${window.location.origin}/callback`, // ajuste se necessário
       },
     });
 
@@ -161,8 +161,8 @@ export default function Login() {
             {loading
               ? "Entrando..."
               : redirecting
-              ? "Redirecionando..."
-              : "Entrar"}
+                ? "Redirecionando..."
+                : "Entrar"}
           </button>
         </form>
         <div className="text-center">
