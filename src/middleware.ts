@@ -23,12 +23,10 @@ export async function middleware(req: NextRequest) {
     }
   );
 
-  // Recupera a sessão atual do Supabase
   const {
     data: { session },
   } = await supabase.auth.getSession();
 
-  // Se tentar acessar /profile-page sem estar logado → redireciona
   if (!session && req.nextUrl.pathname.startsWith("/profile-page")) {
     const redirectUrl = req.nextUrl.clone();
     redirectUrl.pathname = "/";
@@ -39,5 +37,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/profile-general", "/profile-edit"], // você pode expandir isso, ex: "/dashboard/:path*"
+  matcher: ["/profile-general", "/profile-edit"],
 };

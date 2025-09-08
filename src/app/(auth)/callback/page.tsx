@@ -9,19 +9,41 @@ export default function AuthCallback() {
 
   useEffect(() => {
     const handleCallback = async () => {
-      const { data, error } = await supabase.auth.getSession();
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.getSession();
 
-      if (error) {
+      if (error || !session) {
         console.error("Erro na autenticação:", error);
         router.replace("/login");
         return;
       }
 
-      if (data.session) {
-        router.replace("/");
-      } else {
-        router.replace("/login");
+      const user = session.user;
+
+      const { data: existingUser } = await supabase
+        .from("users")
+        .select("id")
+        .eq("id", user.id)
+        .maybeSingle();
+
+      if (!existingUser) {
+        await supabase.from("users").insert([
+          {
+            id: user.id,
+            name:
+              user.user_metadata.full_name ||
+              user.user_metadata.name ||
+              user.email?.split("@")[0],
+            email: user.email,
+            profile_img: user.user_metadata.avatar_url || "",
+            badges: [],
+          },
+        ]);
       }
+
+      router.replace("/");
     };
 
     handleCallback();
