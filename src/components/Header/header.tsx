@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Heart, Menu, X } from "lucide-react";
 import ThemeSwitch from "@/src/components/ThemeSwitch";
 import { SearchBar } from "./search-bar";
 import Logo from "../Logo";
@@ -8,6 +8,8 @@ import { DesktopNav } from "./desktop-nav";
 import { UserMenu } from "./user-menu";
 import { MobileDrawer } from "./mobile-drawer";
 import { useSupabase } from "@/src/contexts/supabase-provider";
+import { Button } from "../ui/button";
+import { FavoritesSheet } from "../FavoritesSheet";
 
 interface UserProfile {
   name?: string;
@@ -19,6 +21,7 @@ export default function Header() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState<false | string>(false);
+  const [favoritesOpen, setFavoritesOpen] = useState(false);
 
   useEffect(() => setMounted(true), []);
 
@@ -60,6 +63,16 @@ export default function Header() {
       <div className="flex items-center gap-2 sm:gap-3">
         <SearchBar />
         <ThemeSwitch />
+        {session && (
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => setFavoritesOpen(true)}
+            className="text-[#010b62] border border-[#010b62] hover:text-white hover:bg-[#010b62] dark:bg-[#030712] dark:text-white dark:border-white cursor-pointer"
+          >
+            <Heart className="w-4 h-4" />
+          </Button>
+        )}
         <div className="hidden sm:block">
           <UserMenu
             session={session}
@@ -77,7 +90,6 @@ export default function Header() {
         </button>
       </div>
 
-      {/* linha decorativa */}
       <div
         className="absolute inset-x-0 bottom-0 h-[4px] pointer-events-none
           dark:bg-[radial-gradient(ellipse_at_center,_#01baef_0%,_#01baef_40%,_#030712_72%,_#030712_100%)]
@@ -93,6 +105,8 @@ export default function Header() {
         supabase={supabase}
         profileName={profile?.name ?? null}
       />
+
+      <FavoritesSheet open={favoritesOpen} onOpenChange={setFavoritesOpen} />
     </header>
   );
 }
