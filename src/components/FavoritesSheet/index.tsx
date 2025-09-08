@@ -68,7 +68,10 @@ export function FavoritesSheet({ open, onOpenChange }: FavoritesSheetProps) {
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-[400px] sm:w-[480px]">
+      <SheetContent
+        side="right"
+        className="w-[400px] sm:w-[480px] flex flex-col"
+      >
         <SheetHeader>
           <SheetTitle className="text-[#010b62] -mb-0.5 dark:text-white">
             Favoritos
@@ -76,7 +79,8 @@ export function FavoritesSheet({ open, onOpenChange }: FavoritesSheetProps) {
           <SheetDescription>Veja seus produtos favoritados</SheetDescription>
         </SheetHeader>
 
-        <div className="mt-6 flex flex-col gap-4">
+        {/* Container scrollável */}
+        <div className="mt-6 flex-1 overflow-y-auto flex flex-col gap-4">
           {loading ? (
             <p>Carregando...</p>
           ) : favorites.length === 0 ? (
