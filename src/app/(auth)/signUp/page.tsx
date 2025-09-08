@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FiArrowLeft, FiEye, FiEyeOff } from "react-icons/fi";
-import { toast } from "sonner"; // <-- import do sonner
+import { toast } from "sonner";
 
 export default function Register() {
   const router = useRouter();
@@ -236,7 +236,6 @@ export default function Register() {
             </Link>
           </p>
         </div>
-        {/* restante do seu código */}
       </div>
     </div>
   );
