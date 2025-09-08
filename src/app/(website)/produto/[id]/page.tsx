@@ -5,21 +5,19 @@ import ProductLayout from "@/src/components/ProductLayout";
 import { RelatedProducts } from "@/src/components/RelatedProducts";
 import type { Metadata } from "next";
 
-// Tipagem dos parâmetros da rota
 type PageParams = { id: string };
 
-// Tipagem correta do props do generateMetadata
 type GenerateMetadataProps = { params: PageParams };
 
-export async function generateMetadata(
-  props: GenerateMetadataProps
-): Promise<Metadata> {
-  const { params } = props; // NÃO usar await
+export async function generateMetadata({
+  params,
+}: GenerateMetadataProps): Promise<Metadata> {
+  const { id } = await params;
 
   const { data: product } = await supabase
     .from("products")
     .select("name")
-    .eq("id", params.id)
+    .eq("id", id)
     .single();
 
   return {
@@ -30,7 +28,6 @@ export async function generateMetadata(
   };
 }
 
-// Página principal — params já resolvido
 export default async function ProductPage({ params }: { params: PageParams }) {
   const { data: product, error } = await supabase
     .from("products")

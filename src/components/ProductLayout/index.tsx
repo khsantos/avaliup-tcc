@@ -12,13 +12,70 @@ import { motion, AnimatePresence } from "framer-motion";
 import ProductReviewView from "../ProductReview";
 import ProductCriteriaStars from "../ProductCriteriaRatings";
 import { supabase } from "@/src/lib/supabase";
+import { useSupabase } from "@/src/contexts/supabase-provider";
+import { toast } from "sonner";
 
 export default function ProductLayout({ product }: { product: Product }) {
   const [selectedThumb, setSelectedThumb] = useState(0);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const { session } = useSupabase();
+  const [loading, setLoading] = useState(false);
 
-  const thumbnails = product.images;
+  const thumbnails = product.images ?? [];
+
+  useEffect(() => {
+    if (!session?.user?.id) return;
+
+    const fetchFavorite = async () => {
+      const { data, error } = await supabase
+        .from("user_favorites")
+        .select("id")
+        .eq("user_id", session.user.id)
+        .eq("product_id", product.id)
+        .maybeSingle();
+
+      if (!error && data) {
+        setIsWishlisted(true);
+      }
+    };
+
+    fetchFavorite();
+  }, [product.id, session?.user?.id]);
+
+  const toggleFavorite = async () => {
+    if (!session?.user?.id) return;
+    setLoading(true);
+
+    if (!isWishlisted) {
+      const { error } = await supabase.from("user_favorites").insert({
+        user_id: session.user.id,
+        product_id: product.id,
+      });
+
+      if (!error) {
+        setIsWishlisted(true);
+        toast.success("Produto adicionado aos favoritos!");
+      } else {
+        toast.error("Erro ao adicionar produto aos favoritos.");
+      }
+    } else {
+      const { error } = await supabase
+        .from("user_favorites")
+        .delete()
+        .eq("user_id", session.user.id)
+        .eq("product_id", product.id);
+
+      if (!error) {
+        setIsWishlisted(false);
+        toast.success("Produto removido dos favoritos!");
+      } else {
+        toast.error("Erro ao remover produto dos favoritos.");
+      }
+    }
+
+    setLoading(false);
+  };
 
   const [ratingBreakdown, setRatingBreakdown] = useState<
     { stars: number; percentage: number }[]
@@ -110,7 +167,7 @@ export default function ProductLayout({ product }: { product: Product }) {
               <div className="w-[320px] h-[320px] flex items-center justify-center rounded-lg mt-[15%]">
                 <Image
                   src={
-                    product.images[selectedThumb] ||
+                    product.images?.[selectedThumb] ||
                     product.image ||
                     "/placeholder.svg"
                   }
@@ -125,7 +182,7 @@ export default function ProductLayout({ product }: { product: Product }) {
                 <div className="bg-[#010b62] text-white px-4 py-2 rounded-md flex items-center gap-2 w-full dark:bg-[#01BAEF] mb-2">
                   <Award className="w-5 h-5 text-[#FFB24B]" />
                   <span className="text-xl font-bold dark:text-white">
-                    {getRankingText(product.rank, product.category)}
+                    {getRankingText(product.rank ?? 0, product.category ?? "")}
                   </span>
                 </div>
                 <div className="flex items-center justify-between mb-2">
@@ -145,7 +202,7 @@ export default function ProductLayout({ product }: { product: Product }) {
                     {formatRating(product.rating)}
                   </span>
                   <div className="flex flex-col ml-4">
-                    <StarRating rating={product.rating} size={22} />
+                    <StarRating rating={product.rating ?? 0} size={22} />
                     <span className="text-sm text-gray-500 mt-1">
                       {(product.review_count
                         ? product.review_count.toLocaleString()
@@ -205,11 +262,12 @@ export default function ProductLayout({ product }: { product: Product }) {
                   <Button
                     variant="outline"
                     size="icon"
-                    onClick={() => setIsWishlisted(!isWishlisted)}
+                    disabled={loading || !session}
+                    onClick={toggleFavorite}
                     className={
                       isWishlisted
-                        ? "text-white bg-[#010b62] dark:text-[#01BAEF]  dark:border-[#01BAEF]"
-                        : "text-[#010b62] border border-[#010b62] hover:text-white hover:bg-[#010b62] dark:bg-[#030712] dark:text-white dark:border-white"
+                        ? "text-white bg-[#010b62] dark:text-[#01BAEF]  dark:border-[#01BAEF] cursor-pointer"
+                        : "text-[#010b62] border border-[#010b62] hover:text-white hover:bg-[#010b62] dark:bg-[#030712] cursor-pointer dark:text-white dark:border-white"
                     }
                   >
                     <Heart
