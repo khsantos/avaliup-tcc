@@ -58,7 +58,7 @@ export default function FAQ({ productId }: FAQProps) {
         )
       `
       )
-      .eq("product_id", productId) // <-- Filtrando pelo produto
+      .eq("product_id", productId)
       .order("created_at", { ascending: false });
 
     if (!error && data) {
@@ -202,9 +202,6 @@ export default function FAQ({ productId }: FAQProps) {
   }
 
   async function handleDeleteQuestion(questionId: string) {
-    const confirmed = confirm("Tem certeza que deseja deletar esta pergunta?");
-    if (!confirmed) return;
-
     const { error } = await supabase
       .from("faq_questions")
       .delete()
