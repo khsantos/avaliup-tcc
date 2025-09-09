@@ -80,7 +80,7 @@ export function FavoritesSheet({ open, onOpenChange }: FavoritesSheetProps) {
         </SheetHeader>
 
         {/* Container scrollável */}
-        <div className="mt-6 flex-1 overflow-y-auto flex flex-col gap-4">
+        <div className="mt-6 flex-1 overflow-y-auto flex flex-col gap-4 pr-4">
           {loading ? (
             <p>Carregando...</p>
           ) : favorites.length === 0 ? (
