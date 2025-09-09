@@ -79,7 +79,10 @@ export default function FAQQuestionCard({
       />
       <div className="flex items-start gap-4 w-full max-w-full break-words">
         <Avatar className="border w-10 h-10">
-          <AvatarImage src={q.users?.profile_img} alt={q.users?.name} />
+          <AvatarImage
+            src={q.users?.profile_img || ""}
+            alt={q.users?.name || "Avatar"}
+          />
           <AvatarFallback>
             <UserIcon className="w-4 h-4 text-muted-foreground" />
           </AvatarFallback>

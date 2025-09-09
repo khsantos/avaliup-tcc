@@ -18,6 +18,7 @@ import { Comentario } from "@/src/types/FAQComment";
 import { Question } from "@/src/types/Question";
 import { toast } from "sonner";
 import FAQQuestionCard from "../FAQQuestionCard";
+import { Pagination } from "../Pagination";
 
 interface FAQProps {
   productId: number;
@@ -42,8 +43,16 @@ export default function FAQ({ productId }: FAQProps) {
   const [openDialogId, setOpenDialogId] = useState<string | null>(null);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const ITEMS_PER_PAGE = 5;
+
   const fetchQuestions = useCallback(async () => {
-    const { data, error } = await supabase
+    const from = (currentPage - 1) * ITEMS_PER_PAGE;
+    const to = from + ITEMS_PER_PAGE - 1;
+
+    const { data, error, count } = await supabase
       .from("faq_questions")
       .select(
         `
@@ -56,10 +65,12 @@ export default function FAQ({ productId }: FAQProps) {
           vote_type,
           user_id
         )
-      `
+      `,
+        { count: "exact" }
       )
-      .eq("product_id", productId) // <-- Filtrando pelo produto
-      .order("created_at", { ascending: false });
+      .eq("product_id", productId)
+      .order("created_at", { ascending: false })
+      .range(from, to);
 
     if (!error && data) {
       const questionsWithVotes = data.map((q) => ({
@@ -76,8 +87,9 @@ export default function FAQ({ productId }: FAQProps) {
       }));
 
       setQuestions(questionsWithVotes);
+      if (count) setTotalPages(Math.ceil(count / ITEMS_PER_PAGE));
     }
-  }, [supabase, user?.id, productId]);
+  }, [supabase, user?.id, productId, currentPage]);
 
   const fetchAllAnswers = useCallback(async () => {
     const { data, error } = await supabase
@@ -165,7 +177,7 @@ export default function FAQ({ productId }: FAQProps) {
     fetchQuestions().then(() => {
       fetchAllAnswers();
     });
-  }, [fetchQuestions, fetchAllAnswers]);
+  }, [fetchQuestions, fetchAllAnswers, currentPage]);
 
   async function handleQuestionVote(
     questionId: string,
@@ -202,9 +214,6 @@ export default function FAQ({ productId }: FAQProps) {
   }
 
   async function handleDeleteQuestion(questionId: string) {
-    const confirmed = confirm("Tem certeza que deseja deletar esta pergunta?");
-    if (!confirmed) return;
-
     const { error } = await supabase
       .from("faq_questions")
       .delete()
@@ -227,6 +236,8 @@ export default function FAQ({ productId }: FAQProps) {
         email: user.email || "",
         badges: user.user_metadata?.badges || [],
         created_at: user.created_at || "",
+        points: user.user_metadata?.points || 0,
+        review_count: user.user_metadata?.review_count || 0,
       }
     : null;
 
@@ -342,6 +353,14 @@ export default function FAQ({ productId }: FAQProps) {
           enviarResposta={enviarResposta}
         />
       ))}
+
+      {totalPages > 0 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={(page) => setCurrentPage(page)}
+        />
+      )}
     </div>
   );
 }

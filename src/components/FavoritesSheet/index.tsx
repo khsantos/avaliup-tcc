@@ -14,6 +14,8 @@ import { supabase } from "@/src/lib/supabase";
 import { useSupabase } from "@/src/contexts/supabase-provider";
 import { FavoriteProduct } from "@/src/types/FavoriteProduct";
 import { useEffect, useState } from "react";
+import { X } from "lucide-react";
+import { toast } from "sonner";
 
 interface FavoritesSheetProps {
   open: boolean;
@@ -66,11 +68,27 @@ export function FavoritesSheet({ open, onOpenChange }: FavoritesSheetProps) {
     fetchFavorites();
   }, [open, session?.user?.id]);
 
+  const handleRemoveFavorite = async (productId: number) => {
+    if (!session?.user?.id) return;
+
+    const { error } = await supabase
+      .from("user_favorites")
+      .delete()
+      .eq("user_id", session.user.id)
+      .eq("product_id", productId);
+
+    if (!error) {
+      setFavorites((prev) => prev.filter((p) => p.id !== productId));
+    } else {
+      toast.error("Erro ao remover favorito.");
+    }
+  };
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
-        className="w-[400px] sm:w-[480px] flex flex-col"
+        className="w-[90vw] max-w-[800px] flex flex-col"
       >
         <SheetHeader>
           <SheetTitle className="text-[#010b62] -mb-0.5 dark:text-white">
@@ -79,7 +97,6 @@ export function FavoritesSheet({ open, onOpenChange }: FavoritesSheetProps) {
           <SheetDescription>Veja seus produtos favoritados</SheetDescription>
         </SheetHeader>
 
-        {/* Container scrollável */}
         <div className="mt-6 flex-1 overflow-y-auto flex flex-col gap-4 pr-4">
           {loading ? (
             <p>Carregando...</p>
@@ -89,8 +106,17 @@ export function FavoritesSheet({ open, onOpenChange }: FavoritesSheetProps) {
             favorites.map((item) => (
               <div
                 key={item.id}
-                className="flex items-center gap-4 border-b pb-3 last:border-none"
+                className="flex items-center gap-4 border-b pb-3 last:border-none relative p-4"
               >
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => handleRemoveFavorite(item.id)}
+                  className="absolute top-2 right-2 p-1 rounded-full hover:bg-red-100 dark:hover-bg-red-900 cursor-pointer "
+                >
+                  <X className="h-4 w-4 text-red-500"></X>
+                </Button>
+
                 <div className="w-[60px] h-[60px] relative shrink-0">
                   <Image
                     src={item.image || "/placeholder.svg"}
@@ -100,13 +126,23 @@ export function FavoritesSheet({ open, onOpenChange }: FavoritesSheetProps) {
                   />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-medium text-sm">{item.name}</h3>
-                  <p className="text-sm">R$ {item.price.toFixed(2)}</p>
-                  <StarRating rating={item.rating || 0} size={16} />
+                  <h3 className="font-medium text-sm justify-center text-left pb-2">
+                    {item.name}
+                  </h3>
+                  <p className="text-sm font-bold text-[#010b62] dark:text-[#01BAEF]">
+                    R$ {item.price.toFixed(2)}
+                  </p>
+
+                  <div className="flex items-center gap-1">
+                    <StarRating rating={item.rating || 0} size={16} />
+                    <span className="text-sm text-[#FFB24B]">
+                      {item.rating?.toFixed(1) ?? "0.0"}
+                    </span>
+                  </div>
                 </div>
                 <Button
                   onClick={() => window.open(`/produto/${item.id}`, "_blank")}
-                  className="bg-[#010b62] hover:bg-[#1C2CA3] dark:bg-[#01BAEF] dark:hover:bg-[#33C9F2] dark:text-white"
+                  className="bg-[#010b62] hover:bg-[#1C2CA3] dark:bg-[#01BAEF] dark:hover:bg-[#33C9F2] dark:text-white "
                 >
                   Visitar
                 </Button>
