@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Product } from "@/src/types/Product";
 import Image from "next/image";
+import { BiSolidMedal } from "react-icons/bi";
 
 export default function ProductCard({
   id,
@@ -15,13 +16,6 @@ export default function ProductCard({
   const router = useRouter();
   const [cardLoading, setCardLoading] = useState(false);
   const [btnLoading, setBtnLoading] = useState(false);
-
-  const getMedal = (rank?: number) => {
-    if (rank === 1) return "🥇";
-    if (rank === 2) return "🥈";
-    if (rank === 3) return "🥉";
-    return null;
-  };
 
   async function navigateToProduct() {
     await new Promise((r) => setTimeout(r, 300)); // pequeno delay para feedback visual
@@ -47,8 +41,21 @@ export default function ProductCard({
       `}
     >
       {rank && rank <= 10 && (
-        <div className="text-[#010b62] dark:text-white mb-2 text-sm font-semibold flex items-center gap-1">
-          {rank <= 3 && <span className="text-lg">{getMedal(rank)}</span>}
+        <div className="text-[#010b62] dark:text-white mb-2 text-sm font-semibold flex items-center">
+          {rank <= 3 && (
+            <span className="mr-1 inline-flex">
+              <BiSolidMedal
+                size={22}
+                color={
+                  rank === 1
+                    ? "#FFB24B"
+                    : rank === 2
+                      ? "#AEA8BA"
+                      : "#EF6C4E"
+                }
+              />
+            </span>
+          )}
           <span>TOP #{rank}</span>
         </div>
       )}
