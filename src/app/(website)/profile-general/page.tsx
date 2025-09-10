@@ -4,12 +4,13 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useSupabase } from "@/src/contexts/supabase-provider";
 import ProfileReview from "@/src/components/ProfileReview";
+import ProfileUserActivity from "@/src/components/ProfileUserActivity";
 
 export default function Page() {
   const { user, loading } = useSupabase();
 
   const [notifications, setNotifications] = useState(true);
-  const [tab, setTab] = useState(3);
+  const [tab, setTab] = useState(0);
   const [username, setUsername] = useState<string>("Usuário");
   const [email, setEmail] = useState<string>("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
@@ -152,24 +153,19 @@ export default function Page() {
         </div>
 
         {tab === 0 && (
-          <div className="mt-10 bg-white dark:bg-[#030712] rounded-xl shadow-md px-8 py-8">
+          <div className="mt-0.5 bg-white dark:bg-[#030712] rounded-xl shadow-md px-8 py-8">
             <ProfileReview userId={user?.id} />
           </div>
         )}
 
         {tab === 1 && (
-          <div className="mt-10 bg-white dark:bg-[#030712] rounded-xl shadow-md px-8 py-8">
-            <h2 className="text-2xl font-bold text-[#010B62] mb-6 dark:text-white">
-              Interações
-            </h2>
-            <p className="text-gray-600 dark:text-white">
-              Aqui ficam as suas curtidas, comentários e respostas em perguntas.
-            </p>
+          <div className="mt-0.5 bg-white dark:bg-[#030712] rounded-xl shadow-md px-8 py-8">
+            <ProfileUserActivity />
           </div>
         )}
 
         {tab === 2 && (
-          <div className="mt-10 bg-white dark:bg-[#030712] rounded-xl shadow-md px-8 py-8">
+          <div className="mt-0.5 bg-white dark:bg-[#030712] rounded-xl shadow-md px-8 py-8">
             <h2 className="text-2xl font-bold text-[#010B62] mb-6 dark:text-white">
               Produtos Favoritos
             </h2>
