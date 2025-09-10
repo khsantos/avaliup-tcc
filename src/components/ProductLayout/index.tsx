@@ -160,6 +160,7 @@ export default function ProductLayout({ product }: { product: Product }) {
                       width={40}
                       height={40}
                       className="object-contain"
+                      loading="lazy"
                     />
                   </button>
                 ))}
@@ -175,6 +176,7 @@ export default function ProductLayout({ product }: { product: Product }) {
                   width={600}
                   height={600}
                   className="object-contain"
+                  loading="lazy"
                 />
               </div>
               {/* Conteúdo do produto */}

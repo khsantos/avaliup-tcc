@@ -123,6 +123,7 @@ export function FavoritesSheet({ open, onOpenChange }: FavoritesSheetProps) {
                     alt={item.name}
                     fill
                     className="object-contain"
+                    loading="lazy"
                   />
                 </div>
                 <div className="flex-1">

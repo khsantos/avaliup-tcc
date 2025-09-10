@@ -158,6 +158,7 @@ export default function PriceMarketplaceComparison({
                       width={140}
                       height={120}
                       className="object-contain"
+                      loading="lazy"
                     />
                   </div>
                   <div className="flex flex-col justify-start w-full">

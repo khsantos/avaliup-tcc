@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import { Pagination } from "../Pagination";
 
 type ProfileReviewProps = {
-  productId: number;
+  productId?: number;
   userId?: string;
 };
 
@@ -143,16 +143,16 @@ export default function ProfileReview({ productId }: ProfileReviewProps) {
 
   useEffect(() => {
     const fetchReviews = async () => {
-      if (!productId || !userId) return;
+      if (!productId && !userId) return;
 
       setLoading(true);
 
       let countQuery = supabase
         .from("reviews")
-        .select("*", { count: "exact", head: true })
-        .eq("product_id", productId)
-        .eq("users_id", userId);
+        .select("*", { count: "exact", head: true });
 
+      if (productId) countQuery = countQuery.eq("product_id", productId);
+      if (userId) countQuery = countQuery.eq("users_id", userId);
       if (filterRating) countQuery = countQuery.eq("rating", filterRating);
 
       const { count } = await countQuery;
@@ -165,17 +165,16 @@ export default function ProfileReview({ productId }: ProfileReviewProps) {
         .from("reviews")
         .select(
           `
-    *,
-    users (id, name, profile_img),
-    review_votes (vote_type),
-    products (id, name, image)
-  `
+        *,
+        users (id, name, profile_img),
+        review_votes (vote_type),
+        products (id, name, image)
+      `
         )
         .range(from, to);
 
       if (productId) query = query.eq("product_id", productId);
       if (userId) query = query.eq("users_id", userId);
-
       if (filterRating) query = query.eq("rating", filterRating);
 
       if (sortBy === "recent")
