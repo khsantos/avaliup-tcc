@@ -60,7 +60,6 @@ export const RelatedProducts = ({ productId }: RelatedProductsProps) => {
             name={product.name}
             image={product.image}
             rating={product.rating}
-            // rank não é usado aqui, então podemos omitir
           />
         ))}
       </div>

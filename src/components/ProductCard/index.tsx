@@ -63,6 +63,7 @@ export default function ProductCard({
           alt={`Imagem do ${name}`}
           fill
           className="object-contain"
+          loading="lazy"
         />
       </div>
 

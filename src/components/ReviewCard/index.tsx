@@ -16,7 +16,7 @@ type ReviewCardProps = {
   hasLiked?: boolean;
   hasDisliked?: boolean;
   isExpanded?: boolean;
-  onToggleExpand: (id: string) => void;
+  onToggleExpand?: (id: string) => void;
   setReviews?: React.Dispatch<React.SetStateAction<UserReview[]>>;
   showComments?: boolean;
   onToggleComments?: (id: string) => void;
@@ -50,7 +50,7 @@ export function ReviewCard({
           title={review.title}
           text={review.text}
           isExpanded={isExpanded}
-          onToggleExpand={() => onToggleExpand(review.id)}
+          onToggleExpand={() => onToggleExpand?.(review.id)}
         />
 
         <div className="flex items-center justify-between">

@@ -4,6 +4,7 @@ import ProductTabs from "@/src/components/ProductTabs";
 import ProductLayout from "@/src/components/ProductLayout";
 import { RelatedProducts } from "@/src/components/RelatedProducts";
 import type { Metadata } from "next";
+import { getProductImageUrl } from "@/src/lib/supabase-storage";
 
 type PageParams = { id: string };
 
@@ -37,9 +38,16 @@ export default async function ProductPage({ params }: { params: PageParams }) {
 
   if (!product || error) return notFound();
 
+  const signedImageUrl = await getProductImageUrl(product.image);
+
+  const productWithSignedUrl = {
+    ...product,
+    imageUrl: signedImageUrl || product.image, // fallback
+  };
+
   return (
     <div className="w-[80%] mx-auto text-white">
-      <ProductLayout product={product} />
+      <ProductLayout product={productWithSignedUrl} />
       <ProductTabs productId={product.id} />
       <RelatedProducts productId={product.id} />
     </div>
