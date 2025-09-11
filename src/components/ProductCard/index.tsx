@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Product } from "@/src/types/Product";
 import Image from "next/image";
 import { BiSolidMedal } from "react-icons/bi";
+import { FaStar } from "react-icons/fa";
 
 export default function ProductCard({
   id,
@@ -41,7 +42,7 @@ export default function ProductCard({
       `}
     >
       {rank && rank <= 10 && (
-        <div className="text-[#010b62] dark:text-white mb-2 text-sm font-semibold flex items-center">
+        <div className="text-[#010b62] dark:text-white mb-2 text-sm font-bold flex items-center">
           {rank <= 3 && (
             <span className="mr-1 inline-flex">
               <BiSolidMedal
@@ -74,11 +75,11 @@ export default function ProductCard({
       </div>
 
       <div className="flex flex-col items-start mt-auto">
-        <div className="flex items-center gap-1 text-[#FFB24B] font-semibold text-md">
-          <span>⭐</span>
+        <div className="flex items-center gap-1 text-[#FFB24B] font-bold text-lg">
+          <FaStar size={18} color="#FFB24B" />
           <span>{rating != null ? rating.toFixed(1) : "0.0"}</span>
         </div>
-        <p className="text-sm text-[#010b62]/90 dark:text-white">
+        <p className="text-sm font-bold text-[#010b62]/70 -mt-1 dark:text-[#FFFFFF]/70">
           Nota Avaliup
         </p>
       </div>
@@ -86,7 +87,7 @@ export default function ProductCard({
       <button
         disabled={btnLoading}
         onClick={handleButtonClick}
-        className={`bg-[#010b62] hover:bg-cyan-600 transition text-white text-sm px-4 py-2 rounded w-full mt-4 flex justify-center items-center cursor-pointer
+        className={`bg-[#010b62] hover:bg-[#010b62]/80 dark:bg-[#01BAEF] dark:hover:bg-[#01BAEF]/80 transition text-white font-medium text-sm px-4 py-2 rounded w-full mt-2 flex justify-center items-center cursor-pointer
           ${btnLoading ? "opacity-70 cursor-not-allowed" : ""}
         `}
       >
