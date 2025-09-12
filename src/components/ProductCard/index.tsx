@@ -37,7 +37,7 @@ export default function ProductCard({
   return (
     <div
       onClick={handleCardClick}
-      className={`border border-[#010b62] dark:border-white rounded-xl p-4 box-border text-white flex flex-col justify-between cursor-pointer transition-all duration-200 hover:shadow-lg hover:ring-2 hover:ring-offset-0 hover:ring-[#010b62]/30 dark:hover:ring-white/30 hover:ring-offset-white dark:hover:ring-offset-[#030712]
+      className={`border border-[#010b62] dark:border-white rounded-xl p-4 box-border text-white flex flex-col justify-between cursor-pointer transition-all duration-200 hover:ring-2 hover:ring-offset-0 hover:ring-[#010b62]/30 dark:hover:ring-white/30 hover:ring-offset-white dark:hover:ring-offset-[#030712]
         ${cardLoading ? "opacity-70 pointer-events-none" : ""}
       `}
     >

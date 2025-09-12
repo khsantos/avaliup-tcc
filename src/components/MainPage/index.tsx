@@ -62,7 +62,7 @@ export default function MainPage() {
     <div className="min-h-screen p-4 dark:bg-[#030712]">
       <Hero />
 
-      <section className="px-4 py-10 flex justify-center">
+      <section>
         <div className="max-w-7xl w-full p-6">
           <span className="font-medium text-lg text-[#010B62]/60 dark:text-[#FFFFFF]/60">Top 10</span>
           <h2 className="text-[#010b62] text-3xl font-semibold mb-6 text-left dark:text-white">

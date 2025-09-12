@@ -5,6 +5,7 @@ import "keen-slider/keen-slider.min.css";
 import ProductCard from "../ProductCard";
 import { Product } from "@/src/types/Product";
 import { useEffect, useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react"; // Added import for icons
 
 type ProductCarouselProps = {
   products: Product[];
@@ -52,6 +53,22 @@ export default function ProductCarousel({ products }: ProductCarouselProps) {
       )}
       {showRightFade && (
         <div className="pointer-events-none absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-white/70 dark:from-[#030712]/70 to-transparent z-10 transition-opacity" />
+      )}
+      {showLeftFade && (
+        <button
+          onClick={() => instanceRef.current?.prev()}
+          className="absolute left-2 top-1/2 transform -translate-y-1/2 z-20 bg-white/80 dark:bg-[#030712]/80 p-2 rounded-full shadow-md hover:bg-white dark:hover:bg-[#030712] transition-colors"
+        >
+          <ChevronLeft size={20} />
+        </button>
+      )}
+      {showRightFade && (
+        <button
+          onClick={() => instanceRef.current?.next()}
+          className="absolute right-2 top-1/2 transform -translate-y-1/2 z-20 bg-white/80 dark:bg-[#030712]/80 p-2 rounded-full shadow-md hover:bg-white dark:hover:bg-[#030712] transition-colors"
+        >
+          <ChevronRight size={20} />
+        </button>
       )}
       <div
         ref={sliderRef}
