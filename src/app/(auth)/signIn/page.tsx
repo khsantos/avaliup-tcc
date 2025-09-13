@@ -3,7 +3,7 @@
 import { supabase } from "@/src/lib/supabase";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { FiEye, FiEyeOff, FiArrowLeft } from "react-icons/fi";
 import Logo from "@/src/components/Logo";
 import ThemeSwitch from "@/src/components/ThemeSwitch";
@@ -17,15 +17,14 @@ export default function Login() {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const hasShownToast = useRef(false);
   const [loading, setLoading] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
+  const [emailConfirmed, setEmailConfirmed] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    if (!hasShownToast.current && params.get("success") === "1") {
-      toast.success("Conta criada com sucesso!");
-      hasShownToast.current = true;
+    if (params.get("confirmed") === "true") {
+      setEmailConfirmed(true);
     }
   }, []);
 
@@ -34,7 +33,7 @@ export default function Login() {
     setError("");
     setLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data: signInData, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
@@ -42,17 +41,33 @@ export default function Login() {
     setLoading(false);
 
     if (error) {
+      const msg = error.message.toLowerCase();
+
+      if (msg.includes("not confirmed")) {
+        toast.error("Confirme seu e-mail antes de fazer login.");
+        setError("Confirme seu e-mail antes de fazer login.");
+        return;
+      }
+
+      if (msg.includes("invalid login credentials")) {
+        toast.error("E-mail ou senha incorretos.");
+        setError("E-mail ou senha incorretos.");
+        return;
+      }
+
       toast.error(error.message);
       setError(error.message);
       return;
     }
 
+    if (!signInData.user) {
+      toast.error("Usuário não encontrado.");
+      return;
+    }
+
     toast.success("Login realizado com sucesso!");
     setRedirecting(true);
-
-    setTimeout(() => {
-      router.push("/");
-    }, 1500);
+    router.push("/");
   };
 
   const handleGoogleLogin = async () => {
@@ -93,6 +108,12 @@ export default function Login() {
         <h2 className="text-2xl font-bold text-[#010B62] text-center dark:text-white">
           Faça Login no Avali.up
         </h2>
+
+        {emailConfirmed && (
+          <p className="text-sm text-[#010b62] dark:text-[#01BAEF] text-center font-bold">
+            E-mail confirmado com sucesso! Faça login abaixo.
+          </p>
+        )}
 
         {error && <p className="text-sm text-red-500">{error}</p>}
         <form className="space-y-4">
