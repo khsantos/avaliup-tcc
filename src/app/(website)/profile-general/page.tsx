@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useSupabase } from "@/src/contexts/supabase-provider";
 import ProfileReview from "@/src/components/ProfileReview";
 import ProfileUserActivity from "@/src/components/ProfileUserActivity";
+import FavoritesTab from "@/src/components/ProfileFavorites";
 
 export default function Page() {
   const { user, loading } = useSupabase();
@@ -166,12 +167,7 @@ export default function Page() {
 
         {tab === 2 && (
           <div className="mt-0.5 bg-white dark:bg-[#030712] rounded-xl shadow-md px-8 py-8">
-            <h2 className="text-2xl font-bold text-[#010B62] mb-6 dark:text-white">
-              Produtos Favoritos
-            </h2>
-            <p className="text-gray-600 dark:text-white">
-              Aqui ficam os produtos que você favoritou.
-            </p>
+            <FavoritesTab />
           </div>
         )}
 
