@@ -80,7 +80,7 @@ export default function ProductCard({
       <button
         disabled={btnLoading}
         onClick={handleButtonClick}
-        className={`bg-[#010b62] hover:bg-cyan-600 transition text-white text-sm px-4 py-2 rounded w-full mt-4 flex justify-center items-center cursor-pointer
+        className={`bg-[#010b62] dark:bg-[#01BAEF] dark:hover:bg-[#00AFD3] hover:bg-cyan-600 transition text-white text-sm px-4 py-2 rounded w-full mt-4 flex justify-center items-center cursor-pointer
           ${btnLoading ? "opacity-70 cursor-not-allowed" : ""}
         `}
       >
