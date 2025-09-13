@@ -33,7 +33,8 @@ export default function FavoritesTab() {
       const { data: products, error: prodError } = await supabase
         .from("products")
         .select("*")
-        .in("id", productIds);
+        .in("id", productIds)
+        .order("rank", { ascending: true });
 
       if (prodError) {
         console.error("Erro ao buscar produtos favoritos:", prodError);
@@ -49,11 +50,11 @@ export default function FavoritesTab() {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
       {favorites.length > 0 ? (
-        favorites.map((item, index) => (
+        favorites.map((item) => (
           <ProductCard
             key={item.id}
             id={item.id}
-            rank={index + 1}
+            rank={item.rank}
             name={item.name}
             rating={item.rating || 0}
             image={item.image}
