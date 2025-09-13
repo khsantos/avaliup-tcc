@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FiArrowLeft, FiEye, FiEyeOff } from "react-icons/fi";
 import { toast } from "sonner";
+import { FiInfo } from "react-icons/fi";
 
 export default function Register() {
   const router = useRouter();
@@ -17,88 +18,119 @@ export default function Register() {
   const [username, setUsername] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const isValidEmail = (email: string) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
+  const isValidPassword = (password: string) => {
+    if (password.length < 8) return false;
+
+    const sequences = [
+      "1234",
+      "2345",
+      "3456",
+      "4567",
+      "5678",
+      "6789",
+      "abcd",
+      "bcde",
+      "cdef",
+      "qwerty",
+      "senha",
+    ];
+    const hasSequence = sequences.some((seq) =>
+      password.toLowerCase().includes(seq)
+    );
+
+    return !hasSequence;
+  };
+
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
 
-    if (!username.trim() || !email.trim() || !password || !confirmPassword) {
-      toast.error("Por favor, preencha todos os campos.");
-      return;
-    }
-    if (username.trim().length < 3) {
-      toast.error("O nome de usuário deve ter pelo menos 3 caracteres.");
-      return;
-    }
-    if (!isValidEmail(email)) {
-      toast.error("Email inválido. Verifique e tente novamente.");
-      return;
-    }
-    if (password.length < 6) {
-      toast.error("A senha deve ter pelo menos 6 caracteres.");
-      return;
-    }
-    if (password !== confirmPassword) {
-      toast.error("As senhas não coincidem.");
-      return;
-    }
-
-    const { data, error: signUpError } = await supabase.auth.signUp({
-      email,
-      password,
-    });
-
-    if (signUpError) {
-      let message = signUpError.message;
-      if (message.includes("already registered")) {
-        message = "Este email já está cadastrado.";
+    try {
+      if (!username.trim() || !email.trim() || !password || !confirmPassword) {
+        toast.error("Preencha todos os campos.");
+        return;
       }
-      toast.error(message);
-      return;
-    }
+      if (username.trim().length < 3) {
+        toast.error("Nome de usuário precisa ter pelo menos 3 caracteres.");
+        return;
+      }
+      if (!isValidEmail(email)) {
+        toast.error("Email inválido.");
+        return;
+      }
+      if (password !== confirmPassword) {
+        toast.error("Senhas não coincidem.");
+        return;
+      }
+      if (!isValidPassword(password)) {
+        toast.error("Senha muito fraca ou contém sequências comuns.");
+        return;
+      }
 
-    if (!data?.user) {
-      toast.error("Não foi possível criar o usuário.");
-      return;
-    }
+      const { data: existingUser } = await supabase
+        .from("users")
+        .select("id")
+        .eq("name", username.trim())
+        .maybeSingle();
 
-    const userId = data.user.id;
+      if (existingUser) {
+        toast.error("Nome de usuário já está em uso.");
+        return;
+      }
 
-    const { data: existingUser } = await supabase
-      .from("users")
-      .select("id")
-      .eq("name", username.trim())
-      .single();
-
-    if (existingUser) {
-      toast.error("Nome de usuário já está em uso. Escolha outro.");
-      return;
-    }
-
-    const { error: insertError } = await supabase.from("users").insert([
-      {
-        id: userId,
-        name: username.trim(),
+      const { data, error: signUpError } = await supabase.auth.signUp({
         email,
-        profile_img: "",
-        badges: [],
-      },
-    ]);
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/signIn?confirmed=true`,
+        },
+      });
 
-    if (insertError) {
-      toast.error(
-        "Conta criada, mas houve um problema ao salvar os dados do perfil."
+      if (signUpError) {
+        toast.error(signUpError.message);
+        return;
+      }
+      if (!data?.user) {
+        toast.error("Não foi possível criar o usuário.");
+        return;
+      }
+
+      const res = await fetch(
+        "https://qjpnvzrmiibksdvxmzop.supabase.co/functions/v1/insert_user",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
+          },
+          body: JSON.stringify({
+            user_id: data.user.id,
+            username: username.trim(),
+            email,
+          }),
+        }
       );
-      return;
+
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "Erro ao criar usuário");
+
+      toast.success(
+        "Conta criada com sucesso! Verifique seu e-mail para ativar a conta."
+      );
+      router.push("/confirmation");
+    } catch (err: unknown) {
+      console.error("Erro ao criar usuário:", err);
+      toast.error(
+        "Ocorreu um erro. Conta criada parcialmente ou não foi possível criar."
+      );
+    } finally {
+      setLoading(false);
     }
-
-    toast.success("Conta criada com sucesso! Você será redirecionado.");
-
-    setTimeout(() => {
-      router.push("/signIn?success=1");
-    }, 1500);
   };
 
   return (
@@ -145,12 +177,20 @@ export default function Register() {
             />
           </div>
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium mb-1 text-[#010B62] dark:text-white"
-            >
-              E-mail
-            </label>
+            <div className="flex items-center gap-2">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium mb-1 text-[#010B62] dark:text-white"
+              >
+                E-mail
+              </label>
+              <div className="relative group">
+                <FiInfo className="dark:text-[#33C9F2] text-[#010b62] cursor-pointer" />
+                <span className="absolute left-6 top-1/2 -translate-y-1/2 w-max px-2 py-1 text-xs text-white bg-black dark:bg-[#030712] rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                  Use um e-mail válido — será necessário para verificação
+                </span>
+              </div>
+            </div>
             <input
               id="email"
               name="email"
@@ -220,9 +260,38 @@ export default function Register() {
           </div>
           <button
             type="submit"
-            className="w-full px-4 py-2 text-white bg-[#010B62] cursor-pointer rounded-md hover:bg-[#202766] dark:bg-[#01BAEF] dark:hover:bg-[#0D91AC]"
+            disabled={loading} // desabilita enquanto estiver carregando
+            className={`w-full px-4 py-2 text-white bg-[#010B62] cursor-pointer rounded-md hover:bg-[#202766] dark:bg-[#01BAEF] dark:hover:bg-[#0D91AC] ${
+              loading ? "opacity-70 cursor-not-allowed" : ""
+            }`}
           >
-            Cadastrar
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <svg
+                  className="animate-spin h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                  ></path>
+                </svg>
+                Cadastrando...
+              </span>
+            ) : (
+              "Cadastrar"
+            )}
           </button>
         </form>
         <div className="text-center">
