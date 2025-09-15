@@ -1,6 +1,6 @@
 import { UserReview } from "@/src/types/UserReview";
-import { Star } from "lucide-react";
 import { Button } from "../ui/button";
+import StarRating from "../StarRating";
 
 export default function RatingAndButton({
   review,
@@ -9,25 +9,15 @@ export default function RatingAndButton({
   review: UserReview;
   onOpenDetails: (review: UserReview) => void;
 }) {
-  const renderStars = (rating: number) => {
-    return Array.from({ length: 5 }, (_, index) => (
-      <Star
-        key={index}
-        className={`w-4 h-4 ${
-          index < rating
-            ? "fill-[#FFB24B] text-[#FFB24B]"
-            : "text-[#FFB24B] fill-none"
-        }`}
-      />
-    ));
-  };
   return (
     <div className="flex flex-col items-end gap-2">
       <div className="flex items-center gap-2">
         <span className="text-2xl font-bold text-[#FFB24B] -mt-2">
           {review.rating}
         </span>
-        <div className="flex gap-1 -mt-2">{renderStars(review.rating)}</div>
+        <div className="flex gap-1 -mt-2">
+          <StarRating rating={review.rating} />
+        </div>
       </div>
       <Button
         size="sm"

@@ -5,16 +5,11 @@ import { supabase } from "@/src/lib/supabase";
 import { UserReview } from "@/src/types/UserReview";
 
 import ReviewDetailsModal from "../UserReviewDetails";
-import { Pagination } from "../Pagination";
 import { ReviewCard } from "../ReviewCard";
 import { toast } from "sonner";
-import { PostgrestError } from "@supabase/supabase-js";
+import { Pagination } from "../Pagination";
 
-type UserReviewProps = {
-  productId: number;
-};
-
-export default function UserReviews({ productId }: UserReviewProps) {
+export default function ProfileUserActivity() {
   const [reviews, setReviews] = useState<UserReview[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedIds, setExpandedIds] = useState<string[]>([]);
@@ -24,23 +19,15 @@ export default function UserReviews({ productId }: UserReviewProps) {
   const [userId, setUserId] = useState<string | null>(null);
   const [selectedReview, setSelectedReview] = useState<UserReview | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [sortBy, setSortBy] = useState<"recent" | "high" | "low" | "useful">(
     "recent"
   );
   const [filterRating, setFilterRating] = useState<number | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [openCommentsId, setOpenCommentsId] = useState<string | null>(null);
-
-  const handleToggleComments = (id: string) => {
-    setOpenCommentsId((prev) => (prev === id ? null : id));
-  };
 
   const REVIEWS_PER_PAGE = 8;
-
-  type ReviewVote = {
-    vote_type: "like" | "dislike";
-  };
+  type ReviewVote = { vote_type: "like" | "dislike" };
 
   useEffect(() => {
     const getUserId = async () => {
@@ -53,8 +40,9 @@ export default function UserReviews({ productId }: UserReviewProps) {
   }, []);
 
   useEffect(() => {
+    if (!userId) return;
+
     const fetchUserVotes = async () => {
-      if (!userId) return;
       const { data } = await supabase
         .from("review_votes")
         .select("review_id, vote_type")
@@ -66,6 +54,7 @@ export default function UserReviews({ productId }: UserReviewProps) {
         setUserVotes(votesMap);
       }
     };
+
     fetchUserVotes();
   }, [userId]);
 
@@ -110,36 +99,24 @@ export default function UserReviews({ productId }: UserReviewProps) {
     );
 
     try {
-      let supabaseError: PostgrestError | null = null;
-
       if (currentVote === voteType) {
-        const { error } = await supabase
+        await supabase
           .from("review_votes")
           .delete()
           .eq("review_id", reviewId)
           .eq("user_id", userId);
-        supabaseError = error;
       } else if (currentVote && currentVote !== voteType) {
-        const { error } = await supabase
+        await supabase
           .from("review_votes")
           .update({ vote_type: voteType })
           .eq("review_id", reviewId)
           .eq("user_id", userId);
-        supabaseError = error;
       } else {
-        const { error } = await supabase.from("review_votes").insert({
+        await supabase.from("review_votes").insert({
           review_id: reviewId,
           user_id: userId,
           vote_type: voteType,
         });
-        supabaseError = error;
-      }
-
-      if (supabaseError) {
-        console.error("Erro ao registrar voto:", supabaseError);
-        toast("Não foi possível registrar seu voto.");
-        setUserVotes((prev) => ({ ...prev, [reviewId]: currentVote }));
-        return;
       }
 
       const { data } = await supabase
@@ -151,156 +128,148 @@ export default function UserReviews({ productId }: UserReviewProps) {
       const newDislikes =
         data?.filter((v) => v.vote_type === "dislike").length || 0;
 
-      setReviews((prev) =>
-        prev.map((rev) =>
-          rev.id === reviewId
-            ? { ...rev, likes: newLikes, dislikes: newDislikes }
-            : rev
-        )
-      );
-    } catch (err: unknown) {
-      console.error("Erro inesperado ao votar:", err);
+      await supabase
+        .from("reviews")
+        .update({ likes: newLikes, dislikes: newDislikes })
+        .eq("id", reviewId);
+    } catch (error) {
+      console.error("Erro ao registrar voto:", error);
       toast("Não foi possível registrar seu voto.");
-
-      setUserVotes((prev) => ({ ...prev, [reviewId]: currentVote }));
     }
   };
 
   useEffect(() => {
-    const fetchReviews = async () => {
-      if (!productId) return;
-
+    const fetchUserInteractedReviews = async () => {
+      if (!userId) return;
       setLoading(true);
 
       try {
-        // 1️⃣ Contagem total de reviews para paginação
-        let countQuery = supabase
-          .from("reviews")
-          .select("*", { count: "exact", head: true })
-          .eq("product_id", productId);
+        const { data: votesData, error: votesError } = await supabase
+          .from("review_votes")
+          .select("review_id")
+          .eq("user_id", userId);
+        if (votesError) throw votesError;
+        const votedReviewIds = votesData?.map((v) => v.review_id) || [];
 
-        if (filterRating) {
-          countQuery = countQuery.eq("rating", filterRating);
+        const { data: commentsData, error: commentsError } = await supabase
+          .from("review_comments")
+          .select("review_id")
+          .eq("user_id", userId);
+        if (commentsError) throw commentsError;
+        const commentedReviewIds = commentsData?.map((c) => c.review_id) || [];
+
+        const interactedReviewIds = Array.from(
+          new Set([...votedReviewIds, ...commentedReviewIds])
+        );
+
+        if (interactedReviewIds.length === 0) {
+          setReviews([]);
+          setTotalPages(1);
+          setLoading(false);
+          return;
         }
 
-        const { count } = await countQuery;
-        if (count) {
-          setTotalPages(Math.ceil(count / REVIEWS_PER_PAGE));
-        }
+        const totalCount = interactedReviewIds.length;
+        setTotalPages(Math.ceil(totalCount / REVIEWS_PER_PAGE));
 
-        // 2️⃣ Busca das reviews
+        const from = (currentPage - 1) * REVIEWS_PER_PAGE;
+        const to = from + REVIEWS_PER_PAGE - 1;
+
         let query = supabase
           .from("reviews")
           .select(
             `
           *,
-          users_id,
           users (id, name, profile_img),
-          review_votes (vote_type),
+          review_votes (vote_type, user_id),
+          review_comments (id, user_id),
           products (id, name, image)
         `
           )
-          .eq("product_id", productId);
+          .in("id", interactedReviewIds)
+          .range(from, to);
 
-        if (filterRating) {
-          query = query.eq("rating", filterRating);
-        }
+        if (filterRating) query = query.eq("rating", filterRating);
 
-        // 3️⃣ Ordenação
-        if (sortBy === "recent") {
+        if (sortBy === "recent")
           query = query.order("created_at", { ascending: false });
-        } else if (sortBy === "high") {
+        else if (sortBy === "high")
           query = query.order("rating", { ascending: false });
-        } else if (sortBy === "low") {
+        else if (sortBy === "low")
           query = query.order("rating", { ascending: true });
-        } else if (sortBy === "useful") {
+        else if (sortBy === "useful")
           query = query.order("likes", { ascending: false });
-        }
 
-        // 4️⃣ Paginação
-        const from = (currentPage - 1) * REVIEWS_PER_PAGE;
-        const to = from + REVIEWS_PER_PAGE - 1;
-        query = query.range(from, to);
-
-        // 5️⃣ Execução da query
         const { data, error } = await query;
+        if (error) throw error;
 
-        if (error) {
-          console.error("Erro ao buscar reviews:", error);
-          setLoading(false);
-          return;
+        if (data) {
+          const parsed = data.map((item) => {
+            const likes =
+              item.review_votes?.filter(
+                (v: ReviewVote) => v.vote_type === "like"
+              ).length || 0;
+            const dislikes =
+              item.review_votes?.filter(
+                (v: ReviewVote) => v.vote_type === "dislike"
+              ).length || 0;
+            const commentCount = item.review_comments?.length || 0;
+
+            return {
+              id: item.id,
+              title: item.title,
+              text: item.text,
+              time_of_use: item.time_of_use,
+              price_paid: `R$${Number(item.price_paid)?.toFixed(2) || "0,00"}`,
+              rating: item.rating,
+              rating_performance: item.rating_performance || 0,
+              rating_cost_benefit: item.rating_cost_benefit || 0,
+              rating_comfort: item.rating_comfort || 0,
+              rating_weight: item.rating_weight || 0,
+              rating_durability: item.rating_durability || 0,
+              likes,
+              dislikes,
+              comments: commentCount,
+              images: item.images ? JSON.parse(item.images) : [],
+              user_profile_img: item.users?.profile_img || "/placeholder.svg",
+              user_name: item.users?.name || "Usuário Anônimo",
+              store: item.store || "Loja Desconhecida",
+              badges: ["Compra Verificada"],
+              created_at: item.created_at,
+              product_id: item.product_id,
+              product_name: item.products?.name || "Produto Desconhecido",
+              product_image: item.products?.image || "/placeholder.svg",
+            };
+          });
+
+          setReviews(parsed);
         }
-
-        if (!data) {
-          setReviews([]);
-          setLoading(false);
-          return;
-        }
-
-        // 6️⃣ Mapeamento para UserReview
-        const parsed = data.map((item) => {
-          const likes =
-            item.review_votes?.filter((v: ReviewVote) => v.vote_type === "like")
-              .length || 0;
-          const dislikes =
-            item.review_votes?.filter(
-              (v: ReviewVote) => v.vote_type === "dislike"
-            ).length || 0;
-
-          return {
-            id: item.id,
-            title: item.title,
-            text: item.text,
-            time_of_use: item.time_of_use,
-            price_paid: `R$${Number(item.price_paid)?.toFixed(2) || "0,00"}`,
-            rating: item.rating,
-            rating_performance: item.rating_performance || 0,
-            rating_cost_benefit: item.rating_cost_benefit || 0,
-            rating_comfort: item.rating_comfort || 0,
-            rating_weight: item.rating_weight || 0,
-            rating_durability: item.rating_durability || 0,
-            likes,
-            dislikes,
-            comments: item.comments,
-            images: item.images ? JSON.parse(item.images) : [],
-            user_profile_img: item.users?.profile_img || "/placeholder.svg",
-            user_name: item.users?.name || "Usuário Anônimo",
-            users_id: item.users_id || item.users?.id || null,
-            store: item.store || "Loja Desconhecida",
-            badges: ["Compra Verificada"],
-            created_at: item.created_at,
-            product_id: item.product_id,
-            product_name: item.products?.name || "Produto Desconhecido",
-            product_image: item.products?.image || "/placeholder.svg",
-          };
-        });
-
-        setReviews(parsed);
-      } catch (err) {
-        console.error("Erro ao buscar reviews:", err);
+      } catch (error) {
+        console.error("Erro ao buscar reviews interagidas:", error);
+        toast("Não foi possível carregar suas interações.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchReviews();
-  }, [productId, sortBy, filterRating, currentPage]);
+    fetchUserInteractedReviews();
+  }, [userId, currentPage, sortBy, filterRating]);
+
+  const handleToggleExpand = (id: string) => {
+    setExpandedIds((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
+  };
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
-  const handleToggleExpand = (id: string) => {
-    setExpandedIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-    );
-  };
-
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center ">
+      <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold text-[#010b62] dark:text-white mt-6">
-          Avaliações dos usuários
+          Interações
         </h2>
         <div className="flex gap-6">
           <div className="flex flex-col">
@@ -379,51 +348,36 @@ export default function UserReviews({ productId }: UserReviewProps) {
           </div>
         </div>
       </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
-        {reviews.length > 0 ? (
-          reviews.map((review) => {
-            const hasLiked = userVotes[review.id] === "like";
-            const hasDisliked = userVotes[review.id] === "dislike";
-            return (
+      {loading && <p className="text-gray-500">Carregando avaliações...</p>}
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
+        {reviews.length > 0
+          ? reviews.map((review) => (
               <ReviewCard
                 key={review.id}
                 review={review}
-                variant="user"
-                setReviews={setReviews}
+                variant="product"
                 onOpenDetails={(rev) => {
                   setSelectedReview(rev);
                   setIsModalOpen(true);
                 }}
                 onVote={handleVote}
-                hasLiked={hasLiked}
-                hasDisliked={hasDisliked}
+                hasLiked={userVotes[review.id] === "like"}
+                hasDisliked={userVotes[review.id] === "dislike"}
                 isExpanded={expandedIds.includes(review.id)}
                 onToggleExpand={handleToggleExpand}
-                showComments={openCommentsId === review.id}
-                onToggleComments={handleToggleComments}
               />
-            );
-          })
-        ) : (
-          <div className="text-center py-6 col-span-2">
-            {loading ? (
-              <p className="text-gray-500">Carregando avaliações...</p>
-            ) : (
-              <p className="text-gray-500">
-                Nenhuma avaliação encontrada. Seja o primeiro a avaliar!
-              </p>
+            ))
+          : !loading && (
+              <p className="text-gray-500">Nenhuma avaliação encontrada.</p>
             )}
-          </div>
-        )}
       </div>
-
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />
-
+      <div className="flex justify-center mt-4 md:col-span-2">
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      </div>
       {selectedReview && (
         <ReviewDetailsModal
           review={selectedReview}
