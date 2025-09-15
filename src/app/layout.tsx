@@ -4,11 +4,11 @@ import { Providers } from "./providers";
 import { Ubuntu_Sans } from "next/font/google";
 import Script from "next/script";
 
-const ubuntu = Ubuntu_Sans({
+const ubuntuSans = Ubuntu_Sans({
   subsets: ["latin"],
   display: "swap",
   weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-ubuntu",
+  variable: "--font-ubuntu-sans",
 });
 
 export const metadata = {
@@ -25,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-br" suppressHydrationWarning className={ubuntu.variable}>
+    <html lang="pt-br" suppressHydrationWarning className={ubuntuSans.variable}>
       <head>
         <link rel="icon" href="/logo-avaliup.svg" />
       </head>
