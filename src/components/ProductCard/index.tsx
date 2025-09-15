@@ -88,7 +88,7 @@ export default function ProductCard({
       <button
         disabled={btnLoading}
         onClick={handleButtonClick}
-        className={`bg-[#010b62] hover:bg-[#010b62]/80 dark:bg-[#01BAEF] dark:hover:bg-[#01BAEF]/80 transition text-white font-medium text-sm px-4 py-2 rounded w-full mt-2 flex justify-center items-center cursor-pointer
+        className={`bg-[#010b62] hover:bg-[#010b62]/80 dark:bg-[#01BAEF] dark:hover:bg-[#01BAEF]/80 transition text-white font-medium text-sm px-4 py-2 rounded w-full mt-2 flex justify-center items-center cursor-pointer`}
       >
         {btnLoading ? (
           <>
