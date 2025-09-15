@@ -8,11 +8,11 @@ import { getProductImageUrl } from "@/src/lib/supabase-storage";
 
 type PageParams = { id: string };
 
-type GenerateMetadataProps = { params: PageParams };
-
 export async function generateMetadata({
   params,
-}: GenerateMetadataProps): Promise<Metadata> {
+}: {
+  params: Promise<PageParams>;
+}): Promise<Metadata> {
   const { id } = await params;
 
   const { data: product } = await supabase
@@ -29,11 +29,17 @@ export async function generateMetadata({
   };
 }
 
-export default async function ProductPage({ params }: { params: PageParams }) {
+export default async function ProductPage({
+  params,
+}: {
+  params: Promise<PageParams>;
+}) {
+  const { id } = await params;
+
   const { data: product, error } = await supabase
     .from("products")
     .select("*")
-    .eq("id", params.id)
+    .eq("id", id)
     .single();
 
   if (!product || error) return notFound();
@@ -42,7 +48,7 @@ export default async function ProductPage({ params }: { params: PageParams }) {
 
   const productWithSignedUrl = {
     ...product,
-    imageUrl: signedImageUrl || product.image, // fallback
+    imageUrl: signedImageUrl || product.image,
   };
 
   return (
