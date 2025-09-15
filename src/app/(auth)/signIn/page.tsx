@@ -9,6 +9,7 @@ import Logo from "@/src/components/Logo";
 import ThemeSwitch from "@/src/components/ThemeSwitch";
 import { toast } from "sonner";
 import Image from "next/image";
+import TwoFactorAuthDialog from "@/src/components/TwoFactorAuthDialog";
 
 export default function Login() {
   const router = useRouter();
@@ -18,8 +19,15 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
   const [loading, setLoading] = useState(false);
-  const [redirecting, setRedirecting] = useState(false);
   const [emailConfirmed, setEmailConfirmed] = useState(false);
+
+  const [show2FA, setShow2FA] = useState(false);
+  const [currentUser, setCurrentUser] = useState<{
+    id: string;
+    email: string;
+    accessToken?: string;
+  } | null>(null);
+  const [step2FA, setStep2FA] = useState<"choose" | "verify">("choose");
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -33,41 +41,57 @@ export default function Login() {
     setError("");
     setLoading(true);
 
-    const { data: signInData, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    try {
+      const { data: signInData, error } =
+        await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
 
-    setLoading(false);
-
-    if (error) {
-      const msg = error.message.toLowerCase();
-
-      if (msg.includes("not confirmed")) {
-        toast.error("Confirme seu e-mail antes de fazer login.");
-        setError("Confirme seu e-mail antes de fazer login.");
+      if (error) {
+        const msg = error.message.toLowerCase();
+        if (msg.includes("not confirmed")) {
+          toast.error("Confirme seu e-mail antes de fazer login.");
+          setError("Confirme seu e-mail antes de fazer login.");
+          return;
+        }
+        if (msg.includes("invalid login credentials")) {
+          toast.error("E-mail ou senha incorretos.");
+          setError("E-mail ou senha incorretos.");
+          return;
+        }
+        toast.error(error.message);
+        setError(error.message);
         return;
       }
 
-      if (msg.includes("invalid login credentials")) {
-        toast.error("E-mail ou senha incorretos.");
-        setError("E-mail ou senha incorretos.");
+      if (!signInData.user?.email) {
+        setError("Usuário não possui e-mail cadastrado.");
         return;
       }
 
-      toast.error(error.message);
-      setError(error.message);
-      return;
-    }
+      setCurrentUser({
+        id: signInData.user.id,
+        email: signInData.user.email,
+        accessToken: signInData.session?.access_token,
+      });
 
-    if (!signInData.user) {
-      toast.error("Usuário não encontrado.");
-      return;
-    }
+      const { data: userData } = await supabase
+        .from("users")
+        .select("two_factor_enabled")
+        .eq("id", signInData.user.id)
+        .single();
 
-    toast.success("Login realizado com sucesso!");
-    setRedirecting(true);
-    router.push("/");
+      if (userData?.two_factor_enabled) {
+        setStep2FA("verify");
+      } else {
+        setStep2FA("choose");
+      }
+
+      setShow2FA(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleGoogleLogin = async () => {
@@ -85,6 +109,15 @@ export default function Login() {
     if (error) {
       toast.error(error.message);
     }
+  };
+
+  const completeLogin = async () => {
+    if (!currentUser?.accessToken) return;
+    await supabase.auth.setSession({
+      access_token: currentUser.accessToken,
+      refresh_token: "",
+    });
+    router.push("/");
   };
 
   return (
@@ -172,18 +205,14 @@ export default function Login() {
           </div>
           <button
             type="submit"
-            disabled={loading || redirecting}
+            disabled={loading}
             className={`w-[345px] h-[45px] px-4 py-2 text-white rounded-md cursor-pointer
               bg-[#010B62] dark:bg-[#01BAEF] hover:bg-[#202766] dark:hover:bg-[#0D91AC] 
-              ${loading || redirecting ? "opacity-70 cursor-not-allowed" : ""}
+              ${loading ? "opacity-70 cursor-not-allowed" : ""}
             `}
             onClick={handleLogin}
           >
-            {loading
-              ? "Entrando..."
-              : redirecting
-              ? "Redirecionando..."
-              : "Entrar"}
+            {loading ? "Entrando..." : "Entrar"}
           </button>
         </form>
         <div className="text-center">
@@ -207,7 +236,7 @@ export default function Login() {
         <button
           type="button"
           onClick={handleGoogleLogin}
-          disabled={loading || redirecting}
+          disabled={loading}
           className="flex items-center justify-center w-full px-4 py-2 text-sm font-medium text-[#010B62] border rounded-md border-[#010B62] hover:bg-gray-300 cursor-pointer dark:text-white dark:hover:bg-[#202766] dark:border-white"
         >
           <Image
@@ -235,6 +264,17 @@ export default function Login() {
           </Link>
         </div>
       </div>
+      {currentUser && (
+        <TwoFactorAuthDialog
+          userId={currentUser.id}
+          email={currentUser.email}
+          accessToken={currentUser.accessToken}
+          open={show2FA}
+          initialStep={step2FA}
+          onClose={completeLogin}
+          onVerified={completeLogin}
+        />
+      )}
     </div>
   );
 }
