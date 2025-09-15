@@ -194,7 +194,34 @@ export default function ProductLayout({ product }: { product: Product }) {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="text-[#010b62] hover:bg-[#010b62] hover:text-white"
+                    className="text-[#010b62] hover:bg-[#010b62] hover:text-white dark:hover:bg-gray-800 cursor-pointer mb-8"
+                    onClick={async () => {
+                      const shareData = {
+                        title: product.name,
+                        text: `Confira este produto: ${product.name}`,
+                        url: window.location.href,
+                      };
+
+                      if (navigator.share) {
+                        try {
+                          await navigator.share(shareData);
+                          toast.success("Link compartilhado!");
+                        } catch (err) {
+                          console.error("Erro ao compartilhar:", err);
+                          toast.error("Não foi possível compartilhar o link.");
+                        }
+                      } else {
+                        try {
+                          await navigator.clipboard.writeText(shareData.url);
+                          toast.success(
+                            "Link copiado para a área de transferência!"
+                          );
+                        } catch (err) {
+                          console.error("Erro ao copiar link:", err);
+                          toast.error("Não foi possível copiar o link.");
+                        }
+                      }
+                    }}
                   >
                     <Share2 className="w-6 h-6 dark:text-white" />
                   </Button>
