@@ -1,12 +1,74 @@
 "use client";
-
 import Logo from "@/src/components/Logo";
 import ThemeSwitch from "@/src/components/ThemeSwitch";
+import { supabase } from "@/src/lib/supabase";
 import Link from "next/link";
-// import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
-export default function ForgotPassword() {
-  //   const router = useRouter();
+export default function ResetPassword() {
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [sessionReady, setSessionReady] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    const hash = window.location.hash.substring(1);
+    const params = new URLSearchParams(hash);
+    const access_token = params.get("access_token");
+    const refresh_token = params.get("refresh_token");
+
+    if (access_token && refresh_token) {
+      supabase.auth
+        .setSession({ access_token, refresh_token })
+        .then(({ data, error }) => {
+          if (!error && data.session) {
+            setSessionReady(true);
+          } else {
+            toast.error("Token inválido ou expirado.");
+          }
+        });
+    }
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        setSessionReady(true);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    if (password !== confirmPassword) {
+      toast.error("As senhas não coincidem.");
+      return;
+    }
+
+    if (!sessionReady) {
+      toast.error("Sessão inválida. Acesse pelo link enviado ao seu e-mail.");
+      return;
+    }
+
+    setLoading(true);
+    const { error } = await supabase.auth.updateUser({ password });
+    setLoading(false);
+
+    if (error) {
+      toast.error("Erro ao redefinir a senha.");
+    } else {
+      toast.success("Senha redefinida com sucesso!");
+      router.push("/signIn");
+    }
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-[#030712]">
@@ -18,40 +80,60 @@ export default function ForgotPassword() {
           <ThemeSwitch />
         </div>
         <h2 className="text-2xl font-bold text-center text-[#010b62] dark:text-white">
-          Recuperar senha
+          Alteração de senha
         </h2>
-        <p className="text-sm text-center text-gray-500">
-          Informe o seu endereço de e-mail para que possamos enviar o link de
-          recuperação da senha.
+        <p className="text-md text-center text-gray-700">
+          Informe sua nova senha para confirmar a alteração.
         </p>
-        <form className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label
-              htmlFor="email"
-              className="block text-sm font-medium text-[#010b62] dark:text-white"
+              htmlFor="newPassword"
+              className="block text-md font-medium text-[#010b62] dark:text-white"
             >
-              E-mail
+              Nova senha
             </label>
             <input
-              id="email"
-              name="email"
-              type="email"
+              id="newPassword"
+              name="newPassword"
+              type="password"
               required
-              placeholder="Insira seu e-mail"
+              placeholder="Insira sua nova senha"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-3 py-2 mt-1 border-2 rounded-md border-[#010b62] focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-white"
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="confirmNewPassword"
+              className="block text-md font-medium text-[#010b62] dark:text-white"
+            >
+              Confirmação da nova senha
+            </label>
+            <input
+              id="confirmNewPassword"
+              name="confirmNewPassword"
+              type="password"
+              required
+              placeholder="Insira novamente sua nova senha"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
               className="w-full px-3 py-2 mt-1 border-2 rounded-md border-[#010b62] focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-white"
             />
           </div>
           <button
             type="submit"
+            disabled={loading}
             className="w-full px-4 py-2 text-white bg-[#010b62] rounded-md hover:bg-[#202766] cursor-pointer dark:bg-[#01baef] dark:hover:bg-[#0D91AC]"
           >
-            Enviar
+            {loading ? "Enviando..." : "Enviar"}
           </button>
         </form>
         <div className="text-center">
           <Link
             href="signIn"
-            className="text-sm text-[#0969da] dark:text-[#00AFD3] hover:underline"
+            className="text-md text-[#0969da] dark:text-[#00AFD3] hover:underline"
           >
             &larr; Voltar
           </Link>
