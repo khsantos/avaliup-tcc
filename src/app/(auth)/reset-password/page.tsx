@@ -14,6 +14,29 @@ export default function ResetPassword() {
   const [sessionReady, setSessionReady] = useState(false);
   const router = useRouter();
 
+  const isValidPassword = (password: string) => {
+    if (password.length < 8) return false;
+
+    const sequences = [
+      "1234",
+      "2345",
+      "3456",
+      "4567",
+      "5678",
+      "6789",
+      "abcd",
+      "bcde",
+      "cdef",
+      "qwerty",
+      "senha",
+    ];
+    const hasSequence = sequences.some((seq) =>
+      password.toLowerCase().includes(seq)
+    );
+
+    return !hasSequence;
+  };
+
   useEffect(() => {
     const hash = window.location.hash.substring(1);
     const params = new URLSearchParams(hash);
@@ -55,6 +78,13 @@ export default function ResetPassword() {
 
     if (!sessionReady) {
       toast.error("Sessão inválida. Acesse pelo link enviado ao seu e-mail.");
+      return;
+    }
+
+    if (!isValidPassword(password)) {
+      toast.error(
+        "A senha deve ter pelo menos 8 caracteres e não conter sequências numéricas comuns."
+      );
       return;
     }
 
