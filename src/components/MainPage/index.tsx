@@ -5,7 +5,6 @@ import ProductCarousel from "@/src/components/ProductCarousel";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/src/lib/supabase";
 import { Product } from "@/src/types/Product";
-import AdSensePlaceholder from "@/src/components/TestAdPlaceholder";
 import LoadingOrEmpty from "@/src/components/LoadingOrEmpty";
 import AdSense from "../AdSense";
 
@@ -65,7 +64,9 @@ export default function MainPage() {
 
       <section>
         <div className="max-w-7xl w-full p-6">
-          <span className="font-medium text-lg text-[#010B62]/60 dark:text-[#FFFFFF]/60">Top 10</span>
+          <span className="font-medium text-lg text-[#010B62]/60 dark:text-[#FFFFFF]/60">
+            Top 10
+          </span>
           <h2 className="text-[#010b62] text-3xl font-semibold mb-6 text-left dark:text-white">
             Mouses gamers custo-benefício
           </h2>
@@ -79,12 +80,13 @@ export default function MainPage() {
         </div>
       </section>
 
-      <AdSensePlaceholder />
       <AdSense />
 
       <section className="px-4 py-10 flex justify-center">
         <div className="max-w-7xl w-full p-6">
-          <span className="font-medium text-lg text-[#010B62]/60 dark:text-[#FFFFFF]/60">Top 10</span>
+          <span className="font-medium text-lg text-[#010B62]/60 dark:text-[#FFFFFF]/60">
+            Top 10
+          </span>
           <h2 className="text-[#010b62] text-3xl font-semibold mb-6 text-left dark:text-white">
             Teclados gamers custo-benefício
           </h2>
@@ -100,7 +102,9 @@ export default function MainPage() {
 
       <section className="px-4 py-10 flex justify-center">
         <div className="max-w-7xl w-full p-6">
-          <span className="font-medium text-lg text-[#010B62]/60 dark:text-[#FFFFFF]/60">Top 10</span>
+          <span className="font-medium text-lg text-[#010B62]/60 dark:text-[#FFFFFF]/60">
+            Top 10
+          </span>
           <h2 className="text-[#010b62] text-3xl font-semibold mb-6 text-left dark:text-white">
             Headsets gamers custo-benefício
           </h2>
@@ -116,7 +120,9 @@ export default function MainPage() {
 
       <section className="px-4 py-10 flex justify-center">
         <div className="max-w-7xl w-full p-6">
-          <span className="font-medium text-lg text-[#010B62]/60 dark:text-[#FFFFFF]/60">Top 10</span>
+          <span className="font-medium text-lg text-[#010B62]/60 dark:text-[#FFFFFF]/60">
+            Top 10
+          </span>
           <h2 className="text-[#010b62] text-3xl font-semibold mb-6 text-left dark:text-white">
             Mousepads gamers custo-benefício
           </h2>
@@ -132,7 +138,9 @@ export default function MainPage() {
 
       <section className="px-4 py-10 flex justify-center">
         <div className="max-w-7xl w-full p-6">
-          <span className="font-medium text-lg text-[#010B62]/60 dark:text-[#FFFFFF]/60">Top 10</span>
+          <span className="font-medium text-lg text-[#010B62]/60 dark:text-[#FFFFFF]/60">
+            Top 10
+          </span>
           <h2 className="text-[#010b62] text-3xl font-semibold mb-6 text-left dark:text-white">
             Controles gamers custo-benefício
           </h2>
