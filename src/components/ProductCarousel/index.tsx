@@ -1,6 +1,6 @@
 "use client";
 
-import { useKeenSlider } from "keen-slider/react";
+import { KeenSliderInstance, useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
 import ProductCard from "../ProductCard";
 import { Product } from "@/src/types/Product";
@@ -18,7 +18,7 @@ export default function ProductCarousel({ products }: ProductCarouselProps) {
 
   useEffect(() => setMounted(true), []);
 
-  function updateFades(slider: any) {
+  function updateFades(slider: KeenSliderInstance) {
     const details = slider.track.details;
     setShowLeftFade(details.rel > 0);
     setShowRightFade(details.rel < details.maxIdx);
@@ -34,9 +34,15 @@ export default function ProductCarousel({ products }: ProductCarouselProps) {
       "(max-width: 640px)": { slides: { perView: 1.2, spacing: 16 } },
       "(max-width: 480px)": { slides: { perView: 1, spacing: 14 } },
     },
-    created(slider) { updateFades(slider); },
-    slideChanged(slider) { updateFades(slider); },
-    updated(slider) { updateFades(slider); },
+    created(slider) {
+      updateFades(slider);
+    },
+    slideChanged(slider) {
+      updateFades(slider);
+    },
+    updated(slider) {
+      updateFades(slider);
+    },
   });
 
   // Garantir atualização quando instancia disponível
@@ -47,7 +53,10 @@ export default function ProductCarousel({ products }: ProductCarouselProps) {
   if (!mounted) return null;
 
   return (
-    <div className="overflow-x-hidden relative" style={{ scrollbarWidth: "none" }}>
+    <div
+      className="overflow-x-hidden relative"
+      style={{ scrollbarWidth: "none" }}
+    >
       {showLeftFade && (
         <div className="pointer-events-none absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-white/70 dark:from-[#030712]/70 to-transparent z-10 transition-opacity" />
       )}
@@ -75,7 +84,10 @@ export default function ProductCarousel({ products }: ProductCarouselProps) {
         className="keen-slider pb-2 px-1" /* slider controla spacing */
       >
         {products.slice(0, 10).map((product) => (
-          <div key={product.id} className="keen-slider__slide flex justify-center p-1">
+          <div
+            key={product.id}
+            className="keen-slider__slide flex justify-center p-1"
+          >
             <ProductCard {...product} />
           </div>
         ))}
