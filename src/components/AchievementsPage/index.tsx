@@ -94,7 +94,7 @@ export default function AchievementsPage() {
               <div
                 className={`flex items-center justify-center w-20 h-20 border rounded-md mr-4 shrink-0 transition ${
                   a.unlocked
-                    ? "bg-gray-200 dark:bg-[#030712] border-[#01BAEF]"
+                    ? "bg-gray-200 dark:bg-[#030712] dark:border-[#01BAEF] border-[#010b62]"
                     : "bg-gray-200/50 dark:bg-[#030712]/50 border-gray-400 dark:border-gray-600 opacity-50"
                 }`}
               >
