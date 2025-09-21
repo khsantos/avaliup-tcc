@@ -107,12 +107,14 @@ export default function Page() {
               ))}
             </div>
             <div className="flex flex-col items-end gap-2">
-              <button
-                type="button"
-                className="bg-[#FFB24B] cursor-pointer text-white rounded-lg px-6 py-2 font-bold hover:bg-[#e6a800] transition"
-              >
-                Coleção
-              </button>
+              <a href="/achievements">
+                <button
+                  type="button"
+                  className="bg-[#FFB24B] cursor-pointer text-white rounded-lg px-6 py-2 font-bold hover:bg-[#e6a800] transition"
+                >
+                  Coleção
+                </button>
+              </a>
               <a href="/profile-edit" className="inline-block w-full">
                 <button
                   type="button"
