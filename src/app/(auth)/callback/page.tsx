@@ -43,6 +43,18 @@ export default function AuthCallback() {
         ]);
       }
 
+      const { error: updateError } = await supabase
+        .from("users")
+        .update({ last_sign_in_at: new Date().toISOString() })
+        .eq("id", user.id);
+
+      if (updateError) {
+        console.error(
+          "Erro ao atualizar last_sign_in_at no callback:",
+          updateError.message
+        );
+      }
+
       router.replace("/");
     };
 

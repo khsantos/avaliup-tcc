@@ -36,6 +36,17 @@ export default function Login() {
     }
   }, []);
 
+  const updateLastSignIn = async (userId: string) => {
+    const { error } = await supabase
+      .from("users")
+      .update({ last_sign_in_at: new Date().toISOString() })
+      .eq("id", userId);
+
+    if (error) {
+      console.error("Erro ao atualizar last_sign_in_at:", error.message);
+    }
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -70,11 +81,15 @@ export default function Login() {
         return;
       }
 
+      const userId = signInData.user.id;
+
       setCurrentUser({
         id: signInData.user.id,
         email: signInData.user.email,
         accessToken: signInData.session?.access_token,
       });
+
+      await updateLastSignIn(userId);
 
       const { data: userData } = await supabase
         .from("users")
@@ -108,6 +123,7 @@ export default function Login() {
 
     if (error) {
       toast.error(error.message);
+      return;
     }
   };
 
