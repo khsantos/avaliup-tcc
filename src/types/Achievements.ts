@@ -1,5 +1,5 @@
 export type Achievement = {
-    id: number;
+    id: string;
     title: string;
     description: string;
     image_url: string | null;

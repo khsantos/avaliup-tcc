@@ -8,38 +8,68 @@ import { Achievement } from "@/src/types/Achievements";
 
 export default function AchievementsPage() {
   const [achievements, setAchievements] = useState<Achievement[]>([]);
-  const { supabase } = useSupabase();
+  const { supabase, user } = useSupabase();
+
+  interface AchievementRow {
+    id: string;
+    title: string;
+    description: string;
+    image_url: string | null;
+  }
+
+  interface UserAchievement {
+    achievements_id: string;
+    unlocked_at: string;
+  }
 
   useEffect(() => {
-    async function fetchAchievements() {
-      const { data, error } = await supabase.from("achievements").select(
-        `
-          id,
-          title,
-          description,
-          image_url,
-          user_achievements (unlocked_at)
-        `
-      );
+    const userId = user?.id;
+    if (!userId) return;
 
-      if (error) {
-        console.error("Erro ao buscar conquistas:", error.message);
+    async function fetchAchievements() {
+      const { data: allAchievements, error: achError } = await supabase
+        .from("achievements")
+        .select("id, title, description, image_url");
+
+      if (achError || !allAchievements) {
+        console.error("Erro ao buscar conquistas:", achError?.message);
         return;
       }
 
-      const mapped = data?.map((a) => ({
-        id: a.id,
-        title: a.title,
-        description: a.description,
-        image_url: a.image_url,
-        unlocked: a.user_achievements?.length > 0,
-      }));
+      const { data: userAchData, error: uaError } = await supabase
+        .from("user_achievements")
+        .select("achievements_id, unlocked_at")
+        .eq("user_id", userId);
 
-      setAchievements(mapped || []);
+      if (uaError || !userAchData) {
+        console.error(
+          "Erro ao buscar conquistas do usuário:",
+          uaError?.message
+        );
+      }
+
+      const userAchievementsIds = new Set(
+        (userAchData || []).map((ua: UserAchievement) => ua.achievements_id)
+      );
+
+      const mapped = (allAchievements as AchievementRow[])
+        .map((a) => ({
+          id: a.id,
+          title: a.title,
+          description: a.description,
+          image_url: a.image_url,
+          unlocked: userAchievementsIds.has(a.id),
+        }))
+        .sort((a, b) => {
+          if (a.unlocked === b.unlocked) return 0;
+          return a.unlocked ? -1 : 1;
+        });
+
+      setAchievements(mapped);
     }
 
     fetchAchievements();
-  }, [supabase]);
+  }, [supabase, user?.id]);
 
   return (
     <div className="min-h-screen p-4 dark:bg-[#030712] flex justify-center">
