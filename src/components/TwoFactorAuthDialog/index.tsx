@@ -13,7 +13,6 @@ import {
 import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/src/lib/supabase";
-import { useSupabase } from "@/src/contexts/supabase-provider";
 import { X } from "lucide-react";
 
 interface TwoFactorAuthDialogProps {
@@ -23,7 +22,7 @@ interface TwoFactorAuthDialogProps {
   open: boolean;
   initialStep?: "choose" | "verify";
   onClose: () => void;
-  onVerified: () => void;
+  onVerified: (accessToken: string) => void;
 }
 
 export default function TwoFactorAuthDialog({
@@ -38,7 +37,6 @@ export default function TwoFactorAuthDialog({
   const [step, setStep] = useState<"choose" | "verify">(initialStep);
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
-  const { session } = useSupabase();
   const [codeSent, setCodeSent] = useState(false);
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
 
@@ -88,9 +86,6 @@ export default function TwoFactorAuthDialog({
   const handleVerifyCode = async () => {
     setLoading(true);
     try {
-      const token = session?.access_token;
-      if (!token) throw new Error("Usuário não autenticado");
-
       const res = await fetch(
         "https://qjpnvzrmiibksdvxmzop.supabase.co/functions/v1/verify-2fa-code",
         {
@@ -98,19 +93,14 @@ export default function TwoFactorAuthDialog({
           body: JSON.stringify({ userId, code }),
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
         }
       );
 
       const data = await res.json();
-      if (data.ok) {
-        await supabase.auth.setSession({
-          access_token: data.access_token,
-          refresh_token: data.refresh_token,
-        });
+      if (data.ok && data.access_token) {
         toast.success("Autenticação de dois fatores concluída!");
-        onVerified();
+        onVerified(data.access_token);
       } else {
         toast.error(data.error || "Código inválido ou expirado.");
       }
@@ -122,24 +112,17 @@ export default function TwoFactorAuthDialog({
     }
   };
 
-  const handleSkip2FA = async () => {
-    setLoading(true);
-    try {
-      const token = session?.access_token;
-      if (!token) throw new Error("Usuário não autenticado");
+  const handleSkip2FA = () => {
+    if (twoFactorEnabled) {
+      toast.error("Sua conta possui 2FA ativado. Você deve inserir o código.");
 
-      await supabase.auth.setSession({
-        access_token: token,
-        refresh_token: "",
-      });
-      toast.success("Login concluído sem 2FA!");
+      supabase.auth.signOut();
       onClose();
-    } catch (err: unknown) {
-      if (err instanceof Error) toast.error(err.message);
-      else toast.error("Erro ao criar sessão.");
-    } finally {
-      setLoading(false);
+
+      return;
     }
+
+    if (accessToken) onVerified(accessToken);
   };
 
   useEffect(() => {
@@ -150,26 +133,7 @@ export default function TwoFactorAuthDialog({
   }, [initialStep, codeSent, loading, handleActivate2FA]);
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(isOpen) => {
-        if (!isOpen) {
-          if (step === "choose") {
-            if (twoFactorEnabled) {
-              toast.error(
-                "Sua conta possui 2FA ativado, você deve continuar e inserir o código que receber."
-              );
-              return;
-            }
-            onClose();
-          } else {
-            toast.error(
-              "Você precisa informar o código para continuar, ou volte para o passo anterior."
-            );
-          }
-        }
-      }}
-    >
+    <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="text-[#010b62] dark:text-[#33C9F2]">
@@ -177,7 +141,7 @@ export default function TwoFactorAuthDialog({
           </DialogTitle>
 
           {!twoFactorEnabled && (
-            <DialogClose className="absolute right-4 top-4">
+            <DialogClose asChild className="absolute right-4 top-4">
               <X className="h-4 w-4" />
             </DialogClose>
           )}
@@ -205,15 +169,7 @@ export default function TwoFactorAuthDialog({
                 {loading ? "Enviando..." : "Ativar"}
               </button>
               <button
-                onClick={() => {
-                  if (initialStep === "verify") {
-                    toast.error(
-                      "Você precisa verificar o código para continuar."
-                    );
-                    return;
-                  }
-                  handleSkip2FA();
-                }}
+                onClick={handleSkip2FA}
                 disabled={loading}
                 className="px-4 py-2 border rounded dark:hover:bg-gray-800 hover:bg-gray-200 cursor-pointer"
               >

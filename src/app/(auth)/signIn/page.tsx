@@ -31,9 +31,7 @@ export default function Login() {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    if (params.get("confirmed") === "true") {
-      setEmailConfirmed(true);
-    }
+    if (params.get("confirmed") === "true") setEmailConfirmed(true);
   }, []);
 
   const updateLastSignIn = async (userId: string) => {
@@ -42,9 +40,16 @@ export default function Login() {
       .update({ last_sign_in_at: new Date().toISOString() })
       .eq("id", userId);
 
-    if (error) {
+    if (error)
       console.error("Erro ao atualizar last_sign_in_at:", error.message);
-    }
+  };
+
+  const completeLogin = async (accessToken: string) => {
+    await supabase.auth.setSession({
+      access_token: accessToken,
+      refresh_token: "",
+    });
+    router.push("/");
   };
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -76,17 +81,17 @@ export default function Login() {
         return;
       }
 
-      if (!signInData.user?.email) {
-        setError("Usuário não possui e-mail cadastrado.");
+      if (!signInData.user?.email || !signInData.session?.access_token) {
+        setError("Não foi possível autenticar o usuário.");
         return;
       }
 
       const userId = signInData.user.id;
 
       setCurrentUser({
-        id: signInData.user.id,
+        id: userId,
         email: signInData.user.email,
-        accessToken: signInData.session?.access_token,
+        accessToken: signInData.session.access_token,
       });
 
       await updateLastSignIn(userId);
@@ -94,15 +99,10 @@ export default function Login() {
       const { data: userData } = await supabase
         .from("users")
         .select("two_factor_enabled")
-        .eq("id", signInData.user.id)
+        .eq("id", userId)
         .single();
 
-      if (userData?.two_factor_enabled) {
-        setStep2FA("verify");
-      } else {
-        setStep2FA("choose");
-      }
-
+      setStep2FA(userData?.two_factor_enabled ? "verify" : "choose");
       setShow2FA(true);
     } finally {
       setLoading(false);
@@ -111,29 +111,13 @@ export default function Login() {
 
   const handleGoogleLogin = async () => {
     setLoading(true);
-
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: {
-        redirectTo: `${window.location.origin}/callback`,
-      },
+      options: { redirectTo: `${window.location.origin}/callback` },
     });
-
     setLoading(false);
 
-    if (error) {
-      toast.error(error.message);
-      return;
-    }
-  };
-
-  const completeLogin = async () => {
-    if (!currentUser?.accessToken) return;
-    await supabase.auth.setSession({
-      access_token: currentUser.accessToken,
-      refresh_token: "",
-    });
-    router.push("/");
+    if (error) toast.error(error.message);
   };
 
   return (
@@ -287,7 +271,9 @@ export default function Login() {
           accessToken={currentUser.accessToken}
           open={show2FA}
           initialStep={step2FA}
-          onClose={completeLogin}
+          onClose={() => {
+            setShow2FA(false);
+          }}
           onVerified={completeLogin}
         />
       )}
