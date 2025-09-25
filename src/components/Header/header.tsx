@@ -68,7 +68,7 @@ export default function Header() {
             variant="outline"
             size="icon"
             onClick={() => setFavoritesOpen(true)}
-            className="text-[#010b62] border border-[#010b62] hover:text-white hover:bg-[#010b62] dark:bg-[#030712] dark:text-white dark:border-white cursor-pointer"
+            className="text-[#010b62] bg-[#0000] border h-10 w-10 border text-[#010b62] hover:text-[#010b62] dark:text-white border-[#010b62] rounded-md hover:bg-[#0969da]/15 dark:hover:bg-[#00afd3]/30 dark:border-white dark:bg-[#0000] dark:hover:text-white transition cursor-pointer"
           >
             <Heart className="w-4 h-4" />
           </Button>

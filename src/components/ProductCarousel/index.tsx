@@ -63,22 +63,32 @@ export default function ProductCarousel({ products }: ProductCarouselProps) {
       {showRightFade && (
         <div className="pointer-events-none absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-white/70 dark:from-[#030712]/70 to-transparent z-10 transition-opacity" />
       )}
-      {showLeftFade && (
-        <button
-          onClick={() => instanceRef.current?.prev()}
-          className="absolute left-2 top-1/2 transform -translate-y-1/2 z-20 bg-white/80 dark:bg-[#030712]/80 p-2 rounded-full shadow-md hover:bg-white dark:hover:bg-[#030712] transition-colors"
-        >
-          <ChevronLeft size={20} />
-        </button>
-      )}
-      {showRightFade && (
-        <button
-          onClick={() => instanceRef.current?.next()}
-          className="absolute right-2 top-1/2 transform -translate-y-1/2 z-20 bg-white/80 dark:bg-[#030712]/80 p-2 rounded-full shadow-md hover:bg-white dark:hover:bg-[#030712] transition-colors"
-        >
-          <ChevronRight size={20} />
-        </button>
-      )}
+
+      {/* Always render arrows; disable + dim at extremes */}
+      <button
+        onClick={() => instanceRef.current?.prev()}
+        disabled={!showLeftFade}
+        aria-disabled={!showLeftFade}
+        className={`absolute left-4 top-1/2 transform -translate-y-1/2 z-20 bg-white dark:bg-[#030712] p-2 rounded-full shadow-md transition-colors border border-[#010b62] dark:border-white ${!showLeftFade
+          ? "opacity-40"
+          : "hover:bg-[#DAE9FA] dark:hover:bg-[#02394C] cursor-pointer"
+          }`}
+      >
+        <ChevronLeft size={20} className="text-[#010b62] dark:text-white" />
+      </button>
+
+      <button
+        onClick={() => instanceRef.current?.next()}
+        disabled={!showRightFade}
+        aria-disabled={!showRightFade}
+        className={`absolute right-2 top-1/2 transform -translate-y-1/2 z-20 bg-white dark:bg-[#030712] p-2 rounded-full shadow-md transition-colors border border-[#010b62] dark:border-white ${!showRightFade
+          ? "opacity-40"
+          : "hover:bg-[#DAE9FA] dark:hover:bg-[#02394C] cursor-pointer"
+          }`}
+      >
+        <ChevronRight size={20} className="text-[#010b62] dark:text-white" />
+      </button>
+
       <div
         ref={sliderRef}
         className="keen-slider pb-2 px-1" /* slider controla spacing */

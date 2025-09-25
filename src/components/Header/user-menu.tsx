@@ -45,7 +45,7 @@ export function UserMenu({
     variant === "desktop" ? (
       <DropdownMenuTrigger asChild>
         <Avatar className="cursor-pointer border h-10 w-10 sm:h-10 border-[#010b62] bg-white dark:bg-[#030712] dark:border-white">
-          <AvatarFallback className="text-[#010b62] dark:text-white font-bold">
+          <AvatarFallback className="text-[#010b62] bg-white dark:text-white font-bold">
             {session.user.email?.[0]?.toUpperCase()}
           </AvatarFallback>
         </Avatar>
