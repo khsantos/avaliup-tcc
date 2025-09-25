@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useSupabase } from "@/src/contexts/supabase-provider";
-import ProfileReview from "@/src/components/ProfileReview";
+import ProfileReview from "@/src/components/ProfileOwnReviews";
 import ProfileUserActivity from "@/src/components/ProfileUserActivity";
 import FavoritesTab from "@/src/components/ProfileFavorites";
 
