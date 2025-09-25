@@ -66,17 +66,17 @@ export default function ProductCarousel({ products }: ProductCarouselProps) {
       {showLeftFade && (
         <button
           onClick={() => instanceRef.current?.prev()}
-          className="absolute left-2 top-1/2 transform -translate-y-1/2 z-20 bg-white/80 dark:bg-[#030712]/80 p-2 rounded-full shadow-md hover:bg-white dark:hover:bg-[#030712] transition-colors"
+          className="absolute left-4 top-1/2 transform -translate-y-1/2 z-20 bg-white dark:bg-[#030712] p-2 rounded-full shadow-md hover:bg-[#DAE9FA] dark:hover:bg-[#02394C] transition-colors border border-[#010b62] dark:border-white cursor-pointer"
         >
-          <ChevronLeft size={20} />
+          <ChevronLeft size={20} className="text-[#010b62] dark:text-white" />
         </button>
       )}
       {showRightFade && (
         <button
           onClick={() => instanceRef.current?.next()}
-          className="absolute right-2 top-1/2 transform -translate-y-1/2 z-20 bg-white/80 dark:bg-[#030712]/80 p-2 rounded-full shadow-md hover:bg-white dark:hover:bg-[#030712] transition-colors"
+          className="absolute right-2 top-1/2 transform -translate-y-1/2 z-20 bg-white dark:bg-[#030712] p-2 rounded-full shadow-md hover:bg-[#DAE9FA] dark:hover:bg-[#02394C] transition-colors border border-[#010b62] dark:border-white cursor-pointer"
         >
-          <ChevronRight size={20} />
+          <ChevronRight size={20} className="text-[#010b62] dark:text-white" />
         </button>
       )}
       <div
