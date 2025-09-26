@@ -43,6 +43,7 @@ export default function ProductCarousel({ products }: ProductCarouselProps) {
     updated(slider) {
       updateFades(slider);
     },
+    renderMode: "performance",
   });
 
   // Garantir atualização quando instancia disponível
@@ -69,10 +70,11 @@ export default function ProductCarousel({ products }: ProductCarouselProps) {
         onClick={() => instanceRef.current?.prev()}
         disabled={!showLeftFade}
         aria-disabled={!showLeftFade}
-        className={`absolute left-4 top-1/2 transform -translate-y-1/2 z-20 bg-white dark:bg-[#030712] p-2 rounded-full shadow-md transition-colors border border-[#010b62] dark:border-white ${!showLeftFade
-          ? "opacity-40"
-          : "hover:bg-[#DAE9FA] dark:hover:bg-[#02394C] cursor-pointer"
-          }`}
+        className={`absolute left-4 top-1/2 transform -translate-y-1/2 z-20 bg-white dark:bg-[#030712] p-2 rounded-full shadow-md transition-colors border border-[#010b62] dark:border-white ${
+          !showLeftFade
+            ? "opacity-40"
+            : "hover:bg-[#DAE9FA] dark:hover:bg-[#02394C] cursor-pointer"
+        }`}
       >
         <ChevronLeft size={20} className="text-[#010b62] dark:text-white" />
       </button>
@@ -81,10 +83,11 @@ export default function ProductCarousel({ products }: ProductCarouselProps) {
         onClick={() => instanceRef.current?.next()}
         disabled={!showRightFade}
         aria-disabled={!showRightFade}
-        className={`absolute right-2 top-1/2 transform -translate-y-1/2 z-20 bg-white dark:bg-[#030712] p-2 rounded-full shadow-md transition-colors border border-[#010b62] dark:border-white ${!showRightFade
-          ? "opacity-40"
-          : "hover:bg-[#DAE9FA] dark:hover:bg-[#02394C] cursor-pointer"
-          }`}
+        className={`absolute right-2 top-1/2 transform -translate-y-1/2 z-20 bg-white dark:bg-[#030712] p-2 rounded-full shadow-md transition-colors border border-[#010b62] dark:border-white ${
+          !showRightFade
+            ? "opacity-40"
+            : "hover:bg-[#DAE9FA] dark:hover:bg-[#02394C] cursor-pointer"
+        }`}
       >
         <ChevronRight size={20} className="text-[#010b62] dark:text-white" />
       </button>

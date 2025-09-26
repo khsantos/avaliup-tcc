@@ -1,19 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Product } from "@/src/types/Product";
 import Image from "next/image";
 import { BiSolidMedal } from "react-icons/bi";
 import { FaStar } from "react-icons/fa";
 
-export default function ProductCard({
-  id,
-  rank,
-  name,
-  rating,
-  image,
-}: Product) {
+function ProductCard({ id, rank, name, rating, image }: Product) {
   const router = useRouter();
   const [cardLoading, setCardLoading] = useState(false);
   const [btnLoading, setBtnLoading] = useState(false);
@@ -48,11 +42,7 @@ export default function ProductCard({
               <BiSolidMedal
                 size={22}
                 color={
-                  rank === 1
-                    ? "#FFB24B"
-                    : rank === 2
-                      ? "#AEA8BA"
-                      : "#EF6C4E"
+                  rank === 1 ? "#FFB24B" : rank === 2 ? "#AEA8BA" : "#EF6C4E"
                 }
               />
             </span>
@@ -72,6 +62,7 @@ export default function ProductCard({
           fill
           className="object-contain"
           loading="lazy"
+          sizes="(max-width: 768px) 112px, 112px"
         />
       </div>
 
@@ -121,3 +112,13 @@ export default function ProductCard({
     </div>
   );
 }
+
+export default React.memo(ProductCard, (prev, next) => {
+  return (
+    prev.id === next.id &&
+    prev.rank === next.rank &&
+    prev.name === next.name &&
+    prev.rating === next.rating &&
+    prev.image === next.image
+  );
+});

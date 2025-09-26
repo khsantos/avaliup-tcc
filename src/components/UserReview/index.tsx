@@ -137,6 +137,11 @@ export default function UserReviews({ productId }: UserReviewProps) {
 
       if (supabaseError) {
         console.error("Erro ao registrar voto:", supabaseError);
+        if (supabaseError.details)
+          console.error("Detalhes:", supabaseError.details);
+        if (supabaseError.hint) console.error("Dica:", supabaseError.hint);
+        if (supabaseError.code)
+          console.error("Código do erro:", supabaseError.code);
         toast("Não foi possível registrar seu voto.");
         setUserVotes((prev) => ({ ...prev, [reviewId]: currentVote }));
         return;

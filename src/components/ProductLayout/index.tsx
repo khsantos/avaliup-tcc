@@ -176,7 +176,8 @@ export default function ProductLayout({ product }: { product: Product }) {
                   width={600}
                   height={600}
                   className="object-contain"
-                  loading="lazy"
+                  loading="eager"
+                  priority
                 />
               </div>
               {/* Conteúdo do produto */}
