@@ -1,4 +1,3 @@
-// src/components/layout/Header/UserMenu.tsx
 "use client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -13,6 +12,9 @@ import {
 } from "@/src/components/ui/dropdown-menu";
 
 import type { Session, SupabaseClient } from "@supabase/supabase-js";
+import { useState } from "react";
+import { Sheet } from "../ui/sheet";
+import NotificationsSheet from "../NotificationsSheet";
 
 type Props = {
   session: Session | null;
@@ -30,6 +32,7 @@ export function UserMenu({
   onAfterAction,
 }: Props) {
   const router = useRouter();
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   if (!session?.user) {
     return (
@@ -59,35 +62,51 @@ export function UserMenu({
     );
 
   return (
-    <DropdownMenu>
-      {trigger}
-      <DropdownMenuContent align={variant === "desktop" ? "end" : "start"}>
-        <DropdownMenuLabel>
-          <div className="flex flex-col">
-            <span className="text-sm font-medium">
-              {profileName ?? "Usuário"}
-            </span>
-            <span className="text-xs text-muted-foreground">
-              {session.user.email}
-            </span>
-          </div>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link href="/profile-general" onClick={onAfterAction}>
-            Meu perfil
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={async () => {
-            await supabase.auth.signOut();
-            onAfterAction?.();
-            router.refresh();
-          }}
-        >
-          Sair
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <>
+      <DropdownMenu>
+        {trigger}
+        <DropdownMenuContent align={variant === "desktop" ? "end" : "start"}>
+          <DropdownMenuLabel>
+            <div className="flex flex-col">
+              <span className="text-sm font-medium">
+                {profileName ?? "Usuário"}
+              </span>
+              <span className="text-xs text-muted-foreground">
+                {session.user.email}
+              </span>
+            </div>
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <Link href="/profile-general" onClick={onAfterAction}>
+              Meu perfil
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => {
+              setTimeout(() => setIsSheetOpen(true), 50);
+            }}
+          >
+            Notificações
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={async () => {
+              await supabase.auth.signOut();
+              onAfterAction?.();
+              router.refresh();
+            }}
+          >
+            Sair
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+        <NotificationsSheet
+          onClose={() => setIsSheetOpen(false)}
+          open={isSheetOpen}
+        />
+      </Sheet>
+    </>
   );
 }

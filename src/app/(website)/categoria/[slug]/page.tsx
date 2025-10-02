@@ -2,18 +2,17 @@
 import type { Metadata } from "next";
 import CategoryPage from "@/src/components/CategoryPage";
 
-// Tipagem explícita dos parâmetros da rota
 interface PageParams {
   slug: string;
 }
 
-// Função de metadata para a página
 export async function generateMetadata({
   params,
 }: {
-  params: PageParams;
+  params: Promise<PageParams>; // <- agora é Promise
 }): Promise<Metadata> {
-  const slug = params.slug;
+  const { slug } = await params; // <- await necessário
+
   const categoryName =
     slug.charAt(0).toUpperCase() + slug.slice(1).replace("-", " ");
 
@@ -23,7 +22,12 @@ export async function generateMetadata({
   };
 }
 
-// Página principal da categoria
-export default function CategoriaPage({ params }: { params: PageParams }) {
-  return <CategoryPage slug={params.slug} />;
+export default async function CategoriaPage({
+  params,
+}: {
+  params: Promise<PageParams>; // <- idem
+}) {
+  const { slug } = await params; // <- await aqui também
+
+  return <CategoryPage slug={slug} />;
 }

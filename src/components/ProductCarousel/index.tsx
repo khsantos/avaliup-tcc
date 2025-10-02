@@ -20,6 +20,7 @@ export default function ProductCarousel({ products }: ProductCarouselProps) {
 
   function updateFades(slider: KeenSliderInstance) {
     const details = slider.track.details;
+    if (!details) return; // <- evita o erro
     setShowLeftFade(details.rel > 0);
     setShowRightFade(details.rel < details.maxIdx);
   }

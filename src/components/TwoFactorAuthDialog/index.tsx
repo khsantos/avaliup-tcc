@@ -98,9 +98,9 @@ export default function TwoFactorAuthDialog({
       );
 
       const data = await res.json();
-      if (data.ok && data.access_token) {
+      if (data.ok) {
         toast.success("Autenticação de dois fatores concluída!");
-        onVerified(data.access_token);
+        onVerified(accessToken || "");
       } else {
         toast.error(data.error || "Código inválido ou expirado.");
       }

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
-import { Star, Heart, Share2, Award } from "lucide-react";
+import { Star, Heart, Share2, Award, Bell } from "lucide-react";
 import Image from "next/image";
 import { Product } from "@/src/types/Product";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
@@ -14,6 +14,7 @@ import ProductCriteriaStars from "../ProductCriteriaRatings";
 import { supabase } from "@/src/lib/supabase";
 import { useSupabase } from "@/src/contexts/supabase-provider";
 import { toast } from "sonner";
+import PriceNotificationDialog from "../PriceNotificationDialog";
 
 export default function ProductLayout({ product }: { product: Product }) {
   const [selectedThumb, setSelectedThumb] = useState(0);
@@ -23,6 +24,7 @@ export default function ProductLayout({ product }: { product: Product }) {
   const [loading, setLoading] = useState(false);
 
   const thumbnails = product.images ?? [];
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
     if (!session?.user?.id) return;
@@ -306,6 +308,28 @@ export default function ProductLayout({ product }: { product: Product }) {
                       }`}
                     />
                   </Button>
+
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => {
+                      if (!session?.user?.id) {
+                        toast.error(
+                          "Você precisa estar logado para criar notificações."
+                        );
+                        return;
+                      }
+                      setIsDialogOpen(true);
+                    }}
+                    className="text-[#010b62] dark:text-white hover:bg-[#010b62] hover:text-white dark:hover:bg-gray-800 dark:bg-[#030712] dark:border-white border-[#010b62] cursor-pointer"
+                  >
+                    <Bell className="w-5 h-5" />
+                  </Button>
+                  <PriceNotificationDialog
+                    onOpenChange={setIsDialogOpen}
+                    open={isDialogOpen}
+                    productId={product.id}
+                  />
                 </div>
               </div>
             </div>
