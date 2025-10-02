@@ -10,4 +10,5 @@ export type PriceNotification = {
   } | null;
   current_price?: number;
   triggered?: boolean;
+  products_id?: string;
 }

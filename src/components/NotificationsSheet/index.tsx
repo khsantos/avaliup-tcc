@@ -12,7 +12,6 @@ import { supabase } from "@/src/lib/supabase";
 import Link from "next/link";
 import { toast } from "sonner";
 import { PriceNotification } from "@/src/types/PriceNotification";
-import { usePriceAlerts } from "@/src/hooks/usePriceAlerts";
 
 type Props = {
   onClose: () => void;
@@ -23,10 +22,9 @@ export default function NotificationsSheet({ onClose, open }: Props) {
   const [notifications, setNotifications] = useState<PriceNotification[]>([]);
   const [loading, setLoading] = useState(true);
 
-  usePriceAlerts(notifications, setNotifications);
-
-  const fetchNotifications = async () => {
+  const fetchAndCheckNotifications = async () => {
     setLoading(true);
+
     const { data: notificationsData, error: notificationsError } =
       await supabase
         .from("price_notifications")
@@ -54,16 +52,64 @@ export default function NotificationsSheet({ onClose, open }: Props) {
     const merged = notificationsData.map((n) => ({
       ...n,
       product: productsData?.find((p) => p.id === n.product_id) ?? null,
+      current_price: undefined,
+      triggered: false,
     }));
 
     setNotifications(merged);
+
+    const pendingIds = merged
+      .filter((n) => !n.triggered)
+      .map((n) => n.product_id);
+
+    if (pendingIds.length === 0) {
+      setLoading(false);
+      return;
+    }
+
+    const { data: pricesData, error: pricesError } = await supabase
+      .from("product_prices")
+      .select("products_id, price")
+      .in("products_id", pendingIds)
+      .order("created_at", { ascending: false });
+
+    if (pricesError) {
+      console.error("Erro ao buscar preços:", pricesError);
+      setLoading(false);
+      return;
+    }
+
+    if (!pricesData) {
+      setLoading(false);
+      return;
+    }
+
+    setNotifications((prev) =>
+      prev.map((n) => {
+        if (n.triggered) return n;
+
+        const productPrice = pricesData.find(
+          (p) => p.products_id === n.product_id
+        )?.price;
+
+        if (productPrice === undefined) return n;
+
+        const triggered =
+          productPrice >= n.min_price && productPrice <= n.max_price;
+
+        return {
+          ...n,
+          current_price: productPrice,
+          triggered,
+        };
+      })
+    );
+
     setLoading(false);
   };
 
   useEffect(() => {
-    if (open) {
-      fetchNotifications();
-    }
+    if (open) fetchAndCheckNotifications();
   }, [open]);
 
   const handleDelete = async (id: string) => {
