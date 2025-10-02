@@ -10,4 +10,6 @@ export type Product = {
     rank?: number;
     rating?: number;
     review_count?: number;
+    lowestPrice?: number | null;
+    lowestPlatform?: string | null;
 }

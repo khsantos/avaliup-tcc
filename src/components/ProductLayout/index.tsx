@@ -270,19 +270,26 @@ export default function ProductLayout({ product }: { product: Product }) {
                   </div>
                 </div>
 
-                <div className="mt-2">
-                  <div className="text-2xl font-bold text-[#010b62] dark:text-white">
-                    {new Intl.NumberFormat("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
-                      minimumFractionDigits: 2,
-                    }).format(product.price)}{" "}
-                    <span className="text-base">à vista</span>
+                {product.lowestPrice ? (
+                  <div className="mt-2">
+                    <div className="text-2xl font-bold text-[#010b62] dark:text-white">
+                      {new Intl.NumberFormat("pt-BR", {
+                        style: "currency",
+                        currency: "BRL",
+                        minimumFractionDigits: 2,
+                      }).format(product.lowestPrice!)}{" "}
+                      <span className="text-base">à vista</span>
+                    </div>
+                    <div className="text-sm text-gray-600 dark:text-gray-300 font-light">
+                      menor preço atual{" "}
+                      {product.lowestPlatform && `na ${product.lowestPlatform}`}
+                    </div>
                   </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-300 font-light">
-                    menor preço atual
+                ) : (
+                  <div className="mt-2 text-gray-500 dark:text-gray-400">
+                    Nenhum preço disponível ainda
                   </div>
-                </div>
+                )}
                 <div className="flex gap-2 mt-4">
                   <Button
                     className="bg-[#010b62] hover:bg-[#1C2CA3] text-white px-6 cursor-pointer dark:bg-[#01BAEF] dark:hover:bg-[#33C9F2]"

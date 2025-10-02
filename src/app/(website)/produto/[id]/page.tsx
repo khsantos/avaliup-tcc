@@ -36,6 +36,7 @@ export default async function ProductPage({
 }) {
   const { id } = await params;
 
+  // Buscar produto
   const { data: product, error } = await supabase
     .from("products")
     .select("*")
@@ -44,11 +45,22 @@ export default async function ProductPage({
 
   if (!product || error) return notFound();
 
+  // Buscar menor preço
+  const { data: lowestPrice } = await supabase
+    .from("product_prices")
+    .select("price, marketplace")
+    .eq("products_id", id)
+    .order("price", { ascending: true })
+    .limit(1)
+    .single();
+
   const signedImageUrl = await getProductImageUrl(product.image);
 
   const productWithSignedUrl = {
     ...product,
     imageUrl: signedImageUrl || product.image,
+    lowestPrice: lowestPrice?.price || null,
+    lowestPlatform: lowestPrice?.marketplace || null,
   };
 
   return (
