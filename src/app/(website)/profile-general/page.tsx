@@ -6,23 +6,52 @@ import { useSupabase } from "@/src/contexts/supabase-provider";
 import ProfileReview from "@/src/components/ProfileOwnReviews";
 import ProfileUserActivity from "@/src/components/ProfileUserActivity";
 import FavoritesTab from "@/src/components/ProfileFavorites";
+import { AchievementBadges } from "@/src/components/AchievementsBadges";
+import { supabase } from "@/src/lib/supabase";
 
 export default function Page() {
   const { user, loading } = useSupabase();
 
   const [notifications, setNotifications] = useState(true);
   const [tab, setTab] = useState(0);
-  const [username, setUsername] = useState<string>("Usuário");
+  const [username, setUsername] = useState<string | null>("Usuário");
   const [email, setEmail] = useState<string>("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [reviewCount, setReviewCount] = useState<number>(0);
+  const [upvotes, setUpvotes] = useState<number>(0);
 
   useEffect(() => {
-    if (!loading && user) {
-      setUsername(user.user_metadata?.username || "Usuário");
-      setEmail(user.email || "");
-      setAvatarUrl(user.user_metadata?.avatar_url || null);
+    async function fetchUserData() {
+      if (!user) return;
+
+      try {
+        const { data, error } = await supabase
+          .from("users")
+          .select("*")
+          .eq("id", user.id)
+          .single();
+
+        if (error) {
+          console.error("Erro ao buscar usuário na tabela users:", error);
+          return;
+        }
+
+        if (data) {
+          setUsername(data.name || "Usuário");
+          setEmail(data.email || "");
+          setAvatarUrl(data.profile_img || null);
+          setUserId(user.id);
+          setReviewCount(data.review_count || 0);
+          setUpvotes(data.upvotes || 0);
+        }
+      } catch (err) {
+        console.error("Erro inesperado ao buscar usuário:", err);
+      }
     }
-  }, [loading, user]);
+
+    fetchUserData();
+  }, [user, loading]);
 
   if (loading) {
     return (
@@ -71,7 +100,7 @@ export default function Page() {
               <div className="flex gap-4">
                 <div className="bg-white dark:bg-[#030712] border-2 border-[#e3eafc] rounded-lg px-4 py-2 text-center min-w-[90px]">
                   <div className="text-xl font-bold text-[#010B62] dark:text-white">
-                    352{" "}
+                    {upvotes}{" "}
                     <span role="img" aria-label="Upvotes">
                       👍
                     </span>
@@ -82,7 +111,7 @@ export default function Page() {
                 </div>
                 <div className="bg-white dark:bg-[#030712] border-2 border-[#e3eafc] rounded-lg px-4 py-2 text-center min-w-[90px]">
                   <div className="text-xl font-bold text-[#010B62] dark:text-white">
-                    27 <span className="text-[#f7b500]">★</span>
+                    {reviewCount} <span className="text-[#f7b500]">★</span>
                   </div>
                   <div className="text-sm text-gray-600 dark:text-white">
                     Avaliações
@@ -96,7 +125,7 @@ export default function Page() {
               Insígnias
             </div>
             <div className="mb-4 flex justify-end">
-              {Array.from({ length: 3 }).map((_, i) => (
+              {/* {Array.from({ length: 3 }).map((_, i) => (
                 <span key={i} className="mx-1">
                   <svg width="32" height="32" viewBox="0 0 32 32">
                     <circle cx="16" cy="16" r="14" fill="#e3eafc" />
@@ -104,7 +133,8 @@ export default function Page() {
                     <circle cx="16" cy="22" r="2" fill="#bfc8e6" />
                   </svg>
                 </span>
-              ))}
+              ))} */}
+              {userId && <AchievementBadges userId={userId} />}
             </div>
             <div className="flex flex-col items-end gap-2">
               <a href="/achievements">

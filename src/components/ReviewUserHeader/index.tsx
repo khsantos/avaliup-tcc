@@ -1,6 +1,7 @@
 import { UserReview } from "@/src/types/UserReview";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import RatingAndButton from "../RatingAndMoreDetails";
+import { AchievementBadges } from "../AchievementsBadges";
 
 export function ReviewUserHeader({
   review,
@@ -27,14 +28,9 @@ export function ReviewUserHeader({
             </span>
           </div>
           <div className="flex gap-1 mt-1">
-            {review.badges?.slice(0, 3).map((badge, i) => (
-              <span
-                key={i}
-                className="px-2 py-1 bg-white rounded-full text-[#010b62] text-xs font-semibold border border-[#010b62]/50"
-              >
-                {badge}
-              </span>
-            ))}
+            {review.users_id && (
+              <AchievementBadges userId={review.users_id} size="sm" />
+            )}
           </div>
         </div>
       </div>
