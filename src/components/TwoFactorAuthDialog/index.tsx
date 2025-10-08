@@ -121,6 +121,7 @@ export default function TwoFactorAuthDialog({
 
       return;
     }
+    toast.success("Login concluído sem 2FA.");
 
     if (accessToken) onVerified(accessToken);
   };

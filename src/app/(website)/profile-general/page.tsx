@@ -8,6 +8,7 @@ import ProfileUserActivity from "@/src/components/ProfileUserActivity";
 import FavoritesTab from "@/src/components/ProfileFavorites";
 import { AchievementBadges } from "@/src/components/AchievementsBadges";
 import { supabase } from "@/src/lib/supabase";
+import { FaStar, FaThumbsUp } from "react-icons/fa";
 
 export default function Page() {
   const { user, loading } = useSupabase();
@@ -66,100 +67,93 @@ export default function Page() {
   return (
     <div className="min-h-screen pt-8 pb-6 flex justify-center">
       <div className="w-[80%]">
-        <div className="bg-white dark:bg-[#030712] rounded-xl shadow-lg px-8 py-6 flex items-center justify-between">
-          <div className="flex items-center">
-            <div className="relative w-24 h-24 bg-[#e3eafc] rounded-xl flex items-center justify-center mr-6 border-2 border-[#bfc8e6] overflow-hidden">
+        <div className="bg-white dark:bg-[#030712] border border-[#d1d5ee] dark:border-[#030726] shadow-[0_0_7px_2px_rgba(255,255,255,0.1)] rounded-lg px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-6">
+            <div className="w-40 h-40 bg-[#E3E8F3] border border-[#B8C1E0] dark:bg-[#030712] rounded-md flex items-center justify-center overflow-hidden relative">
               {avatarUrl ? (
                 <Image
                   src={avatarUrl}
                   alt="Foto de perfil"
-                  fill
-                  className="object-cover"
+                  width={160}
+                  height={160}
+                  className="object-cover w-full h-full"
                 />
               ) : (
-                <svg width="64" height="64" viewBox="0 0 80 80">
-                  <circle cx="40" cy="32" r="24" fill="#bfc8e6" />
+                <svg
+                  width="80"
+                  height="80"
+                  viewBox="0 0 80 80"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle cx="40" cy="30" r="20" fill="#3B4DA1" />
                   <rect
                     x="16"
-                    y="56"
+                    y="50"
                     width="48"
-                    height="18"
-                    rx="9"
-                    fill="#bfc8e6"
+                    height="20"
+                    rx="10"
+                    fill="#3B4DA1"
                   />
                 </svg>
               )}
             </div>
+
             <div>
-              <div className="text-2xl font-bold text-[#010B62] dark:text-white">
+              <h2 className="text-2xl font-semibold text-[#010b62] dark:text-white">
                 {username}
-              </div>
-              <div className="text-base text-gray-600 mb-3">
+              </h2>
+              <p className="text-gray-500 text-sm mb-3 dark:text-white/80">
                 {email || "Nada informado."}
-              </div>
-              <div className="flex gap-4">
-                <div className="bg-white dark:bg-[#030712] border-2 border-[#e3eafc] rounded-lg px-4 py-2 text-center min-w-[90px]">
-                  <div className="text-xl font-bold text-[#010B62] dark:text-white">
-                    {upvotes}{" "}
-                    <span role="img" aria-label="Upvotes">
-                      👍
-                    </span>
-                  </div>
-                  <div className="text-sm text-gray-600 dark:text-white">
+              </p>
+
+              <div className="flex gap-4 mt-18">
+                <div className="border border-[#010b62] rounded-sm px-2 py-2 min-w-[130px] text-left dark:border-white/90">
+                  <p className="text-sm font-medium text-[#010b62] dark:text-white">
                     Upvotes
+                  </p>
+                  <div className="flex items-center gap-1.5 text-2xl font-semibold text-[#010b62] dark:text-white">
+                    {upvotes}
+                    <FaThumbsUp className="text-[#010b62] w-4 h-4 dark:text-white" />
                   </div>
                 </div>
-                <div className="bg-white dark:bg-[#030712] border-2 border-[#e3eafc] rounded-lg px-4 py-2 text-center min-w-[90px]">
-                  <div className="text-xl font-bold text-[#010B62] dark:text-white">
-                    {reviewCount} <span className="text-[#f7b500]">★</span>
-                  </div>
-                  <div className="text-sm text-gray-600 dark:text-white">
+
+                <div className="border border-[#010b62] rounded-sm px-2 py-2 min-w-[130px] text-left dark:border-white">
+                  <p className="text-sm font-medium text-[#010b62] dark:text-white">
                     Avaliações
+                  </p>
+                  <div className="flex items-center gap-1.5 text-2xl font-semibold text-[#010b62] dark:text-white">
+                    {reviewCount}
+                    <FaStar className="text-[#FFB24B] w-4 h-4" />
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <div className="text-right">
-            <div className="text-gray-600 text-base mb-2 dark:text-white">
+
+          <div className="flex flex-col gap-3">
+            <div className="text-[#1C2A76] text-md font-medium text-left dark:text-white/90">
               Insígnias
             </div>
-            <div className="mb-4 flex justify-end">
-              {/* {Array.from({ length: 3 }).map((_, i) => (
-                <span key={i} className="mx-1">
-                  <svg width="32" height="32" viewBox="0 0 32 32">
-                    <circle cx="16" cy="16" r="14" fill="#e3eafc" />
-                    <path d="M16 8v10" stroke="#bfc8e6" strokeWidth="2" />
-                    <circle cx="16" cy="22" r="2" fill="#bfc8e6" />
-                  </svg>
-                </span>
-              ))} */}
+
+            <div className="flex justify-start mb-2">
               {userId && <AchievementBadges userId={userId} />}
             </div>
+
             <div className="flex flex-col items-end gap-2">
-              <a href="/achievements">
-                <button
-                  type="button"
-                  className="bg-[#FFB24B] cursor-pointer text-white rounded-lg px-6 py-2 font-bold hover:bg-[#e6a800] transition"
-                >
-                  Coleção
-                </button>
-              </a>
-              <a href="/profile-edit" className="inline-block w-full">
-                <button
-                  type="button"
-                  className="bg-[#010B62] cursor-pointer text-white rounded-lg px-6 py-2 font-bold w-full hover:bg-[#010B62]/90 transition"
-                >
-                  Editar Perfil
-                </button>
-              </a>
-              <button
-                type="button"
-                onClick={() => alert("Abrir modal de edição de foto")}
-                className="bg-gray-500 cursor-pointer text-white rounded-lg px-6 py-2 font-bold hover:bg-gray-600 transition"
+              <a
+                href="/achievements"
+                className="w-36 text-center bg-[#FFB24B] text-white rounded-md px-6 py-2 font-semibold hover:bg-[#e6a33c] transition"
               >
-                Editar Foto
-              </button>
+                Coleção
+              </a>
+
+              <a
+                href="/profile-edit"
+                className="w-36 text-center bg-[#010b62] text-white rounded-md px-6 py-2 font-semibold hover:bg-[#1C2CA3] transition dark:bg-[#01BAEF] dark:hover:bg-[#019ED9]"
+              >
+                Editar Perfil
+              </a>
             </div>
           </div>
         </div>

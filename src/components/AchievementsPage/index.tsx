@@ -5,10 +5,13 @@ import { Award } from "lucide-react";
 import Image from "next/image";
 import { useSupabase } from "@/src/contexts/supabase-provider";
 import { Achievement } from "@/src/types/Achievements";
+import { ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function AchievementsPage() {
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const { supabase, user } = useSupabase();
+  const router = useRouter();
 
   interface AchievementRow {
     id: string;
@@ -74,6 +77,14 @@ export default function AchievementsPage() {
   return (
     <div className="min-h-screen p-4 dark:bg-[#030712] flex justify-center">
       <div className="max-w-7xl w-full p-6">
+        <button
+          onClick={() => router.back()}
+          className="flex items-center text-[#010B62] dark:text-white mb-6 hover:text-[#1C2CA3] transition cursor-pointer dark:hover:text-[#01BAEF] hover:underline"
+        >
+          <ArrowLeft className="mr-2" size={20} />
+          Voltar
+        </button>
+
         <h2 className="text-[#010b62] text-3xl font-semibold mb-2 dark:text-white">
           Coleção
         </h2>
