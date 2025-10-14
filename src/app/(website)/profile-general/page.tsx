@@ -66,10 +66,10 @@ export default function Page() {
 
   return (
     <div className="min-h-screen pt-8 pb-6 flex justify-center">
-      <div className="w-[80%]">
-        <div className="bg-white dark:bg-[#030712] border border-[#d1d5ee] dark:border-[#030726] shadow-[0_0_7px_2px_rgba(255,255,255,0.1)] rounded-lg px-4 py-4 flex items-center justify-between">
+      <div className="max-w-7xl w-full p-6">
+        <div className="bg-white dark:bg-[#030712] shadow-[0_0_7px_2px_rgba(0,0,255,0.1)] dark:shadow-[0_0_7px_2px_rgba(255,255,255,0.1)] rounded-lg px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-6">
-            <div className="w-40 h-40 bg-[#E3E8F3] border border-[#B8C1E0] dark:bg-[#030712] rounded-md flex items-center justify-center overflow-hidden relative">
+            <div className="w-50 h-50 bg-[#E3E8F3] border border-[#010b62] dark:border-[#01BAEF] rounded-md flex items-center justify-center overflow-hidden relative">
               {avatarUrl ? (
                 <Image
                   src={avatarUrl}
@@ -168,11 +168,10 @@ export default function Page() {
             <button
               key={label}
               onClick={() => setTab(idx)}
-              className={`flex-1 py-3 text-base font-medium transition cursor-pointer ${
-                tab === idx
-                  ? "border-b-4 border-[#010B62] cursor-pointer text-[#010B62] dark:text-white font-bold"
-                  : "text-gray-600"
-              }`}
+              className={`flex-1 py-3 text-base font-medium transition cursor-pointer ${tab === idx
+                ? "border-b-4 border-[#010B62] cursor-pointer text-[#010B62] dark:text-white font-bold"
+                : "text-gray-600"
+                }`}
             >
               {label}
             </button>
@@ -222,15 +221,13 @@ export default function Page() {
                 <button
                   type="button"
                   onClick={() => setNotifications((v) => !v)}
-                  className={`relative inline-flex items-center cursor-pointer h-6 rounded-full w-12 focus:outline-none transition ${
-                    notifications ? "bg-[#010B62]" : "bg-gray-300"
-                  }`}
+                  className={`relative inline-flex items-center cursor-pointer h-6 rounded-full w-12 focus:outline-none transition ${notifications ? "bg-[#010B62]" : "bg-gray-300"
+                    }`}
                 >
                   <span className="sr-only">Toggle Notifications</span>
                   <span
-                    className={`inline-block h-5 w-5 rounded-full bg-white shadow transform transition ${
-                      notifications ? "translate-x-6" : "translate-x-1"
-                    }`}
+                    className={`inline-block h-5 w-5 rounded-full bg-white shadow transform transition ${notifications ? "translate-x-6" : "translate-x-1"
+                      }`}
                   ></span>
                 </button>
                 <span className="ml-3 text-sm text-gray-600">
