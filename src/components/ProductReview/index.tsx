@@ -1,14 +1,14 @@
 "use client";
 
+import React, { useEffect, useState, Dispatch, SetStateAction } from "react";
+import { Product } from "@/src/types/Product";
+import ProductGallery from "../ProductGallery";
 import ReviewForm from "../ReviewForm";
 import StarRating from "../StarRating";
+import ProductCriteriaStars from "../ProductCriteriaRatings";
 import { formatRating } from "@/src/lib/formatRating";
 import { Award, ChevronLeft, Star } from "lucide-react";
-import Image from "next/image";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { Product } from "@/src/types/Product";
 import { supabase } from "@/src/lib/supabase";
-import ProductCriteriaStars from "../ProductCriteriaRatings";
 
 interface ProductReviewViewProps {
   product: Product;
@@ -17,12 +17,12 @@ interface ProductReviewViewProps {
   setShowForm: Dispatch<SetStateAction<boolean>>;
 }
 
-const ProductReviewView = ({
+export default function ProductReviewView({
   product,
   selectedThumb,
   setSelectedThumb,
   setShowForm,
-}: ProductReviewViewProps) => {
+}: ProductReviewViewProps) {
   const [ratingBreakdown, setRatingBreakdown] = useState<
     { stars: number; percentage: number }[]
   >([
@@ -33,40 +33,31 @@ const ProductReviewView = ({
     { stars: 1, percentage: 0 },
   ]);
 
-  function calculateRatingBreakdown(reviews: { rating: number }[]) {
-    const starCounts = [0, 0, 0, 0, 0];
-    for (const { rating } of reviews) {
-      const rounded = Math.round(rating);
-      if (rounded >= 1 && rounded <= 5) {
-        starCounts[rounded - 1]++;
-      }
-    }
-
-    const total = reviews.length;
-    return starCounts
-      .map((count, i) => ({
-        stars: i + 1,
-        percentage: total ? Math.round((count / total) * 100) : 0,
-      }))
-      .reverse();
-  }
-
   useEffect(() => {
-    async function fetchRatingsData() {
-      const { data: reviews, error: errorReviews } = await supabase
+    const fetchRatings = async () => {
+      const { data: reviews, error } = await supabase
         .from("reviews")
-        .select("id, rating")
+        .select("rating")
         .eq("product_id", product.id);
 
-      if (errorReviews || !reviews) {
-        console.error("Erro ao buscar reviews:", errorReviews);
-        return;
-      }
+      if (error || !reviews) return;
 
-      setRatingBreakdown(calculateRatingBreakdown(reviews));
-    }
+      const total = reviews.length;
+      const counts: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+      reviews.forEach(({ rating }) => {
+        const rounded = Math.round(rating);
+        if (rounded >= 1 && rounded <= 5) counts[rounded]++;
+      });
 
-    fetchRatingsData();
+      setRatingBreakdown(
+        [5, 4, 3, 2, 1].map((stars) => ({
+          stars,
+          percentage: total ? Math.round((counts[stars] / total) * 100) : 0,
+        }))
+      );
+    };
+
+    fetchRatings();
   }, [product.id]);
 
   const getRankingText = (rank: number, category: string) => {
@@ -83,7 +74,7 @@ const ProductReviewView = ({
   };
 
   return (
-    <div key="form" className="w-full">
+    <div className="w-full">
       <header className="mb-6">
         <button
           className="flex items-center text-[#010b62] dark:text-[#01BAEF] hover:underline"
@@ -102,47 +93,21 @@ const ProductReviewView = ({
               {getRankingText(product.rank, product.category)}
             </span>
           </div>
+
           <h1 className="text-2xl font-medium text-[#010b62] -mt-6 dark:text-white">
             {product.name}
           </h1>
 
-          <div className="flex flex-col md:flex-row gap-6 -mt-4 max-w-[1200px] w-full mx-auto">
-            <div className="flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-visible pb-2 md:pb-0 px-1">
-              {product.images.map((img, i) => (
-                <button
-                  key={i}
-                  onClick={() => setSelectedThumb(i)}
-                  className={`w-12 h-12 border rounded-md flex items-center justify-center transition-colors ${
-                    selectedThumb === i
-                      ? "border-[#010b62] dark:border-[#01BAEF] dark:bg-gray-800 border-2"
-                      : "border-[#010b62] dark:border-[#01BAEF]"
-                  }`}
-                >
-                  <Image
-                    src={img}
-                    alt={`Thumbnail ${i + 1}`}
-                    width={40}
-                    height={40}
-                    className="object-contain"
-                  />
-                </button>
-              ))}
-            </div>
-            <div className="flex items-center justify-center w-full max-w-md min-h-[200px]">
-              <Image
-                src={
-                  product.images[selectedThumb] ||
-                  product.image ||
-                  "/placeholder.svg"
-                }
-                alt={product.name}
-                width={400}
-                height={400}
-                className="object-contain w-auto max-h-[300px]"
-              />
-            </div>
-          </div>
+          <ProductGallery
+            images={product.images}
+            selectedThumb={selectedThumb}
+            setSelectedThumb={setSelectedThumb}
+            productName={product.name}
+            preloadFirst={true}
+            align="center"
+          />
 
+          {/* ⭐ Nota do público */}
           <div className="mt-8">
             <h2 className="text-2xl font-bold mb-4 text-[#010b62] dark:text-white">
               Nota do Público
@@ -155,12 +120,12 @@ const ProductReviewView = ({
                 <div className="flex flex-col ml-4">
                   <StarRating rating={product.rating} size={22} />
                   <span className="text-sm text-gray-500 mt-1">
-                    {(product.review_count
-                      ? product.review_count.toLocaleString()
-                      : "0") + " avaliações"}
+                    {(product.review_count || 0).toLocaleString() +
+                      " avaliações"}
                   </span>
                 </div>
               </div>
+
               <div className="flex-2 -space-y-0.5">
                 {ratingBreakdown.map((item) => (
                   <div key={item.stars} className="flex items-center gap-2">
@@ -173,7 +138,6 @@ const ProductReviewView = ({
                         }}
                       />
                     </div>
-
                     <span className="text-s text-[#010b62] dark:text-gray-400 w-4 text-right">
                       {item.stars}
                     </span>
@@ -183,6 +147,7 @@ const ProductReviewView = ({
               </div>
             </div>
           </div>
+
           <ProductCriteriaStars productId={product.id} />
         </div>
 
@@ -190,6 +155,4 @@ const ProductReviewView = ({
       </div>
     </div>
   );
-};
-
-export default ProductReviewView;
+}

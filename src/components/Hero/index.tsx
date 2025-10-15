@@ -41,7 +41,7 @@ export default function Hero() {
         width={HeroPNG.width}
         height={HeroPNG.height}
         className="object-contain"
-        priority
+        loading="lazy"
       />
     </Link>
   );

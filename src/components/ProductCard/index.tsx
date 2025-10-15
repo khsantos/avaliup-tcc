@@ -59,7 +59,8 @@ function ProductCard({ id, rank, name, rating, image }: Product) {
         <Image
           src={image}
           alt={`Imagem do ${name}`}
-          fill
+          width={120}
+          height={120}
           className="object-contain"
           loading="lazy"
           sizes="(max-width: 768px) 112px, 112px"

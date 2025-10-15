@@ -16,9 +16,8 @@ const nextConfig: NextConfig = {
   },
 
   images: {
+    unoptimized: true,
     remotePatterns: [
-      { protocol: 'https', hostname: 'source.unsplash.com' },
-      { protocol: 'https', hostname: 'picsum.photos' },
       { protocol: 'https', hostname: 'qjpnvzrmiibksdvxmzop.supabase.co' },
       { protocol: 'https', hostname: 'images.kabum.com.br' },
       { protocol: 'https', hostname: 'm.media-amazon.com' },
