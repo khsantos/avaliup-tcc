@@ -9,6 +9,7 @@ import formatCpf from "@/src/lib/formatCpf";
 import { useValidateCPF } from "@/src/hooks/useValidateCpf";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { ChangeProfilePhotoDialog } from "@/src/components/ChangeProfileDialog";
+import { DeleteAccountDialog } from "@/src/components/DeleteAccountDialog";
 
 export default function ProfileEditPage() {
   const { user, loading } = useSupabase();
@@ -323,12 +324,7 @@ export default function ProfileEditPage() {
               {saving ? "Salvando..." : "Salvar alterações"}
             </button>
 
-            <button
-              type="button"
-              className="px-4 py-2 text-white bg-[#f50909] rounded-md hover:bg-red-700 cursor-pointer"
-            >
-              Excluir conta
-            </button>
+            <DeleteAccountDialog userId={userId!} />
           </div>
         </form>
       </div>

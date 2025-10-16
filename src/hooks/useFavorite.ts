@@ -3,7 +3,7 @@ import { supabase } from "@/src/lib/supabase";
 import { toast } from "sonner";
 import type { Session } from "@supabase/supabase-js";
 
-export function useFavorite(productId: string, session: Session | null) {
+export function useFavorite(productId: number, session: Session | null) {
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [loading, setLoading] = useState(false);
 

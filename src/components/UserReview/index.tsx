@@ -385,7 +385,7 @@ export default function UserReviews({ productId }: UserReviewProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
         {reviews.length > 0 ? (
           reviews.map((review) => {
             const hasLiked = userVotes[review.id] === "like";

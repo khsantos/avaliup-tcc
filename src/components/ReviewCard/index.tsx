@@ -36,7 +36,12 @@ export function ReviewCard({
   showComments = false,
 }: ReviewCardProps) {
   return (
-    <Card className="shadow-lg hover:shadow-2xl transition-transform hover:scale-102 dark:bg-[#030712] border border-[#010b62] dark:border-[#ffffff]/20 rounded-sm text-white">
+    <Card
+      className="h-full flex flex-col justify-between shadow-lg hover:shadow-2xl 
+                 transition-transform hover:scale-102 dark:bg-[#030712] 
+                 border border-[#010b62] dark:border-[#ffffff]/20 
+                 rounded-sm text-white"
+    >
       <CardContent className="p-4">
         {variant === "user" ? (
           <ReviewUserHeader review={review} onOpenDetails={onOpenDetails} />
@@ -53,7 +58,7 @@ export function ReviewCard({
           onToggleExpand={() => onToggleExpand?.(review.id)}
         />
 
-        <div className="flex items-center justify-between">
+        <div className="">
           <ReviewActions
             review={review}
             hasLiked={hasLiked}
