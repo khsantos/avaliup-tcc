@@ -14,6 +14,7 @@ import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/src/lib/supabase";
 import { X } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 interface TwoFactorAuthDialogProps {
   userId: string;
@@ -39,6 +40,7 @@ export default function TwoFactorAuthDialog({
   const [loading, setLoading] = useState(false);
   const [codeSent, setCodeSent] = useState(false);
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
+  const [confirmingSkip, setConfirmingSkip] = useState(false);
 
   useEffect(() => {
     const fetchTwoFactorStatus = async () => {
@@ -121,6 +123,12 @@ export default function TwoFactorAuthDialog({
 
       return;
     }
+
+    if (loading && !confirmingSkip) {
+      setConfirmingSkip(true);
+      return;
+    }
+
     toast.success("Login concluído sem 2FA.");
 
     if (accessToken) onVerified(accessToken);
@@ -171,10 +179,17 @@ export default function TwoFactorAuthDialog({
               </button>
               <button
                 onClick={handleSkip2FA}
-                disabled={loading}
-                className="px-4 py-2 border rounded dark:hover:bg-gray-800 hover:bg-gray-200 cursor-pointer"
+                disabled={loading && !confirmingSkip}
+                className="px-4 py-2 border rounded dark:hover:bg-gray-800 hover:bg-gray-200 cursor-pointer flex items-center justify-center gap-2"
               >
-                Ignorar
+                {loading && confirmingSkip ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Aguarde...
+                  </>
+                ) : (
+                  "Ignorar"
+                )}
               </button>
             </>
           ) : (
