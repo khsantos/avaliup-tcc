@@ -9,9 +9,9 @@ interface PageParams {
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<PageParams>; // <- agora é Promise
+  params: Promise<PageParams>;
 }): Promise<Metadata> {
-  const { slug } = await params; // <- await necessário
+  const { slug } = await params;
 
   const categoryName =
     slug.charAt(0).toUpperCase() + slug.slice(1).replace("-", " ");
@@ -25,9 +25,9 @@ export async function generateMetadata({
 export default async function CategoriaPage({
   params,
 }: {
-  params: Promise<PageParams>; // <- idem
+  params: Promise<PageParams>;
 }) {
-  const { slug } = await params; // <- await aqui também
+  const { slug } = await params;
 
   return <CategoryPage slug={slug} />;
 }

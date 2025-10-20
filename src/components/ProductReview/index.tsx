@@ -90,7 +90,7 @@ export default function ProductReviewView({
           <div className="bg-[#010b62] dark:bg-[#01BAEF] text-white px-4 py-2 rounded-md flex items-center gap-2 w-full">
             <Award className="w-5 h-5 text-[#FFB24B]" />
             <span className="text-xl font-bold dark:text-white">
-              {getRankingText(product.rank, product.category)}
+              {getRankingText(product.rank ?? 0, product.category ?? "")}
             </span>
           </div>
 
@@ -118,7 +118,7 @@ export default function ProductReviewView({
                   {formatRating(product.rating)}
                 </span>
                 <div className="flex flex-col ml-4">
-                  <StarRating rating={product.rating} size={22} />
+                  <StarRating rating={product.rating ?? 0} size={22} />
                   <span className="text-sm text-gray-500 mt-1">
                     {(product.review_count || 0).toLocaleString() +
                       " avaliações"}

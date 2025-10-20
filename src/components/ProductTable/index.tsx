@@ -105,7 +105,7 @@ export function ProdutoTable({ produtos }: ProdutoTableProps) {
             <TableCell>
               <Image
                 src={produto.image}
-                alt={produto.category}
+                alt={produto.category ?? "Imagem do produto"} // ✅ fallback padrão
                 width={60}
                 height={40}
                 className="rounded w-16 h-16 object-cover"
