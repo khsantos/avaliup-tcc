@@ -77,7 +77,7 @@ export default function ProductTabs({ productId }: ProductTabsProps) {
                 style={{
                   borderBottom: isActive
                     ? "3px solid #ffffff"
-                    : "2px solid #e5e7eb", // gray-300
+                    : "2px solid #e5e7eb",
                 }}
               >
                 {tab.label}

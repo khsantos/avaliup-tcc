@@ -33,7 +33,6 @@ export default function ProductLayout({ product }: { product: Product }) {
     toggleFavorite,
   } = useFavorite(product.id, session);
 
-  // ⭐ Fetch de rating breakdown otimizado
   const [ratingBreakdown, setRatingBreakdown] = useState<RatingBreakdown[]>([
     { stars: 5, percentage: 0, count: 0 },
     { stars: 4, percentage: 0, count: 0 },
@@ -43,35 +42,58 @@ export default function ProductLayout({ product }: { product: Product }) {
   ]);
 
   useEffect(() => {
+    let isMounted = true;
+    const controller = new AbortController();
+    const { signal } = controller;
+
     const fetchRatings = async () => {
-      const { data: reviews, error } = await supabase
-        .from("reviews")
-        .select("rating")
-        .eq("product_id", product.id);
+      try {
+        const { data: reviews, error } = await supabase
+          .from("reviews")
+          .select("rating")
+          .eq("product_id", product.id)
+          .abortSignal(signal);
 
-      if (error) return;
+        if (error || !isMounted || signal.aborted) return;
 
-      const total = reviews?.length || 0;
-      const countMap: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+        const total = reviews?.length || 0;
+        const countMap: Record<number, number> = {
+          1: 0,
+          2: 0,
+          3: 0,
+          4: 0,
+          5: 0,
+        };
 
-      reviews?.forEach(({ rating }) => {
-        const rounded = Math.round(rating);
-        if (rounded >= 1 && rounded <= 5) countMap[rounded]++;
-      });
+        reviews?.forEach(({ rating }) => {
+          const rounded = Math.round(rating);
+          if (rounded >= 1 && rounded <= 5) countMap[rounded]++;
+        });
 
-      const breakdown = [5, 4, 3, 2, 1].map((stars) => ({
-        stars,
-        count: countMap[stars],
-        percentage: total > 0 ? Math.round((countMap[stars] / total) * 100) : 0,
-      }));
+        if (!isMounted) return;
 
-      setRatingBreakdown(breakdown);
+        setRatingBreakdown(
+          [5, 4, 3, 2, 1].map((stars) => ({
+            stars,
+            count: countMap[stars],
+            percentage:
+              total > 0 ? Math.round((countMap[stars] / total) * 100) : 0,
+          }))
+        );
+      } catch (err) {
+        if (signal.aborted) return;
+        console.error("Erro ao buscar avaliações:", err);
+      }
     };
 
     fetchRatings();
+
+    return () => {
+      isMounted = false;
+      controller.abort();
+    };
   }, [product.id]);
 
-  // ⭐ Memoização de componentes estáticos
   const MemoHeader = useMemo(
     () => (
       <ProductHeader
@@ -113,7 +135,7 @@ export default function ProductLayout({ product }: { product: Product }) {
 
   return (
     <div className="max-w-9xl mx-auto px-6 py-10">
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="sync">
         {!showForm ? (
           <motion.div
             key="layout"

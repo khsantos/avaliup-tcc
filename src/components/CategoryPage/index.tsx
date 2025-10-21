@@ -22,7 +22,7 @@ const slugToCategoryMap: Record<string, string> = {
   processadores: "processador",
   ssds: "ssd",
   "memorias-ram": "memoria-ram",
-  "placas-de-video": "placa de vídeo",
+  "placas-de-video": "gpu",
 };
 
 export default function CategoryPage({ slug }: CategoryPageProps) {
