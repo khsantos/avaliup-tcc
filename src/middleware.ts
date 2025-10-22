@@ -28,8 +28,7 @@ export async function middleware(req: NextRequest) {
 
   if (
     !session &&
-    (req.nextUrl.pathname.startsWith("/profile-general") ||
-      req.nextUrl.pathname.startsWith("/profile-edit"))
+    (req.nextUrl.pathname.startsWith("") || req.nextUrl.pathname.startsWith(""))
   ) {
     const redirectUrl = req.nextUrl.clone();
     redirectUrl.pathname = "/";
@@ -40,5 +39,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/profile-general", "/profile-edit"],
+  matcher: ["", ""],
 };
