@@ -19,7 +19,7 @@ const slugToCategoryMap: Record<string, string> = {
   monitores: "monitor",
   mousepads: "mousepad",
   controles: "controle",
-  processadores: "processador",
+  processadores: "cpu",
   ssds: "ssd",
   "memorias-ram": "memoria-ram",
   "placas-de-video": "gpu",

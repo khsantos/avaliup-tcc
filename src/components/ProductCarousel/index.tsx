@@ -2,10 +2,10 @@
 
 import { KeenSliderInstance, useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
-import ProductCard from "../ProductCard";
 import { Product } from "@/src/types/Product";
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react"; // Added import for icons
+import ProductCardCarousel from "../ProductCardCarousel";
 
 type ProductCarouselProps = {
   products: Product[];
@@ -102,7 +102,7 @@ export default function ProductCarousel({ products }: ProductCarouselProps) {
             key={product.id}
             className="keen-slider__slide flex justify-center p-1"
           >
-            <ProductCard {...product} />
+            <ProductCardCarousel {...product} />
           </div>
         ))}
       </div>
