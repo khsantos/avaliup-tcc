@@ -20,19 +20,12 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let mounted = true;
-
     const getSession = async () => {
-      try {
-        const { data } = await supabase.auth.getSession();
-        if (!mounted) return;
-        setSession(data.session ?? null);
-      } catch (err) {
-        console.error("Erro ao buscar sessão Supabase:", err);
-        if (!mounted) return;
-      } finally {
-        if (mounted) setLoading(false);
-      }
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      setSession(session);
+      setLoading(false);
     };
 
     getSession();
@@ -40,17 +33,11 @@ export function SupabaseProvider({ children }: { children: React.ReactNode }) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!mounted) return;
       setSession(session);
     });
 
     return () => {
-      mounted = false;
-      try {
-        subscription?.unsubscribe();
-      } catch (e) {
-        throw e;
-      }
+      subscription.unsubscribe();
     };
   }, []);
 
