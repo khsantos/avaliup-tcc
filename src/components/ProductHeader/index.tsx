@@ -1,9 +1,6 @@
-import { Share2, Award, Star } from "lucide-react";
+import { Share2, Award } from "lucide-react";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
-import { formatRating } from "@/src/lib/formatRating";
-import StarRating from "../StarRating";
-import ProductCriteriaStars from "../ProductCriteriaRatings";
 
 interface ProductHeaderProps {
   name: string;
@@ -19,10 +16,6 @@ export default function ProductHeader({
   name,
   rank,
   category,
-  rating,
-  reviewCount,
-  ratingBreakdown = [],
-  productId,
 }: ProductHeaderProps) {
   const getRankingText = (rank: number, category: string) => {
     switch (category.toLowerCase()) {
@@ -79,47 +72,6 @@ export default function ProductHeader({
         >
           <Share2 className="w-6 h-6 dark:text-white" />
         </Button>
-      </div>
-
-      {/* Avaliação geral */}
-      <div className="flex items-center min-w-[220px]">
-        <span className="text-5xl font-bold text-[#FFB24B] leading-none">
-          {formatRating(rating)}
-        </span>
-        <div className="flex flex-col ml-4">
-          <StarRating rating={rating ?? 0} size={22} />
-          <span className="text-sm text-gray-500 mt-1">
-            {reviewCount?.toLocaleString() ?? 0} avaliações
-          </span>
-        </div>
-      </div>
-
-      {/* Rating breakdown */}
-      <div className="flex-2 -space-y-0.5 max-w-[400px] min-w-[200px] w-1/2">
-        {ratingBreakdown.map((item) => (
-          <div key={item.stars} className="flex items-center gap-2">
-            <div className="flex-1 bg-gray-200 rounded-full h-2">
-              <div
-                className="bg-[#010b62] dark:bg-[#01BAEF] h-2 rounded-full"
-                style={{
-                  width: item.percentage > 0 ? `${item.percentage}%` : "4px",
-                }}
-              />
-            </div>
-
-            <span className="text-s text-[#010b62] dark:text-gray-400 w-4 text-right">
-              {item.stars}
-            </span>
-            <Star className="w-4 h-4 fill-[#FFB24B] text-[#FFB24B] flex" />
-          </div>
-        ))}
-      </div>
-
-      {/* Critérios detalhados */}
-      <div className="mt-2">
-        <div className="flex overflow-x-auto no-scrollbar divide-x divide-[#010b62]/40 dark:divide-[#FFFFFF]/50">
-          <ProductCriteriaStars productId={productId} />
-        </div>
       </div>
     </div>
   );

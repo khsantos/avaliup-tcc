@@ -26,11 +26,10 @@ export default function ProductGallery({
         <button
           key={index}
           onClick={() => setSelectedThumb(index)}
-          className={`w-12 h-12 border rounded-md flex items-center justify-center transition-colors ${
-            selectedThumb === index
-              ? "border-[#010b62] dark:border-[#01BAEF] dark:bg-gray-800 border-2"
-              : "border-[#010b62] dark:border-[#01BAEF]"
-          }`}
+          className={`w-12 h-12 border rounded-md flex items-center justify-center transition-colors ${selectedThumb === index
+            ? "border-[#010b62] dark:border-[#01BAEF] dark:bg-gray-800 border-2"
+            : "border-[#010b62] dark:border-[#01BAEF]"
+            }`}
         >
           <Image
             src={thumbUrl || "/placeholder.svg"}
@@ -49,13 +48,12 @@ export default function ProductGallery({
   const mainImageWrapperClasses =
     align === "center"
       ? "w-[320px] h-[320px] flex items-center justify-center rounded-lg mx-auto"
-      : "w-[320px] h-[320px] flex items-center justify-center rounded-lg mt-[15%]";
+      : "w-[320px] h-[320px] flex items-center justify-center rounded-lg mt-4 lg:mt-[15%]";
 
   return (
     <div
-      className={`flex gap-2 ${
-        align === "center" ? "flex-col md:flex-row" : "flex-row"
-      }`}
+      className={`flex gap-2 ${align === "center" ? "flex-col md:flex-row" : "flex-row"
+        }`}
     >
       {/* Miniaturas */}
       <div className="flex flex-col gap-2 min-w-[56px]">{thumbnails}</div>
