@@ -21,8 +21,7 @@ export default function ProductPrice({
         {new Intl.NumberFormat("pt-BR", {
           style: "currency",
           currency: "BRL",
-          minimumFractionDigits: 2,
-        }).format(lowestPrice)}{" "}
+        }).format(lowestPrice > 10000 ? lowestPrice / 100 : lowestPrice)}{" "}
         <span className="text-base">à vista</span>
       </div>
       <div className="text-sm text-gray-600 dark:text-gray-300 font-light">

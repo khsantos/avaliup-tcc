@@ -174,7 +174,11 @@ export default function PriceMarketplaceComparison({
                             style: "currency",
                             currency: "BRL",
                             minimumFractionDigits: 2,
-                          }).format(store.price)}{" "}
+                          }).format(
+                            store.price > 10000
+                              ? store.price / 100
+                              : store.price
+                          )}{" "}
                           <span className="text-sm font-normal">à vista</span>
                         </div>
                         <div className="text-[12px] sm:text-[14px] text-gray-400 leading-tight">
@@ -186,7 +190,11 @@ export default function PriceMarketplaceComparison({
                                   style: "currency",
                                   currency: "BRL",
                                   minimumFractionDigits: 2,
-                                }).format(store.old_price)}{" "}
+                                }).format(
+                                  store.old_price > 10000
+                                    ? store.price / 100
+                                    : store.price
+                                )}{" "}
                                 à prazo
                               </span>
                             </>
