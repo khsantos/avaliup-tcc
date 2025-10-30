@@ -6,7 +6,6 @@ import { Product } from "@/src/types/Product";
 import ProductCard from "@/src/components/ProductCard";
 import dynamic from "next/dynamic";
 import { Pagination } from "@/src/components/Pagination";
-import AdSensePlaceholder from "@/src/components/TestAdPlaceholder";
 
 interface CategoryPageProps {
   slug: string;
@@ -67,33 +66,38 @@ export default function CategoryPage({ slug }: CategoryPageProps) {
   );
 
   return (
-    <div className="py-8 w-full px-4">
-      <section className="pb-10">
-        <h2 className="text-md text-gray-600 dark:text-white">Top 10</h2>
-        <h1 className="text-3xl font-bold text-[#010b62] dark:text-white mb-4">
-          {slug.charAt(0).toUpperCase() + slug.slice(1)} Gamers Custo-Benefício
-        </h1>
-
-        <div className="-mx-1">
-          <ProductCarousel products={topProducts} />
+    <div className="py-4 w-full px-4">
+      <section className="px-2 py-4 flex justify-center">
+        <div className="w-full px-4 pb-2">
+          <span className="font-medium text-lg text-[#010B62]/60 dark:text-[#FFFFFF]/60">
+            Top 10
+          </span>
+          <h1 className="text-3xl font-bold text-[#010b62] dark:text-white mb-6 text-left">
+            {slug.charAt(0).toUpperCase() + slug.slice(1)} Gamers Custo-Benefício
+          </h1>
+          <div className="-ml-1">
+            <ProductCarousel products={topProducts} />
+          </div>
         </div>
-      </section>
 
-      <AdSensePlaceholder />
+      </section>
 
       {loading ? (
         <p className="text-gray-500">Carregando produtos...</p>
       ) : (
         <>
           {otherProducts.length > 0 && (
-            <section>
-              <h2 className="text-xl font-semibold text-[#010b62] dark:text-white mb-4">
-                Outros {slug} gamers custo-benefício
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                {paginatedProducts.map((product) => (
-                  <ProductCard key={product.id} {...product} />
-                ))}
+            <section className="px-4 py-10 flex justify-center">
+              <div className="w-full px-4 py-8">
+                <h2 className="text-xl font-semibold text-[#010b62] dark:text-white mb-4">
+                  Outros {slug} gamers custo-benefício
+                </h2>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                  {paginatedProducts.map((product) => (
+                    <ProductCard key={product.id} {...product} />
+                  ))}
+                </div>
               </div>
             </section>
           )}

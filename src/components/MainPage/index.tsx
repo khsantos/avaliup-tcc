@@ -91,7 +91,7 @@ export default function MainPage() {
 
       {CATEGORIES.map((c) => (
         <section key={c.key} className="px-4 py-10 flex justify-center">
-          <div className="max-w-7xl w-full p-6">
+          <div className="py-8 w-full px-4">
             <span className="font-medium text-lg text-[#010B62]/60 dark:text-[#FFFFFF]/60">
               Top 10
             </span>
