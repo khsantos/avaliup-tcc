@@ -14,6 +14,7 @@ import ProductGallery from "../ProductGallery";
 import ProductHeader from "../ProductHeader";
 import ProductPrice from "../ProductPrice";
 import ProductActions from "../ProductActions";
+import ProductCriteriaStars from "../ProductCriteriaRatings";
 
 interface RatingBreakdown {
   stars: number;
@@ -134,7 +135,7 @@ export default function ProductLayout({ product }: { product: Product }) {
   );
 
   return (
-    <div className="max-w-9xl mx-auto px-6 py-10">
+    <div className="max-w-9xl mx-auto px-4 sm:px-6 py-10">
       <AnimatePresence mode="sync">
         {!showForm ? (
           <motion.div
@@ -144,16 +145,37 @@ export default function ProductLayout({ product }: { product: Product }) {
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.4 }}
           >
-            <div className="flex gap-10 items-start w-full px-2 max-w-6xl mx-auto">
+            <div className="flex flex-col lg:flex-row gap-6 lg:gap-10 items-start w-full px-2 max-w-6xl mx-auto">
+              {/* Header no topo em mobile */}
+              <div className="block lg:hidden w-full">{MemoHeader}</div>
               <ProductGallery
                 images={product.images}
                 selectedThumb={selectedThumb}
                 setSelectedThumb={setSelectedThumb}
                 productName={product.name}
                 preloadFirst={true}
+                align="right"
               />
-              <div className="flex-1 max-w-[600px] flex flex-col gap-4 self-start">
-                {MemoHeader}
+              {/* ProductCriteriaStars abaixo da imagem no mobile */}
+              <div className="block lg:hidden mt-6">
+                <ProductCriteriaStars
+                  productId={product.id}
+                  rating={product.rating}
+                  reviewCount={product.review_count}
+                  ratingBreakdown={ratingBreakdown}
+                />
+              </div>
+              <div className="flex-1 max-w-full lg:max-w-[600px] flex flex-col gap-4 self-start">
+                {/* Header e ProductCriteriaStars na lateral em telas maiores */}
+                <div className="hidden lg:block">{MemoHeader}</div>
+                <div className="hidden lg:block">
+                  <ProductCriteriaStars
+                    productId={product.id}
+                    rating={product.rating}
+                    reviewCount={product.review_count}
+                    ratingBreakdown={ratingBreakdown}
+                  />
+                </div>
                 {MemoPrice}
                 <div>
                   {MemoActions}
