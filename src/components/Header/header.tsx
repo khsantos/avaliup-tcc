@@ -23,6 +23,9 @@ export default function Header() {
   const [dropdownOpen, setDropdownOpen] = useState<false | string>(false);
   const [favoritesOpen, setFavoritesOpen] = useState(false);
 
+  useEffect(() => {
+  }, [favoritesOpen]);
+
   useEffect(() => setMounted(true), []);
 
   useEffect(() => {
@@ -63,16 +66,18 @@ export default function Header() {
       <div className="flex items-center gap-2 sm:gap-3">
         <SearchBar />
         <ThemeSwitch />
-        {session && (
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setFavoritesOpen(true)}
-            className="text-[#010b62]  border h-10 w-10 hover:text-[#010b62] dark:text-white border-[#010b62] rounded-md hover:bg-[#0969da]/15 dark:hover:bg-[#00afd3]/30 dark:border-white dark:bg-[#0000] dark:hover:text-white transition cursor-pointer"
-          >
-            <Heart className="w-4 h-4" />
-          </Button>
-        )}
+        <div className="hidden sm:block">
+          {session && (
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setFavoritesOpen(true)}
+              className="text-[#010b62]  border h-10 w-10 hover:text-[#010b62] dark:text-white border-[#010b62] rounded-md hover:bg-[#0969da]/15 dark:hover:bg-[#00afd3]/30 dark:border-white dark:bg-[#0000] dark:hover:text-white transition cursor-pointer"
+            >
+              <Heart className="w-4 h-4" />
+            </Button>
+          )}
+        </div>
         <div className="hidden sm:block">
           <UserMenu
             session={session}
@@ -104,9 +109,13 @@ export default function Header() {
         session={session}
         supabase={supabase}
         profileName={profile?.name ?? null}
+        setFavoritesOpen={(val) => {
+          console.log('setFavoritesOpen called with:', val);
+          setFavoritesOpen(val);
+        }}
       />
 
-      <FavoritesSheet open={favoritesOpen} onOpenChange={setFavoritesOpen} />
+      {mounted && <FavoritesSheet open={favoritesOpen} onOpenChange={setFavoritesOpen} />}
     </header>
   );
 }

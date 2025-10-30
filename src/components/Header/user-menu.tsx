@@ -55,7 +55,7 @@ export function UserMenu({
       </DropdownMenuTrigger>
     ) : (
       <DropdownMenuTrigger asChild>
-        <button className="w-full px-3 py-2 rounded-sm bg-white text-[#010b62] dark:bg-[#030712] dark:text-white border border-[#010b62] dark:border-white hover:bg-[#0969da]/15 dark:hover:bg-[#00afd3]/30 transition">
+        <button className="w-full px-3 py-2 rounded-md bg-white text-[#010b62] dark:bg-[#030712] dark:text-white border border-[#010b62] dark:border-white hover:bg-[#0969da]/15 dark:hover:bg-[#00afd3]/30 transition">
           Meu perfil
         </button>
       </DropdownMenuTrigger>
