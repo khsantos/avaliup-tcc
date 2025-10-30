@@ -168,10 +168,11 @@ export default function Page() {
             <button
               key={label}
               onClick={() => setTab(idx)}
-              className={`flex-1 py-3 text-base font-medium transition cursor-pointer ${tab === idx
-                ? "border-b-4 border-[#010B62] cursor-pointer text-[#010B62] dark:text-white font-bold"
-                : "text-gray-600"
-                }`}
+              className={`flex-1 py-3 text-base font-medium transition cursor-pointer ${
+                tab === idx
+                  ? "border-b-4 border-[#010B62] dark:border-[#01BAEF] cursor-pointer text-[#010B62] dark:text-white font-bold"
+                  : "text-gray-600"
+              }`}
             >
               {label}
             </button>
@@ -211,7 +212,6 @@ export default function Page() {
                 </label>
                 <select className="cursor-pointer border border-gray-300 rounded-md px-3 py-1 text-[#010B62] bg-white dark:bg-[#030712] dark:text-white">
                   <option>Português</option>
-                  <option>Inglês</option>
                 </select>
               </div>
               <div className="flex items-center mb-4">
@@ -221,13 +221,17 @@ export default function Page() {
                 <button
                   type="button"
                   onClick={() => setNotifications((v) => !v)}
-                  className={`relative inline-flex items-center cursor-pointer h-6 rounded-full w-12 focus:outline-none transition ${notifications ? "bg-[#010B62]" : "bg-gray-300"
-                    }`}
+                  className={`relative inline-flex items-center cursor-pointer h-6 rounded-full w-12 focus:outline-none transition ${
+                    notifications
+                      ? "bg-[#010B62] dark:bg-[#01BAEF]"
+                      : "bg-gray-300"
+                  }`}
                 >
                   <span className="sr-only">Toggle Notifications</span>
                   <span
-                    className={`inline-block h-5 w-5 rounded-full bg-white shadow transform transition ${notifications ? "translate-x-6" : "translate-x-1"
-                      }`}
+                    className={`inline-block h-5 w-5 rounded-full bg-white shadow transform transition ${
+                      notifications ? "translate-x-6" : "translate-x-1"
+                    }`}
                   ></span>
                 </button>
                 <span className="ml-3 text-sm text-gray-600">

@@ -10,13 +10,14 @@ import { useValidateCPF } from "@/src/hooks/useValidateCpf";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { ChangeProfilePhotoDialog } from "@/src/components/ChangeProfileDialog";
 import { DeleteAccountDialog } from "@/src/components/DeleteAccountDialog";
+import { UserUpdate } from "@/src/types/UserUpdate";
 
 export default function ProfileEditPage() {
   const { user, loading } = useSupabase();
 
   const [name, setName] = useState("");
   const [cpf, setCpf] = useState("");
-  const [gender, setGender] = useState("Outro");
+  const [gender, setGender] = useState("Escolher");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [saving, setSaving] = useState(false);
@@ -25,6 +26,11 @@ export default function ProfileEditPage() {
   const { validateCPF, cpfError } = useValidateCPF();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [originalData, setOriginalData] = useState({
+    name: "",
+    cpf: "",
+    gender: "",
+  });
 
   const handleCpfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatCpf(e.target.value);
@@ -56,9 +62,17 @@ export default function ProfileEditPage() {
       }
 
       if (data) {
+        const formattedCpf = data.cpf ? formatCpf(data.cpf) : "";
         setName(data.name || "");
-        setCpf(data.cpf ? formatCpf(data.cpf) : "");
-        setGender(data.gender || "Outro");
+        setCpf(formattedCpf);
+        setGender(data.gender || "Escolher");
+
+        setOriginalData({
+          name: data.name || "",
+          cpf: formattedCpf,
+          gender: data.gender || "Escolher",
+        });
+
         setProfileImg(data.profile_img || null);
       }
     }
@@ -76,24 +90,41 @@ export default function ProfileEditPage() {
     setMessage("");
 
     try {
-      if (!userId) {
-        throw new Error("Usuário não autenticado.");
-      }
+      if (!userId) throw new Error("Usuário não autenticado.");
 
-      if (password && password !== confirmPassword) {
+      if (password && password !== confirmPassword)
         throw new Error("As senhas não coincidem.");
+
+      if (password && password.length <= 6)
+        throw new Error("A nova senha deve conter mais de 6 caracteres.");
+
+      if (gender === "Escolher")
+        throw new Error("Por favor, selecione um gênero válido.");
+
+      if (cpf !== originalData.cpf && !validateCPF(cpf)) {
+        throw new Error("CPF inválido. Corrija antes de salvar.");
       }
 
-      const { error } = await supabase
-        .from("users")
-        .update({
-          name,
-          cpf,
-          gender,
-        })
-        .eq("id", userId);
+      const updatedFields: UserUpdate = {};
 
-      if (error) throw error;
+      if (name !== originalData.name) updatedFields.name = name;
+      if (cpf !== originalData.cpf) updatedFields.cpf = cpf;
+      if (gender !== originalData.gender) updatedFields.gender = gender;
+
+      if (Object.keys(updatedFields).length === 0 && !password) {
+        toast.info("Nenhuma alteração detectada.");
+        setSaving(false);
+        return;
+      }
+
+      if (Object.keys(updatedFields).length > 0) {
+        const { error } = await supabase
+          .from("users")
+          .update(updatedFields)
+          .eq("id", userId);
+
+        if (error) throw error;
+      }
 
       if (password) {
         const { error: updateError } = await supabase.auth.updateUser({
@@ -102,35 +133,34 @@ export default function ProfileEditPage() {
         if (updateError) throw updateError;
       }
 
-      setMessage("Perfil atualizado com sucesso!");
+      toast.success("Perfil atualizado com sucesso!");
+
+      setOriginalData({ name, cpf, gender });
     } catch (err: unknown) {
-      if (err instanceof Error) {
-        let errorMessage = err.message;
+      let errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Ocorreu um erro ao atualizar o perfil.";
 
-        if (errorMessage.includes("New password should be different")) {
-          errorMessage = "A nova senha deve ser diferente da atual.";
-        } else if (errorMessage.includes("Password should be at least")) {
-          errorMessage = "A senha deve ter pelo menos 6 caracteres.";
-        } else if (errorMessage.includes("Invalid login credentials")) {
-          errorMessage = "Credenciais inválidas. Verifique seu e-mail e senha.";
-        } else {
-          errorMessage = "Ocorreu um erro ao atualizar o perfil.";
-        }
-
-        setMessage(`Erro: ${errorMessage}`);
-        toast.error(errorMessage);
-      } else {
-        const fallback = "Ocorreu um erro inesperado.";
-        setMessage(fallback);
-        toast.error(fallback);
+      if (
+        errorMessage.includes(
+          "New password should be different from the old password"
+        )
+      ) {
+        errorMessage = "A nova senha deve ser diferente da senha atual.";
+      } else if (
+        errorMessage.includes("Password should be at least 6 characters")
+      ) {
+        errorMessage = "A nova senha deve conter pelo menos 6 caracteres.";
+      } else if (errorMessage.includes("Invalid login credentials")) {
+        errorMessage = "Credenciais inválidas. Verifique seu e-mail e senha.";
       }
-    }
-    if (!validateCPF(cpf)) {
-      setMessage("CPF inválido. Corrija antes de salvar.");
+
+      setMessage(`Erro: ${errorMessage}`);
+      toast.error(errorMessage);
+    } finally {
       setSaving(false);
-      return;
     }
-    setSaving(false);
   }
 
   return (
@@ -249,6 +279,9 @@ export default function ProfileEditPage() {
               onChange={(e) => setGender(e.target.value)}
               className="w-full px-3 py-2 mt-1 border rounded-md dark:border-white border-[#010b62] dark:bg-[#030712] focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
+              <option value="Escolher" disabled>
+                Escolher
+              </option>
               <option value="Feminino">Feminino</option>
               <option value="Masculino">Masculino</option>
               <option value="Outro">Outro</option>
@@ -310,9 +343,7 @@ export default function ProfileEditPage() {
           </div>
 
           {message && (
-            <p className="text-sm mt-2 text-center text-gray-700 dark:text-gray-300">
-              {message}
-            </p>
+            <p className="text-md mt-2 text-center text-red-500">{message}</p>
           )}
 
           <div className="flex justify-between">
