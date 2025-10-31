@@ -55,67 +55,69 @@ export default function Header() {
   if (!mounted) return null;
 
   return (
-    <header className="bg-white dark:bg-[#030712] h-20 flex items-center justify-between px-4 sm:px-6 md:px-8 relative">
-      <div className="flex items-center">
-        <div className="relative w-[60px] h-[38px] sm:w-[78px] sm:h-[49px] shrink-0">
-          <Logo />
+    <>
+      <header className="bg-white dark:bg-[#030712] h-20 flex items-center justify-between px-4 sm:px-6 md:px-8 relative">
+        <div className="flex items-center">
+          <div className="relative w-[60px] h-[38px] sm:w-[78px] sm:h-[49px] shrink-0">
+            <Logo />
+          </div>
+          <DesktopNav />
         </div>
-        <DesktopNav />
-      </div>
 
-      <div className="flex items-center gap-2 sm:gap-3">
-        <SearchBar />
-        <ThemeSwitch />
-        <div className="hidden sm:block">
-          {session && (
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => setFavoritesOpen(true)}
-              className="text-[#010b62]  border h-10 w-10 hover:text-[#010b62] dark:text-white border-[#010b62] rounded-md hover:bg-[#0969da]/15 dark:hover:bg-[#00afd3]/30 dark:border-white dark:bg-[#0000] dark:hover:text-white transition cursor-pointer"
-            >
-              <Heart className="w-4 h-4" />
-            </Button>
-          )}
+        <div className="flex items-center gap-2 sm:gap-3">
+          <SearchBar />
+          <ThemeSwitch />
+          <div className="hidden sm:block">
+            {session && (
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setFavoritesOpen(true)}
+                className="text-[#010b62]  border h-10 w-10 hover:text-[#010b62] dark:text-white border-[#010b62] rounded-md hover:bg-[#0969da]/15 dark:hover:bg-[#00afd3]/30 dark:border-white dark:bg-[#0000] dark:hover:text-white transition cursor-pointer"
+              >
+                <Heart className="w-4 h-4" />
+              </Button>
+            )}
+          </div>
+          <div className="hidden sm:block">
+            <UserMenu
+              session={session}
+              profileName={profile?.name ?? null}
+              supabase={supabase}
+            />
+          </div>
+          <button
+            className="lg:hidden cursor-pointer flex items-center justify-center h-10 w-10 p-2 border text-[#010b62] dark:text-white border-[#010b62] rounded-md hover:bg-[#0969da]/15 dark:hover:bg-[#00afd3]/30 dark:border-white transition"
+            onClick={() => setMobileOpen((v) => !v)}
+            aria-label={mobileOpen ? "Fechar menu" : "Abrir menu"}
+            type="button"
+          >
+            {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
-        <div className="hidden sm:block">
-          <UserMenu
-            session={session}
-            profileName={profile?.name ?? null}
-            supabase={supabase}
-          />
-        </div>
-        <button
-          className="lg:hidden cursor-pointer flex items-center justify-center h-10 w-10 p-2 border text-[#010b62] dark:text-white border-[#010b62] rounded-md hover:bg-[#0969da]/15 dark:hover:bg-[#00afd3]/30 dark:border-white transition"
-          onClick={() => setMobileOpen((v) => !v)}
-          aria-label={mobileOpen ? "Fechar menu" : "Abrir menu"}
-          type="button"
-        >
-          {mobileOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-      </div>
 
-      <div
-        className="absolute inset-x-0 bottom-0 h-[4px] pointer-events-none
+        <div
+          className="absolute inset-x-0 bottom-0 h-[4px] pointer-events-none
           dark:bg-[radial-gradient(ellipse_at_center,_#01baef_0%,_#01baef_40%,_#030712_72%,_#030712_100%)]
           bg-[radial-gradient(ellipse_at_center,_#010b62_0%,_#010b62_40%,_#ffffff_72%,_#ffffff_100%)]"
-      />
+        />
 
-      <MobileDrawer
-        open={mobileOpen}
-        setOpen={setMobileOpen}
-        dropdownOpen={dropdownOpen}
-        setDropdownOpen={setDropdownOpen}
-        session={session}
-        supabase={supabase}
-        profileName={profile?.name ?? null}
-        setFavoritesOpen={(val) => {
-          console.log('setFavoritesOpen called with:', val);
-          setFavoritesOpen(val);
-        }}
-      />
+        <MobileDrawer
+          open={mobileOpen}
+          setOpen={setMobileOpen}
+          dropdownOpen={dropdownOpen}
+          setDropdownOpen={setDropdownOpen}
+          session={session}
+          supabase={supabase}
+          profileName={profile?.name ?? null}
+          setFavoritesOpen={(val) => {
+            console.log('setFavoritesOpen called with:', val);
+            setFavoritesOpen(val);
+          }}
+        />
 
+      </header>
       {mounted && <FavoritesSheet open={favoritesOpen} onOpenChange={setFavoritesOpen} />}
-    </header>
+    </>
   );
 }

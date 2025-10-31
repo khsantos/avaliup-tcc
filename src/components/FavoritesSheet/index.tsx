@@ -35,19 +35,18 @@ export function FavoritesSheet({ open, onOpenChange }: FavoritesSheetProps) {
     if (!session?.user?.id) return;
 
     const fetchFavorites = async () => {
+      setLoading(true);
       const { data, error } = await supabase
         .from("user_favorites")
-        .select(
-          `
-      product:products (
-        id,
-        name,
-        price,
-        image,
-        rating
-      )
-    `
-        )
+        .select(`
+          product:products (
+            id,
+            name,
+            price,
+            image,
+            rating
+          )
+        `)
         .eq("user_id", session.user.id);
 
       if (!error && data) {
@@ -56,15 +55,14 @@ export function FavoritesSheet({ open, onOpenChange }: FavoritesSheetProps) {
             Array.isArray(item.product)
               ? item.product
               : item.product
-              ? [item.product]
-              : []
+                ? [item.product]
+                : []
         );
-
         setFavorites(products);
       }
-
       setLoading(false);
     };
+
     fetchFavorites();
   }, [open, session?.user?.id]);
 
@@ -88,16 +86,27 @@ export function FavoritesSheet({ open, onOpenChange }: FavoritesSheetProps) {
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
-        className="w-[90vw] max-w-[800px] flex flex-col"
+        className="
+      fixed inset-0 z-50 w-full h-full
+      sm:max-w-[90vw] md:max-w-[700px]
+      flex flex-col overflow-hidden
+      transition-all duration-300
+    "
       >
         <SheetHeader>
-          <SheetTitle className="text-[#010b62] -mb-0.5 dark:text-white">
+          <SheetTitle className="text-[#010b62] dark:text-white">
             Favoritos
           </SheetTitle>
-          <SheetDescription>Veja seus produtos favoritados</SheetDescription>
+          <SheetDescription className="text-sm sm:text-base">
+            Veja seus produtos favoritados
+          </SheetDescription>
         </SheetHeader>
 
-        <div className="mt-6 flex-1 overflow-y-auto flex flex-col gap-4 pr-4">
+        <div
+          className="
+flex-1 overflow-y-auto mt-6 flex flex-col gap-3 sm:gap-4 pr-2 sm:pr-4
+    "
+        >
           {loading ? (
             <p>Carregando...</p>
           ) : favorites.length === 0 ? (
@@ -106,47 +115,54 @@ export function FavoritesSheet({ open, onOpenChange }: FavoritesSheetProps) {
             favorites.map((item) => (
               <div
                 key={item.id}
-                className="flex items-center gap-4 border-b pb-3 last:border-none relative p-4"
+                onClick={() => window.open(`/produto/${item.id}`, "_blank")}
+                className="relative group flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 border-b pb-4 sm:pb-3 last:border-none p-3 sm:p-4 rounded-lg hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors cursor-pointer"
               >
+                {/* Overlay "Visitar" */}
+                <div className="absolute inset-0 bg-black/50 dark:bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
+                  <span className="text-white font-semibold text-lg">Visitar</span>
+                </div>
+
+                {/* Botão remover */}
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => handleRemoveFavorite(item.id)}
-                  className="absolute top-2 right-2 p-1 rounded-full hover:bg-red-100 dark:hover-bg-red-900 cursor-pointer "
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleRemoveFavorite(item.id);
+                  }}
+                  className="absolute top-2 right-2 p-1 rounded-full hover:bg-red-100 dark:hover:bg-red-900 z-10"
                 >
-                  <X className="h-4 w-4 text-red-500"></X>
+                  <X className="h-4 w-4 text-red-500" />
                 </Button>
 
-                <div className="w-[60px] h-[60px] relative shrink-0">
+                {/* Imagem */}
+                <div className="w-[70px] h-[70px] sm:w-[60px] sm:h-[60px] relative shrink-0 mx-auto sm:mx-0">
                   <Image
-                    src={item.image || "/placeholder.svg"}
+                    src={item.image || '/placeholder.svg'}
                     alt={item.name}
                     fill
                     className="object-contain"
                     loading="lazy"
                   />
                 </div>
-                <div className="flex-1">
-                  <h3 className="font-medium text-sm justify-center text-left pb-2">
+
+                {/* Informações */}
+                <div className="flex-1 text-center sm:text-left">
+                  <h3 className="font-medium text-sm sm:text-base mb-1 line-clamp-2">
                     {item.name}
                   </h3>
-                  <p className="text-sm font-bold text-[#010b62] dark:text-[#01BAEF]">
+                  <p className="text-sm sm:text-base font-bold text-[#010b62] dark:text-[#01BAEF]">
                     R$ {item.price.toFixed(2)}
                   </p>
 
-                  <div className="flex items-center gap-1">
+                  <div className="flex justify-center sm:justify-start items-center gap-1">
                     <StarRating rating={item.rating || 0} size={16} />
-                    <span className="text-sm text-[#FFB24B]">
-                      {item.rating?.toFixed(1) ?? "0.0"}
+                    <span className="text-xs sm:text-sm text-[#FFB24B]">
+                      {item.rating?.toFixed(1) ?? '0.0'}
                     </span>
                   </div>
                 </div>
-                <Button
-                  onClick={() => window.open(`/produto/${item.id}`, "_blank")}
-                  className="bg-[#010b62] hover:bg-[#1C2CA3] dark:bg-[#01BAEF] dark:hover:bg-[#33C9F2] dark:text-white "
-                >
-                  Visitar
-                </Button>
               </div>
             ))
           )}
