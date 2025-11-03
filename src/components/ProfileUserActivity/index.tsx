@@ -189,7 +189,11 @@ export default function ProfileUserActivity() {
           .in("id", interactedReviewIds)
           .range(from, to);
 
-        if (filterRating) query = query.eq("rating", filterRating);
+        if (filterRating) {
+          query = query
+            .gte("rating", filterRating)
+            .lt("rating", filterRating + 1);
+        }
 
         if (sortBy === "recent")
           query = query.order("created_at", { ascending: false });

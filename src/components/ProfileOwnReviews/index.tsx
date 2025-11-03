@@ -153,7 +153,11 @@ export default function ProfileReview({ productId }: ProfileReviewProps) {
 
       if (productId) countQuery = countQuery.eq("product_id", productId);
       if (userId) countQuery = countQuery.eq("users_id", userId);
-      if (filterRating) countQuery = countQuery.eq("rating", filterRating);
+      if (filterRating) {
+        countQuery = countQuery
+          .gte("rating", filterRating)
+          .lt("rating", filterRating + 1);
+      }
 
       const { count } = await countQuery;
       if (count) setTotalPages(Math.ceil(count / REVIEWS_PER_PAGE));
@@ -175,7 +179,11 @@ export default function ProfileReview({ productId }: ProfileReviewProps) {
 
       if (productId) query = query.eq("product_id", productId);
       if (userId) query = query.eq("users_id", userId);
-      if (filterRating) query = query.eq("rating", filterRating);
+      if (filterRating) {
+        query = query
+          .gte("rating", filterRating)
+          .lt("rating", filterRating + 1);
+      }
 
       if (sortBy === "recent")
         query = query.order("created_at", { ascending: false });
