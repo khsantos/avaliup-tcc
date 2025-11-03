@@ -65,11 +65,11 @@ export default function Page() {
   }
 
   return (
-    <div className="min-h-screen pt-8 pb-6 flex justify-center">
-      <div className="max-w-7xl w-full p-6">
-        <div className="bg-white dark:bg-[#030712] shadow-[0_0_7px_2px_rgba(0,0,255,0.1)] dark:shadow-[0_0_7px_2px_rgba(255,255,255,0.1)] rounded-lg px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <div className="w-50 h-50 bg-[#E3E8F3] border border-[#010b62] dark:border-[#01BAEF] rounded-md flex items-center justify-center overflow-hidden relative">
+    <div className="min-h-screen pt-8 pb-6 flex justify-center px-4 sm:px-6">
+      <div className="max-w-7xl w-full">
+        <div className="bg-white dark:bg-[#030712] shadow-[0_0_7px_2px_rgba(0,0,255,0.1)] dark:shadow-[0_0_7px_2px_rgba(255,255,255,0.1)] rounded-lg px-4 py-6 flex flex-col lg:flex-row items-center justify-between gap-6">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 w-full lg:w-auto">
+            <div className="w-32 h-32 sm:w-40 sm:h-40 bg-[#E3E8F3] border border-[#010b62] dark:border-[#01BAEF] rounded-md flex items-center justify-center overflow-hidden relative">
               {avatarUrl ? (
                 <Image
                   src={avatarUrl}
@@ -99,7 +99,7 @@ export default function Page() {
               )}
             </div>
 
-            <div>
+            <div className="text-center sm:text-left">
               <h2 className="text-2xl font-semibold text-[#010b62] dark:text-white">
                 {username}
               </h2>
@@ -107,8 +107,8 @@ export default function Page() {
                 {email || "Nada informado."}
               </p>
 
-              <div className="flex gap-4 mt-18">
-                <div className="border border-[#010b62] rounded-sm px-2 py-2 min-w-[130px] text-left dark:border-white/90">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center sm:justify-start">
+                <div className="border border-[#010b62] rounded-sm px-3 py-2 min-w-[120px] text-left dark:border-white/90">
                   <p className="text-sm font-medium text-[#010b62] dark:text-white">
                     Upvotes
                   </p>
@@ -118,7 +118,7 @@ export default function Page() {
                   </div>
                 </div>
 
-                <div className="border border-[#010b62] rounded-sm px-2 py-2 min-w-[130px] text-left dark:border-white">
+                <div className="border border-[#010b62] rounded-sm px-3 py-2 min-w-[120px] text-left dark:border-white">
                   <p className="text-sm font-medium text-[#010b62] dark:text-white">
                     Avaliações
                   </p>
@@ -131,26 +131,26 @@ export default function Page() {
             </div>
           </div>
 
-          <div className="flex flex-col gap-3">
-            <div className="text-[#1C2A76] text-md font-medium text-left dark:text-white/90">
+          <div className="flex flex-col items-center lg:items-end gap-3 w-full lg:w-auto">
+            <div className="text-[#1C2A76] text-md font-medium dark:text-white/90">
               Insígnias
             </div>
 
-            <div className="flex justify-start mb-2">
+            <div className="flex justify-center lg:justify-start mb-2">
               {userId && <AchievementBadges userId={userId} />}
             </div>
 
-            <div className="flex flex-col items-end gap-2">
+            <div className="flex flex-col sm:flex-row lg:flex-col items-center gap-2 w-full sm:w-auto">
               <a
                 href="/achievements"
-                className="w-36 text-center bg-[#FFB24B] text-white rounded-md px-6 py-2 font-semibold hover:bg-[#e6a33c] transition"
+                className="w-full sm:w-36 text-center bg-[#FFB24B] text-white rounded-md px-6 py-2 font-semibold hover:bg-[#e6a33c] transition"
               >
                 Coleção
               </a>
 
               <a
                 href="/profile-edit"
-                className="w-36 text-center bg-[#010b62] text-white rounded-md px-6 py-2 font-semibold hover:bg-[#1C2CA3] transition dark:bg-[#01BAEF] dark:hover:bg-[#019ED9]"
+                className="w-full sm:w-36 text-center bg-[#010b62] text-white rounded-md px-6 py-2 font-semibold hover:bg-[#1C2CA3] transition dark:bg-[#01BAEF] dark:hover:bg-[#019ED9]"
               >
                 Editar Perfil
               </a>
@@ -168,10 +168,10 @@ export default function Page() {
             <button
               key={label}
               onClick={() => setTab(idx)}
-              className={`flex-1 py-3 text-base font-medium transition cursor-pointer ${
+              className={`flex-1 sm:flex-[1_1_0%] text-center py-3 text-sm sm:text-base font-medium transition cursor-pointer ${
                 tab === idx
-                  ? "border-b-4 border-[#010B62] dark:border-[#01BAEF] cursor-pointer text-[#010B62] dark:text-white font-bold"
-                  : "text-gray-600"
+                  ? "border-b-4 border-[#010B62] dark:border-[#01BAEF] text-[#010B62] dark:text-white font-bold"
+                  : "text-gray-600 dark:text-gray-400"
               }`}
             >
               {label}
@@ -179,68 +179,56 @@ export default function Page() {
           ))}
         </div>
 
-        {tab === 0 && (
-          <div className="mt-0.5 bg-white dark:bg-[#030712] rounded-xl shadow-md px-8 py-8">
-            <ProfileReview userId={user?.id} />
-          </div>
-        )}
-
-        {tab === 1 && (
-          <div className="mt-0.5 bg-white dark:bg-[#030712] rounded-xl shadow-md px-8 py-8">
-            <ProfileUserActivity />
-          </div>
-        )}
-
-        {tab === 2 && (
-          <div className="mt-0.5 bg-white dark:bg-[#030712] rounded-xl shadow-md px-8 py-8">
-            <FavoritesTab />
-          </div>
-        )}
-
-        {tab === 3 && (
-          <div className="mt-10 bg-white dark:bg-[#030712] rounded-xl shadow-md px-8 py-8">
-            <h2 className="text-2xl font-bold text-[#010B62] mb-6 dark:text-white">
-              Configurações Gerais
-            </h2>
-            <div className="mb-8">
-              <h3 className="text-lg font-bold text-[#010B62] mb-4 dark:text-white">
+        <div className="mt-2 bg-white dark:bg-[#030712] rounded-xl shadow-md px-4 sm:px-8 py-6 sm:py-8">
+          {tab === 0 && <ProfileReview userId={user?.id} />}
+          {tab === 1 && <ProfileUserActivity />}
+          {tab === 2 && <FavoritesTab />}
+          {tab === 3 && (
+            <div>
+              <h2 className="text-2xl font-bold text-[#010B62] mb-6 dark:text-white">
                 Configurações Gerais
-              </h3>
-              <div className="flex items-center mb-4">
-                <label className="w-40 text-base text-[#010B62] dark:text-white">
-                  Idioma
-                </label>
-                <select className="cursor-pointer border border-gray-300 rounded-md px-3 py-1 text-[#010B62] bg-white dark:bg-[#030712] dark:text-white">
-                  <option>Português</option>
-                </select>
-              </div>
-              <div className="flex items-center mb-4">
-                <label className="w-40 text-base text-[#010B62] dark:text-white">
-                  Notificações
-                </label>
-                <button
-                  type="button"
-                  onClick={() => setNotifications((v) => !v)}
-                  className={`relative inline-flex items-center cursor-pointer h-6 rounded-full w-12 focus:outline-none transition ${
-                    notifications
-                      ? "bg-[#010B62] dark:bg-[#01BAEF]"
-                      : "bg-gray-300"
-                  }`}
-                >
-                  <span className="sr-only">Toggle Notifications</span>
-                  <span
-                    className={`inline-block h-5 w-5 rounded-full bg-white shadow transform transition ${
-                      notifications ? "translate-x-6" : "translate-x-1"
-                    }`}
-                  ></span>
-                </button>
-                <span className="ml-3 text-sm text-gray-600">
-                  {notifications ? "Ativadas" : "Desativadas"}
-                </span>
+              </h2>
+
+              <div className="mb-8">
+                <div className="flex flex-col sm:flex-row sm:items-center mb-4">
+                  <label className="sm:w-40 text-base text-[#010B62] dark:text-white mb-2 sm:mb-0">
+                    Idioma
+                  </label>
+                  <select className="cursor-pointer border border-gray-300 rounded-md px-3 py-1 text-[#010B62] bg-white dark:bg-[#030712] dark:text-white">
+                    <option>Português</option>
+                  </select>
+                </div>
+
+                <div className="flex flex-col sm:flex-row sm:items-center mb-4">
+                  <label className="sm:w-40 text-base text-[#010B62] dark:text-white mb-2 sm:mb-0">
+                    Notificações
+                  </label>
+                  <div className="flex items-center">
+                    <button
+                      type="button"
+                      onClick={() => setNotifications((v) => !v)}
+                      className={`relative inline-flex items-center cursor-pointer h-6 rounded-full w-12 focus:outline-none transition ${
+                        notifications
+                          ? "bg-[#010B62] dark:bg-[#01BAEF]"
+                          : "bg-gray-300"
+                      }`}
+                    >
+                      <span className="sr-only">Toggle Notifications</span>
+                      <span
+                        className={`inline-block h-5 w-5 rounded-full bg-white shadow transform transition ${
+                          notifications ? "translate-x-6" : "translate-x-1"
+                        }`}
+                      ></span>
+                    </button>
+                    <span className="ml-3 text-sm text-gray-600">
+                      {notifications ? "Ativadas" : "Desativadas"}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
