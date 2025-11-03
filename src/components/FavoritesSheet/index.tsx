@@ -38,7 +38,8 @@ export function FavoritesSheet({ open, onOpenChange }: FavoritesSheetProps) {
       setLoading(true);
       const { data, error } = await supabase
         .from("user_favorites")
-        .select(`
+        .select(
+          `
           product:products (
             id,
             name,
@@ -46,7 +47,8 @@ export function FavoritesSheet({ open, onOpenChange }: FavoritesSheetProps) {
             image,
             rating
           )
-        `)
+        `
+        )
         .eq("user_id", session.user.id);
 
       if (!error && data) {
@@ -55,8 +57,8 @@ export function FavoritesSheet({ open, onOpenChange }: FavoritesSheetProps) {
             Array.isArray(item.product)
               ? item.product
               : item.product
-                ? [item.product]
-                : []
+              ? [item.product]
+              : []
         );
         setFavorites(products);
       }
@@ -65,6 +67,32 @@ export function FavoritesSheet({ open, onOpenChange }: FavoritesSheetProps) {
 
     fetchFavorites();
   }, [open, session?.user?.id]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const doc = document.documentElement;
+    const body = document.body;
+
+    const prevOverflow = doc.style.overflow;
+    const prevBodyPaddingRight = body.style.paddingRight;
+
+    if (open) {
+      const scrollBarWidth = window.innerWidth - doc.clientWidth;
+      doc.style.overflow = "hidden";
+      if (scrollBarWidth > 0) {
+        body.style.paddingRight = `${scrollBarWidth}px`;
+      }
+    } else {
+      doc.style.overflow = prevOverflow || "";
+      body.style.paddingRight = prevBodyPaddingRight || "";
+    }
+
+    return () => {
+      doc.style.overflow = prevOverflow || "";
+      body.style.paddingRight = prevBodyPaddingRight || "";
+    };
+  }, [open]);
 
   const handleRemoveFavorite = async (productId: number) => {
     if (!session?.user?.id) return;
@@ -86,12 +114,9 @@ export function FavoritesSheet({ open, onOpenChange }: FavoritesSheetProps) {
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
-        className="
-      fixed inset-0 z-50 w-full h-full
-      sm:max-w-[90vw] md:max-w-[700px]
-      flex flex-col overflow-hidden
-      transition-all duration-300
-    "
+        className={
+          "w-full sm:max-w-[90vw] md:max-w-[700px] flex flex-col overflow-hidden transition-all duration-300 h-screen sm:h-auto"
+        }
       >
         <SheetHeader>
           <SheetTitle className="text-[#010b62] dark:text-white">
@@ -102,11 +127,7 @@ export function FavoritesSheet({ open, onOpenChange }: FavoritesSheetProps) {
           </SheetDescription>
         </SheetHeader>
 
-        <div
-          className="
-flex-1 overflow-y-auto mt-6 flex flex-col gap-3 sm:gap-4 pr-2 sm:pr-4
-    "
-        >
+        <div className="flex-1 overflow-y-auto mt-6 flex flex-col gap-3 sm:gap-4 pr-2 sm:pr-4 max-h-screen">
           {loading ? (
             <p>Carregando...</p>
           ) : favorites.length === 0 ? (
@@ -118,12 +139,12 @@ flex-1 overflow-y-auto mt-6 flex flex-col gap-3 sm:gap-4 pr-2 sm:pr-4
                 onClick={() => window.open(`/produto/${item.id}`, "_blank")}
                 className="relative group flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 border-b pb-4 sm:pb-3 last:border-none p-3 sm:p-4 rounded-lg hover:bg-gray-50 dark:hover:bg-zinc-900 transition-colors cursor-pointer"
               >
-                {/* Overlay "Visitar" */}
                 <div className="absolute inset-0 bg-black/50 dark:bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
-                  <span className="text-white font-semibold text-lg">Visitar</span>
+                  <span className="text-white font-semibold text-lg">
+                    Visitar
+                  </span>
                 </div>
 
-                {/* Botão remover */}
                 <Button
                   variant="ghost"
                   size="icon"
@@ -136,10 +157,9 @@ flex-1 overflow-y-auto mt-6 flex flex-col gap-3 sm:gap-4 pr-2 sm:pr-4
                   <X className="h-4 w-4 text-red-500" />
                 </Button>
 
-                {/* Imagem */}
                 <div className="w-[70px] h-[70px] sm:w-[60px] sm:h-[60px] relative shrink-0 mx-auto sm:mx-0">
                   <Image
-                    src={item.image || '/placeholder.svg'}
+                    src={item.image || "/placeholder.svg"}
                     alt={item.name}
                     fill
                     className="object-contain"
@@ -147,7 +167,6 @@ flex-1 overflow-y-auto mt-6 flex flex-col gap-3 sm:gap-4 pr-2 sm:pr-4
                   />
                 </div>
 
-                {/* Informações */}
                 <div className="flex-1 text-center sm:text-left">
                   <h3 className="font-medium text-sm sm:text-base mb-1 line-clamp-2">
                     {item.name}
@@ -159,7 +178,7 @@ flex-1 overflow-y-auto mt-6 flex flex-col gap-3 sm:gap-4 pr-2 sm:pr-4
                   <div className="flex justify-center sm:justify-start items-center gap-1">
                     <StarRating rating={item.rating || 0} size={16} />
                     <span className="text-xs sm:text-sm text-[#FFB24B]">
-                      {item.rating?.toFixed(1) ?? '0.0'}
+                      {item.rating?.toFixed(1) ?? "0.0"}
                     </span>
                   </div>
                 </div>

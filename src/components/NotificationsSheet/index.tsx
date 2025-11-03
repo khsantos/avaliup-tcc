@@ -24,7 +24,6 @@ export default function NotificationsSheet({ onClose, open }: Props) {
 
   const fetchAndCheckNotifications = async () => {
     setLoading(true);
-
     const { data: notificationsData, error: notificationsError } =
       await supabase
         .from("price_notifications")
@@ -112,6 +111,32 @@ export default function NotificationsSheet({ onClose, open }: Props) {
     if (open) fetchAndCheckNotifications();
   }, [open]);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const doc = document.documentElement;
+    const body = document.body;
+
+    const prevOverflow = doc.style.overflow;
+    const prevBodyPaddingRight = body.style.paddingRight;
+
+    if (open) {
+      const scrollBarWidth = window.innerWidth - doc.clientWidth;
+      doc.style.overflow = "hidden";
+      if (scrollBarWidth > 0) {
+        body.style.paddingRight = `${scrollBarWidth}px`;
+      }
+    } else {
+      doc.style.overflow = prevOverflow || "";
+      body.style.paddingRight = prevBodyPaddingRight || "";
+    }
+
+    return () => {
+      doc.style.overflow = prevOverflow || "";
+      body.style.paddingRight = prevBodyPaddingRight || "";
+    };
+  }, [open]);
+
   const handleDelete = async (id: string) => {
     const { error } = await supabase
       .from("price_notifications")
@@ -130,7 +155,7 @@ export default function NotificationsSheet({ onClose, open }: Props) {
   return (
     <SheetContent
       side="right"
-      className="w-[400px] sm:w-[500px] border-white dark:bg-[#030712] dark:border-white"
+      className="w-[400px] sm:w-[500px] border-white dark:bg-[#030712] dark:border-white h-screen sm:h-auto"
     >
       <SheetHeader>
         <SheetTitle className="dark:text-white text-[#010b62]">
@@ -141,7 +166,7 @@ export default function NotificationsSheet({ onClose, open }: Props) {
         </SheetDescription>
       </SheetHeader>
 
-      <div className="mt-6 space-y-4 max-h-[70vh] overflow-y-auto">
+      <div className="mt-6 space-y-4 max-h-screen overflow-y-auto">
         {loading ? (
           <p className="text-sm text-muted-foreground">Carregando...</p>
         ) : notifications.length > 0 ? (
