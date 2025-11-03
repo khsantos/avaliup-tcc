@@ -10,20 +10,17 @@ export default function RatingAndButton({
   onOpenDetails: (review: UserReview) => void;
 }) {
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2 w-full sm:w-auto">
-      <div className="flex items-center gap-2">
-        <span className="text-xl sm:text-2xl font-bold text-[#FFB24B]">
+    <div className="flex flex-col items-stretch gap-1 w-full">
+      <div className="flex items-center gap-1">
+        <span className="text-2xl font-bold text-[#FFB24B]">
           {review.rating}
         </span>
-        <div className="flex gap-1">
-          <StarRating rating={review.rating} />
-        </div>
+        <StarRating rating={review.rating} />
       </div>
-
       <Button
         size="sm"
         onClick={() => onOpenDetails(review)}
-        className="dark:bg-[#01BAEF] dark:hover:bg-[#33C9F2] bg-[#010b62] hover:bg-[#1C2CA3]/70 text-white text-sm rounded-se-lg px-2"
+        className="dark:bg-[#01BAEF] dark:hover:bg-[#33C9F2] bg-[#010b62] hover:bg-[#1C2CA3]/70 text-white text-sm rounded-se-lg px-2 w-full"
       >
         Ver Detalhes
       </Button>

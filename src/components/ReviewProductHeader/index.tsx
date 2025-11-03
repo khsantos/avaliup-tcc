@@ -1,6 +1,6 @@
 import { UserReview } from "@/src/types/UserReview";
 import Image from "next/image";
-import RatingAndButton from "../RatingAndMoreDetails";
+import RatingAndButton from "../RatingAndButton";
 import Link from "next/link";
 
 type ReviewProductHeaderProps = {

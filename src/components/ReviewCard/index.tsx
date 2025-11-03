@@ -2,11 +2,12 @@ import { UserReview } from "@/src/types/UserReview";
 import { Card, CardContent } from "../ui/card";
 import { ReviewUserHeader } from "../ReviewUserHeader";
 import ReviewProductHeader from "../ReviewProductHeader";
-import ReviewMeta from "../ReviewMeta";
+
 import { ReviewContent } from "../ReviewContent";
 import ReviewActions from "../ReviewActions";
 import { ReviewComments } from "../ReviewComments";
 import { ReviewOptions } from "../ReviewOptions";
+import ReviewMeta from "../ReviewMeta";
 
 type ReviewCardProps = {
   review: UserReview;

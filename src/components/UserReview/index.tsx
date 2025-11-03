@@ -185,7 +185,9 @@ export default function UserReviews({ productId }: UserReviewProps) {
           .eq("product_id", productId);
 
         if (filterRating) {
-          countQuery = countQuery.eq("rating", filterRating);
+          countQuery = countQuery
+            .gte("rating", filterRating)
+            .lt("rating", filterRating + 1);
         }
 
         const { count } = await countQuery;
@@ -198,17 +200,19 @@ export default function UserReviews({ productId }: UserReviewProps) {
           .from("reviews")
           .select(
             `
-          *,
-          users_id,
-          users (id, name, profile_img),
-          review_votes (vote_type),
-          products (id, name, image)
-        `
+    *,
+    users_id,
+    users (id, name, profile_img),
+    review_votes (vote_type),
+    products (id, name, image)
+  `
           )
           .eq("product_id", productId);
 
         if (filterRating) {
-          query = query.eq("rating", filterRating);
+          query = query
+            .gte("rating", filterRating)
+            .lt("rating", filterRating + 1);
         }
 
         // 3️⃣ Ordenação
