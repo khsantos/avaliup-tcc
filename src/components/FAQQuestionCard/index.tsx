@@ -9,7 +9,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-
 import { Button } from "@/src/components/ui/button";
 import {
   Award,
@@ -64,7 +63,7 @@ export default function FAQQuestionCard({
   enviarResposta,
 }: FAQQuestionCardProps) {
   return (
-    <div className="bg-white dark:bg-[#030712] shadow-md dark:shadow-none border border-[#010b62]/10 dark:border-white/10 rounded-2xl p-5 mt-8 space-y-3">
+    <div className="bg-white dark:bg-[#030712] shadow-md dark:shadow-none border border-[#010b62]/10 dark:border-white/10 rounded-2xl p-4 sm:p-5 mt-8 space-y-3">
       <DeleteDialog
         open={openDialogId === q.id}
         onOpenChange={(open) => {
@@ -77,8 +76,10 @@ export default function FAQQuestionCard({
         }}
         onCancel={() => setOpenDialogId(null)}
       />
-      <div className="flex items-start gap-4 w-full max-w-full break-words">
-        <Avatar className="border w-10 h-10">
+
+      {/* Cabeçalho da pergunta */}
+      <div className="flex flex-col sm:flex-row sm:items-start gap-3 w-full">
+        <Avatar className="w-10 h-10 flex-shrink-0 border">
           <AvatarImage
             src={q.users?.profile_img || ""}
             alt={q.users?.name || "Avatar"}
@@ -87,10 +88,11 @@ export default function FAQQuestionCard({
             <UserIcon className="w-4 h-4 text-muted-foreground" />
           </AvatarFallback>
         </Avatar>
+
         <div className="flex-1 min-w-0">
-          <div className="flex justify-between items-start">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 w-full">
             <div className="flex flex-col">
-              <div className="flex items-center gap-2 text-sm">
+              <div className="flex flex-wrap items-center gap-2 text-sm">
                 <span className="font-semibold text-[#010b62] dark:text-white">
                   {q.users?.name || q.user_id}
                 </span>
@@ -108,6 +110,7 @@ export default function FAQQuestionCard({
                 <Award className="w-4 h-4 text-blue-200" />
               </div>
             </div>
+
             {user?.id === q.user_id && (
               <DropdownMenu
                 open={openMenuId === q.id}
@@ -142,7 +145,8 @@ export default function FAQQuestionCard({
               </DropdownMenu>
             )}
           </div>
-          <h4 className="text-lg font-bold mt-2 text-[#010b62] dark:text-white">
+
+          <h4 className="text-lg font-bold mt-2 text-[#010b62] dark:text-white break-words">
             {q.title}
           </h4>
           <p className="text-md mt-1 leading-relaxed text-[#010b62]/90 dark:text-white/90 break-words whitespace-pre-wrap">
@@ -150,49 +154,52 @@ export default function FAQQuestionCard({
           </p>
         </div>
       </div>
-      <div className="flex justify-start items-start mt-4 ml-14">
-        <div className="flex flex-col items-center gap-1">
-          <div className="flex gap-2 text-[#010b62]/70 dark:text-white mr-12">
-            <Button
-              onClick={() => handleQuestionVote(q.id, "like")}
-              variant="ghost"
-              className={clsx(
-                "transition-transform duration-150 ease-in-out active:scale-90 transform hover:scale-110 cursor-pointer hover:bg-gray-200 hover:text-[#01BAEF]",
-                q.userVote === "like" && "text-[#01BAEF]",
-                animatedVote[q.id] === "like" && "animate-press"
-              )}
-            >
-              <ThumbsUp className="h-6 w-6" />
-              <span className="text-sm">{q.likeCount}</span>
-            </Button>
-            <Button
-              onClick={() => handleQuestionVote(q.id, "dislike")}
-              variant="ghost"
-              className={clsx(
-                "transition-transform duration-150 ease-in-out active:scale-90 transform hover:scale-110 cursor-pointer hover:text-red-600 hover:bg-gray-200",
-                q.userVote === "dislike" && "text-red-600",
-                animatedVote[q.id] === "dislike" && "animate-press"
-              )}
-            >
-              <ThumbsDown className="h-6 w-6" />
-              <span className="text-sm">{q.dislikeCount}</span>
-            </Button>
-          </div>
-          <div
-            onClick={() =>
-              setMostrarRespostas(mostrarRespostas === q.id ? null : q.id)
-            }
-            className="flex items-center gap-1 text-sm text-[#01BAEF] cursor-pointer hover:underline -ml-18"
-          >
-            <span>{respostasListadas[q.id]?.length || 0} respostas</span>
-            {mostrarRespostas === q.id ? (
-              <ChevronUp className="w-4 h-4" />
-            ) : (
-              <ChevronDown className="w-4 h-4" />
+
+      {/* Área de votos e mostrar respostas */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-start gap-3 mt-4">
+        <div className="flex gap-2 text-[#010b62]/70 dark:text-white items-center flex-wrap">
+          <Button
+            onClick={() => handleQuestionVote(q.id, "like")}
+            variant="ghost"
+            className={clsx(
+              "transition-transform duration-150 ease-in-out active:scale-90 transform hover:scale-110 cursor-pointer hover:bg-gray-200 hover:text-[#01BAEF]",
+              q.userVote === "like" && "text-[#01BAEF]",
+              animatedVote[q.id] === "like" && "animate-press"
             )}
-          </div>
+          >
+            <ThumbsUp className="h-6 w-6" />
+            <span className="text-sm">{q.likeCount}</span>
+          </Button>
+          <Button
+            onClick={() => handleQuestionVote(q.id, "dislike")}
+            variant="ghost"
+            className={clsx(
+              "transition-transform duration-150 ease-in-out active:scale-90 transform hover:scale-110 cursor-pointer hover:text-red-600 hover:bg-gray-200",
+              q.userVote === "dislike" && "text-red-600",
+              animatedVote[q.id] === "dislike" && "animate-press"
+            )}
+          >
+            <ThumbsDown className="h-6 w-6" />
+            <span className="text-sm">{q.dislikeCount}</span>
+          </Button>
+        </div>
+
+        <div
+          onClick={() =>
+            setMostrarRespostas(mostrarRespostas === q.id ? null : q.id)
+          }
+          className="flex items-center gap-1 text-sm text-[#01BAEF] cursor-pointer hover:underline"
+        >
+          <span>{respostasListadas[q.id]?.length || 0} respostas</span>
+          {mostrarRespostas === q.id ? (
+            <ChevronUp className="w-4 h-4" />
+          ) : (
+            <ChevronDown className="w-4 h-4" />
+          )}
         </div>
       </div>
+
+      {/* Lista de respostas */}
       {mostrarRespostas === q.id && (
         <FAQAnswerList
           respostasListadas={respostasListadas}

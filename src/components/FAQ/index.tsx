@@ -242,24 +242,24 @@ export default function FAQ({ productId }: FAQProps) {
     : null;
 
   return (
-    <div>
-      <div className="mb-10 flex items-center justify-between">
+    <div className="px-2 sm:px-4 md:px-6 lg:px-8">
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h3 className="text-2xl font-semibold mb-1 text-[#010b62] dark:text-white">
             Dúvidas
           </h3>
-          <span className="text-[#010b62]/50 dark:text-white/50">
+          <span className="text-[#010b62]/50 dark:text-white/50 text-sm sm:text-base">
             Observe e interaja com as dúvidas de nossa comunidade
           </span>
         </div>
 
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="bg-[#010b62] text-white hover:bg-[#019ACF] dark:text-white dark:bg-[#01BAEF]">
+            <Button className="bg-[#010b62] text-white hover:bg-[#019ACF] dark:text-white dark:bg-[#01BAEF] w-full sm:w-auto">
               Fazer uma pergunta
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-lg">
+          <DialogContent className="w-full max-w-sm sm:max-w-md md:max-w-lg">
             {!user ? (
               <>
                 <DialogHeader>
@@ -277,7 +277,7 @@ export default function FAQ({ productId }: FAQProps) {
                   </p>
                   <Button
                     onClick={() => (window.location.href = "/signIn")}
-                    className="bg-[#010b62] hover:bg-[#019ACF] dark:bg-[#01BAEF] dark:hover:bg-[#019ACF] dark:text-white"
+                    className="bg-[#010b62] hover:bg-[#019ACF] dark:bg-[#01BAEF] dark:hover:bg-[#019ACF] dark:text-white w-full sm:w-auto"
                   >
                     Ir para login
                   </Button>
@@ -301,7 +301,7 @@ export default function FAQ({ productId }: FAQProps) {
                     </label>
                     <Textarea
                       placeholder="Explique melhor sua dúvida para ajudar outros a responderem."
-                      className="mt-1"
+                      className="mt-1 w-full"
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                     />
@@ -315,7 +315,7 @@ export default function FAQ({ productId }: FAQProps) {
                     <Button
                       type="submit"
                       disabled={loading}
-                      className="bg-[#010b62] hover:bg-[#019ACF] dark:bg-[#01BAEF] dark:hover:bg-[#019ACF] dark:text-white"
+                      className="bg-[#010b62] hover:bg-[#019ACF] dark:bg-[#01BAEF] dark:hover:bg-[#019ACF] dark:text-white w-full sm:w-auto"
                     >
                       {loading ? "Enviando..." : "Publicar pergunta"}
                     </Button>
@@ -333,33 +333,37 @@ export default function FAQ({ productId }: FAQProps) {
         </p>
       )}
 
-      {questions.map((q) => (
-        <FAQQuestionCard
-          key={q.id}
-          q={q}
-          user={userAdapted}
-          respostasListadas={respostasListadas}
-          respostas={respostas}
-          setRespostas={setRespostas}
-          mostrarRespostas={mostrarRespostas}
-          setMostrarRespostas={setMostrarRespostas}
-          openDialogId={openDialogId}
-          setOpenDialogId={setOpenDialogId}
-          openMenuId={openMenuId}
-          setOpenMenuId={setOpenMenuId}
-          handleDeleteQuestion={handleDeleteQuestion}
-          handleQuestionVote={handleQuestionVote}
-          animatedVote={animatedVote}
-          enviarResposta={enviarResposta}
-        />
-      ))}
+      <div className="flex flex-col gap-4">
+        {questions.map((q) => (
+          <FAQQuestionCard
+            key={q.id}
+            q={q}
+            user={userAdapted}
+            respostasListadas={respostasListadas}
+            respostas={respostas}
+            setRespostas={setRespostas}
+            mostrarRespostas={mostrarRespostas}
+            setMostrarRespostas={setMostrarRespostas}
+            openDialogId={openDialogId}
+            setOpenDialogId={setOpenDialogId}
+            openMenuId={openMenuId}
+            setOpenMenuId={setOpenMenuId}
+            handleDeleteQuestion={handleDeleteQuestion}
+            handleQuestionVote={handleQuestionVote}
+            animatedVote={animatedVote}
+            enviarResposta={enviarResposta}
+          />
+        ))}
+      </div>
 
       {totalPages > 0 && (
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={(page) => setCurrentPage(page)}
-        />
+        <div className="flex justify-center mt-4 sm:justify-start">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(page) => setCurrentPage(page)}
+          />
+        </div>
       )}
     </div>
   );

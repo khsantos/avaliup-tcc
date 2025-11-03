@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Award } from "lucide-react";
+import { Award, ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import { useSupabase } from "@/src/contexts/supabase-provider";
 import { Achievement } from "@/src/types/Achievements";
-import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function AchievementsPage() {
@@ -75,8 +74,9 @@ export default function AchievementsPage() {
   }, [supabase, user?.id]);
 
   return (
-    <div className="min-h-screen p-4 dark:bg-[#030712] flex justify-center">
-      <div className="max-w-7xl w-full p-6">
+    <div className="min-h-screen p-4 dark:bg-[#030712] flex flex-col items-center">
+      <div className="max-w-7xl w-full p-4 sm:p-6">
+        {/* Botão voltar */}
         <button
           onClick={() => router.back()}
           className="flex items-center text-[#010B62] dark:text-white mb-6 hover:text-[#1C2CA3] transition cursor-pointer dark:hover:text-[#01BAEF] hover:underline"
@@ -85,25 +85,28 @@ export default function AchievementsPage() {
           Voltar
         </button>
 
-        <h2 className="text-[#010b62] text-3xl font-semibold mb-2 dark:text-white">
+        {/* Cabeçalho */}
+        <h2 className="text-[#010b62] text-2xl sm:text-3xl font-semibold mb-2 dark:text-white">
           Coleção
         </h2>
-        <p className="text-[#010B62]/60 dark:text-[#FFFFFF]/60 mb-10">
+        <p className="text-[#010B62]/60 dark:text-[#FFFFFF]/60 mb-8 sm:mb-10 text-sm sm:text-base">
           Cumpra os desafios e colecione insígnias!
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* Grid de conquistas */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {achievements.map((a) => (
             <div
               key={a.id}
-              className={`flex items-center rounded-lg p-4 shadow-sm transition ${
+              className={`flex flex-col sm:flex-row items-center sm:items-start rounded-lg p-4 shadow-sm transition w-full ${
                 a.unlocked
                   ? "bg-gray-100 dark:bg-[#030712]"
                   : "bg-gray-100/60 dark:bg-[#030712]/60"
               }`}
             >
+              {/* Ícone / Imagem */}
               <div
-                className={`flex items-center justify-center w-20 h-20 border rounded-md mr-4 shrink-0 transition ${
+                className={`flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 border rounded-md mr-0 sm:mr-4 mb-2 sm:mb-0 shrink-0 transition ${
                   a.unlocked
                     ? "bg-gray-200 dark:bg-[#030712] dark:border-[#01BAEF] border-[#010b62]"
                     : "bg-gray-200/50 dark:bg-[#030712]/50 border-gray-400 dark:border-gray-600 opacity-50"
@@ -129,11 +132,14 @@ export default function AchievementsPage() {
                 )}
               </div>
 
+              {/* Texto */}
               <div
-                className={`flex flex-col ${!a.unlocked ? "opacity-60" : ""}`}
+                className={`flex flex-col text-center sm:text-left ${
+                  !a.unlocked ? "opacity-60" : ""
+                }`}
               >
                 <h3
-                  className={`font-semibold text-base mb-1 transition ${
+                  className={`font-semibold text-sm sm:text-base mb-1 transition ${
                     a.unlocked
                       ? "text-[#010b62] dark:text-[#01baef]"
                       : "text-gray-500 dark:text-gray-400"
@@ -142,7 +148,7 @@ export default function AchievementsPage() {
                   {a.title}
                 </h3>
                 <p
-                  className={`text-sm transition ${
+                  className={`text-xs sm:text-sm transition ${
                     a.unlocked
                       ? "text-[#010B62]/60 dark:text-[#FFFFFF]/90"
                       : "text-gray-400 dark:text-gray-500"

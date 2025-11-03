@@ -63,12 +63,12 @@ export default function ProductSpecification({
   }
 
   return (
-    <div className="p-2 max-w-8xl mx-auto">
+    <div className="p-2 max-w-full mx-auto overflow-x-auto">
       <Card className="rounded-2xl border border-[#b9b9d1] bg-border-white overflow-hidden">
         {specifications.map((spec, index) => (
           <div
             key={index}
-            className={`grid grid-cols-[220px_1fr] text-sm px-4 py-3
+            className={`grid grid-cols-1 sm:grid-cols-[150px_1fr] md:grid-cols-[220px_1fr] text-sm sm:text-base px-2 sm:px-4 py-2 sm:py-3
               ${
                 index % 2 === 0
                   ? "bg-[#e4e4f5] dark:bg-[#030712]"
@@ -83,7 +83,7 @@ export default function ProductSpecification({
             <div className="font-medium text-[#010b62] dark:text-white">
               {spec.label}
             </div>
-            <div className="text-[#010b62] dark:text-white border-l border-white/60 dark:border-white pl-4">
+            <div className="text-[#010b62] dark:text-white sm:border-l border-white/60 dark:border-white pl-0 sm:pl-4">
               {spec.value}
             </div>
           </div>
