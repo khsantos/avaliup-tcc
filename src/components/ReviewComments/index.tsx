@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useSupabase } from "@/src/contexts/supabase-provider";
 import { useFetchComments } from "@/src/hooks/useFetchComments";
 import { Button } from "../ui/button";
 import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { toast } from "sonner";
-import { UserReview } from "@/src/types/UserReview";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,11 +15,13 @@ import {
 } from "../ui/dropdown-menu";
 import { MoreVertical } from "lucide-react";
 import type { User } from "@supabase/supabase-js";
+import { UserReview } from "@/src/types/UserReview";
+import { AchievementBadges } from "../AchievementsBadges";
 
 interface ReviewCommentsProps {
   reviewId: string;
   onCommentAdded?: () => void;
-  setReviews?: React.Dispatch<React.SetStateAction<UserReview[]>>;
+  setReviews?: Dispatch<SetStateAction<UserReview[]>>;
 }
 
 export function ReviewComments({
@@ -31,7 +32,6 @@ export function ReviewComments({
   const { comments, loading, setComments } = useFetchComments(reviewId);
   const [newComment, setNewComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   useEffect(() => {
@@ -77,12 +77,10 @@ export function ReviewComments({
       const updatedComments = [data[0], ...comments];
       setComments(updatedComments);
       setNewComment("");
-
       await supabase
         .from("reviews")
         .update({ comments: updatedComments.length })
         .eq("id", reviewId);
-
       if (onCommentAdded) onCommentAdded();
       toast.success("Comentário adicionado com sucesso!");
     }
@@ -115,7 +113,6 @@ export function ReviewComments({
 
     const updatedComments = comments.filter((c) => c.id !== commentId);
     setComments(updatedComments);
-
     await supabase
       .from("reviews")
       .update({ comments: updatedComments.length })
@@ -126,7 +123,7 @@ export function ReviewComments({
 
   return (
     <div className="mt-4 pt-4 border-t border-[#010b62]/20 dark:border-white/20 space-y-3">
-      <div className="flex gap-2">
+      <div className="flex flex-col sm:flex-row gap-2">
         <input
           className="flex-1 border rounded px-2 py-1 dark:bg-none dark:text-white text-[#010b62] border-[#010b62] dark:border-[#01BAEF]"
           placeholder="Escreva um comentário..."
@@ -149,60 +146,71 @@ export function ReviewComments({
       ) : comments.length === 0 ? (
         <p className="text-sm text-gray-500">Nenhum comentário ainda.</p>
       ) : (
-        comments.map((c) => (
-          <div key={c.id} className="flex gap-2 w-full justify-between">
-            <div className="flex gap-2">
-              {c.users?.profile_img ? (
-                <Image
-                  src={c.users.profile_img}
-                  alt="user"
-                  className="w-10 h-10 rounded-full border border-[#010b62]"
-                  width={40}
-                  height={40}
-                />
-              ) : (
-                <div className="w-10 h-10 flex items-center justify-center">
+        <div className="space-y-3">
+          {comments.map((c) => (
+            <div
+              key={c.id}
+              className="flex flex-col sm:flex-row sm:justify-between gap-2 sm:gap-4 w-full"
+            >
+              <div className="flex gap-2">
+                {c.users?.profile_img ? (
+                  <Image
+                    src={c.users.profile_img}
+                    alt="user"
+                    className="w-10 h-10 rounded-full border border-[#010b62]"
+                    width={40}
+                    height={40}
+                  />
+                ) : (
                   <Avatar className="w-10 h-10 border-[#010b62] text-[#010b62] dark:text-[#01BAEF]/70 border dark:border-[#01BAEF]/70">
                     <AvatarImage
                       src={c.users?.profile_img || "/placeholder.svg"}
                     />
                     <AvatarFallback>{c.users?.name?.charAt(0)}</AvatarFallback>
                   </Avatar>
+                )}
+
+                <div className="flex-1 flex flex-col">
+                  <p className="text-sm font-semibold text-[#010b62] dark:text-white">
+                    {c.users?.name}
+                  </p>
+
+                  {/* Badges de conquistas */}
+                  {c.user_id && (
+                    <AchievementBadges userId={c.user_id} size="sm" />
+                  )}
+
+                  <p className="text-sm text-[#010b62] dark:text-white break-words mt-1">
+                    {c.text}
+                  </p>
+                  <span className="text-xs dark:text-gray-400 text-gray-500">
+                    {new Date(c.created_at).toLocaleString()}
+                  </span>
+                </div>
+              </div>
+
+              {currentUser?.id === c.user_id && (
+                <div className="flex justify-end sm:justify-start">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700">
+                        <MoreVertical size={16} />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        className="text-red-600 cursor-pointer"
+                        onClick={() => handleDeleteComment(c.id)}
+                      >
+                        Deletar comentário
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               )}
-
-              <div>
-                <p className="text-sm font-semibold text-[#010b62] dark:text-white">
-                  {c.users?.name}
-                </p>
-                <p className="text-sm text-[#010b62] dark:text-white">
-                  {c.text}
-                </p>
-                <span className="text-xs dark:text-gray-400 text-gray-500">
-                  {new Date(c.created_at).toLocaleString()}
-                </span>
-              </div>
             </div>
-
-            {currentUser?.id === c.user_id && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700">
-                    <MoreVertical size={16} />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem
-                    className="text-red-600 cursor-pointer"
-                    onClick={() => handleDeleteComment(c.id)}
-                  >
-                    Deletar comentário
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
-          </div>
-        ))
+          ))}
+        </div>
       )}
     </div>
   );

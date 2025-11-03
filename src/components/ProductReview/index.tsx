@@ -3,7 +3,7 @@
 import React, { useEffect, useState, Dispatch, SetStateAction } from "react";
 import { Product } from "@/src/types/Product";
 import ProductGallery from "../ProductGallery";
-import ReviewForm from "../ReviewForm";
+import ReviewForm from "../CreateReviewForm";
 import StarRating from "../StarRating";
 import ProductCriteriaStars from "../ProductCriteriaRatings";
 import { formatRating } from "@/src/lib/formatRating";

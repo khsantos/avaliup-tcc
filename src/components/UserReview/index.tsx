@@ -303,115 +303,79 @@ export default function UserReviews({ productId }: UserReviewProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center ">
-        <h2 className="text-2xl font-bold text-[#010b62] dark:text-white mt-6">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+        <h2 className="text-2xl font-bold text-[#010b62] dark:text-white text-center md:text-left">
           Avaliações dos usuários
         </h2>
-        <div className="flex gap-6">
-          <div className="flex flex-col">
+
+        <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto justify-center">
+          <div className="flex flex-col w-full sm:w-auto">
             <label className="text-[#010b62] flex items-center gap-1 dark:text-white">
               Ordenar
-              <span className="inline-flex">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <path
-                    d="M7 15V5M7 5L4 8M7 5L10 8"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M13 5V15M13 15L16 12M13 15L10 12"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </span>
             </label>
-            <div className="relative">
-              <select
-                value={sortBy}
-                onChange={(e) =>
-                  setSortBy(
-                    e.target.value as "recent" | "high" | "low" | "useful"
-                  )
-                }
-                className="w-48 px-4 py-2 border border-[#010b62]/50 dark:border-[#FFFFFF]/50 rounded-[4px] text-[#64748b] bg-white dark:bg-[#030712] focus:outline-none hover:border-[#010b62] transition-colors appearance-none"
-              >
-                <option value="recent">Mais recentes</option>
-                <option value="high">Maior nota</option>
-                <option value="low">Menor nota</option>
-                <option value="useful">Mais úteis</option>
-              </select>
-            </div>
+            <select
+              value={sortBy}
+              onChange={(e) =>
+                setSortBy(
+                  e.target.value as "recent" | "high" | "low" | "useful"
+                )
+              }
+              className="w-full sm:w-48 px-4 py-2 border border-[#010b62]/50 dark:border-white/40 rounded-md text-[#64748b] bg-white dark:bg-[#030712] focus:outline-none"
+            >
+              <option value="recent">Mais recentes</option>
+              <option value="high">Maior nota</option>
+              <option value="low">Menor nota</option>
+              <option value="useful">Mais úteis</option>
+            </select>
           </div>
 
-          <div className="flex flex-col">
-            <label className="text-[#010b62] dark:text-white ">
+          <div className="flex flex-col w-full sm:w-auto">
+            <label className="text-[#010b62] dark:text-white">
               Filtrar por
             </label>
-            <div className="relative">
-              <select
-                value={filterRating ?? ""}
-                onChange={(e) =>
-                  setFilterRating(
-                    e.target.value === "" ? null : Number(e.target.value)
-                  )
-                }
-                className="w-48 px-4 py-2 border border-[#010b62]/50 rounded-[4px] dark:border-[#FFFFFF]/50 text-[#64748b] bg-white dark:bg-[#030712] focus:outline-none hover:border-[#010b62] transition-colors appearance-none"
-              >
-                <option value="">Todos</option>
-                <option value="5">5 estrelas</option>
-                <option value="4">4 estrelas</option>
-                <option value="3">3 estrelas</option>
-                <option value="2">2 estrelas</option>
-                <option value="1">1 estrela</option>
-              </select>
-              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">
-                <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
-                  <path
-                    d="M6 9l6 6 6-6"
-                    stroke="#64748b"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </span>
-            </div>
+            <select
+              value={filterRating ?? ""}
+              onChange={(e) =>
+                setFilterRating(
+                  e.target.value === "" ? null : Number(e.target.value)
+                )
+              }
+              className="w-full sm:w-48 px-4 py-2 border border-[#010b62]/50 dark:border-white/40 rounded-md text-[#64748b] bg-white dark:bg-[#030712] focus:outline-none"
+            >
+              <option value="">Todos</option>
+              <option value="5">5 estrelas</option>
+              <option value="4">4 estrelas</option>
+              <option value="3">3 estrelas</option>
+              <option value="2">2 estrelas</option>
+              <option value="1">1 estrela</option>
+            </select>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {reviews.length > 0 ? (
-          reviews.map((review) => {
-            const hasLiked = userVotes[review.id] === "like";
-            const hasDisliked = userVotes[review.id] === "dislike";
-            return (
-              <ReviewCard
-                key={review.id}
-                review={review}
-                variant="user"
-                setReviews={setReviews}
-                onOpenDetails={(rev) => {
-                  setSelectedReview(rev);
-                  setIsModalOpen(true);
-                }}
-                onVote={handleVote}
-                hasLiked={hasLiked}
-                hasDisliked={hasDisliked}
-                isExpanded={expandedIds.includes(review.id)}
-                onToggleExpand={handleToggleExpand}
-                showComments={openCommentsId === review.id}
-                onToggleComments={handleToggleComments}
-              />
-            );
-          })
+          reviews.map((review) => (
+            <ReviewCard
+              key={review.id}
+              review={review}
+              variant="user"
+              setReviews={setReviews}
+              onOpenDetails={(rev) => {
+                setSelectedReview(rev);
+                setIsModalOpen(true);
+              }}
+              onVote={handleVote}
+              hasLiked={userVotes[review.id] === "like"}
+              hasDisliked={userVotes[review.id] === "dislike"}
+              isExpanded={expandedIds.includes(review.id)}
+              onToggleExpand={handleToggleExpand}
+              showComments={openCommentsId === review.id}
+              onToggleComments={handleToggleComments}
+            />
+          ))
         ) : (
-          <div className="text-center py-6 col-span-2">
+          <div className="text-center py-6 col-span-full">
             {loading ? (
               <p className="text-gray-500">Carregando avaliações...</p>
             ) : (

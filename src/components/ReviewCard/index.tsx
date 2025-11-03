@@ -40,9 +40,9 @@ export function ReviewCard({
       className="h-full flex flex-col justify-between shadow-lg hover:shadow-2xl 
                  transition-transform hover:scale-102 dark:bg-[#030712] 
                  border border-[#010b62] dark:border-[#ffffff]/20 
-                 rounded-sm text-white"
+                 rounded-sm text-white max-w-full sm:max-w-2xl mx-auto"
     >
-      <CardContent className="p-4">
+      <CardContent className="p-4 sm:p-6 flex flex-col gap-3">
         {variant === "user" ? (
           <ReviewUserHeader review={review} onOpenDetails={onOpenDetails} />
         ) : (
@@ -58,7 +58,7 @@ export function ReviewCard({
           onToggleExpand={() => onToggleExpand?.(review.id)}
         />
 
-        <div className="">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
           <ReviewActions
             review={review}
             hasLiked={hasLiked}
@@ -71,19 +71,21 @@ export function ReviewCard({
         </div>
 
         {showComments && (
-          <ReviewComments
-            reviewId={review.id}
-            setReviews={setReviews}
-            onCommentAdded={() => {
-              setReviews?.((prev) =>
-                prev.map((r) =>
-                  r.id === review.id
-                    ? { ...r, comments: (r.comments || 0) + 1 }
-                    : r
-                )
-              );
-            }}
-          />
+          <div className="w-full mt-4">
+            <ReviewComments
+              reviewId={review.id}
+              setReviews={setReviews}
+              onCommentAdded={() => {
+                setReviews?.((prev) =>
+                  prev.map((r) =>
+                    r.id === review.id
+                      ? { ...r, comments: (r.comments || 0) + 1 }
+                      : r
+                  )
+                );
+              }}
+            />
+          </div>
         )}
       </CardContent>
     </Card>

@@ -14,32 +14,36 @@ export function ReviewContent({
   onToggleExpand,
 }: ReviewContentProps) {
   return (
-    <>
-      <div className="font-bold text-lg mb-1 text-[#010b62] dark:text-white">
+    <div className="space-y-2">
+      {/* Título */}
+      <div className="font-bold text-lg text-[#010b62] dark:text-white">
         {title}
       </div>
 
-      <div className="flex justify-between gap-4 mb-2">
+      {/* Conteúdo */}
+      <div className="flex flex-col sm:flex-row sm:gap-4">
+        {/* Texto */}
         <div className="flex-1 relative">
-          <div className="relative">
-            <p
-              className={`dark:text-white text-[#010b62] text-base text-justify leading-snug whitespace-pre-line pr-4 ${
-                isExpanded ? "" : "line-clamp-4 overflow-hidden"
-              }`}
-            >
-              {text}
-            </p>
+          <p
+            className={`dark:text-white text-[#010b62] text-base text-justify leading-snug whitespace-pre-line pr-0 sm:pr-4 ${
+              isExpanded ? "" : "line-clamp-4 overflow-hidden"
+            }`}
+          >
+            {text}
+          </p>
 
-            {!isExpanded && (
-              <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-[#ffffff] dark:from-[#030712] to-transparent pointer-events-none" />
-            )}
-          </div>
+          {!isExpanded && (
+            <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-[#ffffff] dark:from-[#030712] to-transparent pointer-events-none" />
+          )}
         </div>
 
-        {/* Futuro: espaço reservado para imagens */}
-        <div className="w-20 shrink-0 flex items-center justify-center"></div>
+        {/* Espaço reservado para imagens (pode ser usado futuramente) */}
+        <div className="w-full sm:w-20 mt-2 sm:mt-0 flex items-center justify-center shrink-0">
+          {/* Placeholder para imagens */}
+        </div>
       </div>
 
+      {/* Botão */}
       <Button
         variant="ghost"
         size="sm"
@@ -48,6 +52,6 @@ export function ReviewContent({
       >
         {isExpanded ? "Ver menos" : "Ver mais"}
       </Button>
-    </>
+    </div>
   );
 }
