@@ -203,7 +203,7 @@ export default function TwoFactorAuthDialog({
               <button
                 onClick={handleVerifyCode}
                 disabled={loading}
-                className="px-4 py-2 bg-[#010b62] hover:bg-[#1C2CA3] text-white rounded cursor-pointer"
+                className="px-4 py-2 bg-[#010b62] hover:bg-[#1C2CA3] dark:bg-[#01BAEF] hover:dark:bg-[#33C9F2] text-white rounded cursor-pointer"
               >
                 {loading ? "Verificando..." : "Verificar"}
               </button>
