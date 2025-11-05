@@ -20,7 +20,7 @@ export function ReviewUserHeader({
           </Avatar>
 
           <span className="font-bold text-lg text-[#010b62] dark:text-white">
-            {review.user_name || "Usuário Anônimo"}
+            {review.user_name || "Usuário Deletado"}
           </span>
         </div>
 

@@ -27,20 +27,31 @@ export function DeleteAccountDialog({ userId }: DeleteAccountDialogProps) {
     setDeleting(true);
 
     try {
-      const { error } = await supabase.from("users").delete().eq("id", userId);
-      if (error) throw error;
+      const response = await fetch(
+        "https://qjpnvzrmiibksdvxmzop.supabase.co/functions/v1/delete-user",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              (
+                await supabase.auth.getSession()
+              ).data.session?.access_token
+            }`,
+          },
+          body: JSON.stringify({ user_id: userId }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) throw new Error(data.error || "Erro ao excluir conta");
 
       await supabase.auth.signOut();
-
-      toast.success("Conta excluída com sucesso.");
-      setOpen(false);
+      toast.success("Conta excluída com sucesso!");
       window.location.href = "/";
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.error("Erro ao excluir conta:", error.message);
-      } else {
-        console.error("Erro desconhecido ao excluir conta:", error);
-      }
+    } catch (error) {
+      console.error("Erro:", error);
       toast.error("Erro ao excluir conta. Tente novamente.");
     } finally {
       setDeleting(false);

@@ -92,7 +92,9 @@ export default function Register() {
       });
 
       if (signUpError) {
-        toast.error(signUpError.message);
+        toast.error(
+          signUpError.message + "Aqui está o erro do supabase. signUpError"
+        );
         return;
       }
       if (!data?.user) {
