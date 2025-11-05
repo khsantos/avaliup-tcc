@@ -33,15 +33,19 @@ export function ReviewCard({
   isExpanded,
   onToggleExpand,
   setReviews,
+  showComments,
   onToggleComments,
-  showComments = false,
 }: ReviewCardProps) {
   return (
     <Card
-      className="h-full flex flex-col justify-between shadow-lg hover:shadow-2xl 
-                 transition-transform hover:scale-102 dark:bg-[#030712] 
-                 border border-[#010b62] dark:border-[#ffffff]/20 
-                 rounded-sm text-white max-w-full sm:max-w-2xl mx-auto"
+      className="flex flex-col justify-between shadow-lg hover:shadow-2xl 
+             transition-transform hover:scale-102 dark:bg-[#030712] 
+             border border-[#010b62] dark:border-[#ffffff]/20 
+             rounded-sm text-white 
+             w-full sm:max-w-2xl 
+             min-h-[300px] sm:min-h-[400px] 
+             h-auto 
+             mx-auto"
     >
       <CardContent className="p-4 sm:p-6 flex flex-col gap-3">
         {variant === "user" ? (

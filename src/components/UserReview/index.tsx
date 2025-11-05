@@ -17,7 +17,6 @@ type UserReviewProps = {
 export default function UserReviews({ productId }: UserReviewProps) {
   const [reviews, setReviews] = useState<UserReview[]>([]);
   const [loading, setLoading] = useState(true);
-  const [expandedIds, setExpandedIds] = useState<string[]>([]);
   const [userVotes, setUserVotes] = useState<
     Record<string, "like" | "dislike" | null>
   >({});
@@ -30,10 +29,14 @@ export default function UserReviews({ productId }: UserReviewProps) {
   const [filterRating, setFilterRating] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [openCommentsId, setOpenCommentsId] = useState<string | null>(null);
+
+  const [expandedIds, setExpandedIds] = useState<string[]>([]);
+  const [openCommentsIds, setOpenCommentsIds] = useState<string[]>([]);
 
   const handleToggleComments = (id: string) => {
-    setOpenCommentsId((prev) => (prev === id ? null : id));
+    setOpenCommentsIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
   };
 
   const REVIEWS_PER_PAGE = 8;
@@ -299,12 +302,6 @@ export default function UserReviews({ productId }: UserReviewProps) {
     setCurrentPage(page);
   };
 
-  const handleToggleExpand = (id: string) => {
-    setExpandedIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-    );
-  };
-
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
@@ -373,8 +370,14 @@ export default function UserReviews({ productId }: UserReviewProps) {
               hasLiked={userVotes[review.id] === "like"}
               hasDisliked={userVotes[review.id] === "dislike"}
               isExpanded={expandedIds.includes(review.id)}
-              onToggleExpand={handleToggleExpand}
-              showComments={openCommentsId === review.id}
+              onToggleExpand={(id) =>
+                setExpandedIds((prev) =>
+                  prev.includes(id)
+                    ? prev.filter((x) => x !== id)
+                    : [...prev, id]
+                )
+              }
+              showComments={openCommentsIds.includes(review.id)}
               onToggleComments={handleToggleComments}
             />
           ))

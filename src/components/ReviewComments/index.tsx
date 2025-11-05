@@ -157,7 +157,7 @@ export function ReviewComments({
                   <Image
                     src={c.users.profile_img}
                     alt="user"
-                    className="w-10 h-10 rounded-full border border-[#010b62]"
+                    className="w-10 h-10 border-[#010b62] text-[#010b62] dark:text-[#01BAEF]/70 border dark:border-[#01BAEF]/70"
                     width={40}
                     height={40}
                   />
@@ -171,7 +171,7 @@ export function ReviewComments({
                 )}
 
                 <div className="flex-1 flex flex-col">
-                  <p className="text-sm font-semibold text-[#010b62] dark:text-white">
+                  <p className="text-sm font-semibold text-[#010b62] comment-bubble dark:text-white">
                     {c.users?.name}
                   </p>
 

@@ -3,19 +3,33 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --font-sans: 'Ubuntu Sans', system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-sans: "Ubuntu Sans", system-ui, -apple-system, "Segoe UI", Roboto,
+    Arial, sans-serif;
 }
 
 /* Oculta scrollbar em navegadores modernos */
-.no-scrollbar::-webkit-scrollbar { display: none; }
-.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
 
 /* Utilities extras */
 @layer utilities {
-  .animate-fade-in { animation: fade-in 0.4s ease-out; }
+  .animate-fade-in {
+    animation: fade-in 0.4s ease-out;
+  }
   @keyframes fade-in {
-    from { opacity: 0; transform: translateY(-6px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }
 
@@ -164,6 +178,11 @@
 }
 
 @layer base {
-  * { @apply border-border outline-ring/50; }
-  body { @apply bg-background text-foreground font-sans; font-family: var(--font-ubuntu-sans), 'Ubuntu Sans', Ubuntu, sans-serif; }
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+    font-family: var(--font-ubuntu-sans), "Ubuntu Sans", Ubuntu, sans-serif;
+  }
 }
