@@ -1,6 +1,6 @@
 "use client";
 
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useSupabase } from "@/src/contexts/supabase-provider";
 import { useFetchComments } from "@/src/hooks/useFetchComments";
 import { Button } from "../ui/button";
@@ -15,13 +15,11 @@ import {
 } from "../ui/dropdown-menu";
 import { MoreVertical } from "lucide-react";
 import type { User } from "@supabase/supabase-js";
-import { UserReview } from "@/src/types/UserReview";
 import { AchievementBadges } from "../AchievementsBadges";
 
 interface ReviewCommentsProps {
   reviewId: string;
   onCommentAdded?: () => void;
-  setReviews?: Dispatch<SetStateAction<UserReview[]>>;
 }
 
 export function ReviewComments({
@@ -30,9 +28,11 @@ export function ReviewComments({
 }: ReviewCommentsProps) {
   const { supabase } = useSupabase();
   const { comments, loading, setComments } = useFetchComments(reviewId);
+
   const [newComment, setNewComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     const getUser = async () => {
@@ -44,21 +44,20 @@ export function ReviewComments({
     getUser();
   }, [supabase]);
 
-  const handleAddComment = async () => {
+  const handleAddComment = useCallback(async () => {
     if (!newComment.trim()) {
       toast.error("Digite algo antes de comentar.");
       return;
     }
 
     setIsSubmitting(true);
-
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
     if (!user) {
-      setIsSubmitting(false);
       toast.error("Você precisa estar logado para comentar.");
+      setIsSubmitting(false);
       return;
     }
 
@@ -67,59 +66,76 @@ export function ReviewComments({
       .insert([{ review_id: reviewId, user_id: user.id, text: newComment }])
       .select("*, users(name, profile_img)");
 
-    if (error) {
+    if (error || !data) {
       toast.error("Erro ao adicionar comentário. Tente novamente.");
       setIsSubmitting(false);
       return;
     }
 
-    if (data) {
-      const updatedComments = [data[0], ...comments];
-      setComments(updatedComments);
-      setNewComment("");
-      await supabase
-        .from("reviews")
-        .update({ comments: updatedComments.length })
-        .eq("id", reviewId);
-      if (onCommentAdded) onCommentAdded();
-      toast.success("Comentário adicionado com sucesso!");
-    }
+    setComments((prev) =>
+      [...prev, data[0]].sort(
+        (a, b) =>
+          new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+      )
+    );
+    setNewComment("");
 
-    setIsSubmitting(false);
-  };
-
-  const handleDeleteComment = async (commentId: string) => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      toast.error(
-        "Você precisa estar logado para deletar comentários próprios."
-      );
-      return;
-    }
-
-    const { error } = await supabase
-      .from("review_comments")
-      .delete()
-      .eq("id", commentId)
-      .eq("user_id", user.id);
-
-    if (error) {
-      toast.error("Ocorreu um problema ao tentar deletar seu comentário.");
-      return;
-    }
-
-    const updatedComments = comments.filter((c) => c.id !== commentId);
-    setComments(updatedComments);
     await supabase
       .from("reviews")
-      .update({ comments: updatedComments.length })
+      .update({ comments: comments.length + 1 })
       .eq("id", reviewId);
 
-    toast.success("Comentário deletado com sucesso");
-  };
+    toast.success("Comentário adicionado com sucesso!");
+    onCommentAdded?.();
+    setIsSubmitting(false);
+  }, [
+    newComment,
+    reviewId,
+    supabase,
+    setComments,
+    comments.length,
+    onCommentAdded,
+  ]);
+
+  const handleDeleteComment = useCallback(
+    async (commentId: string) => {
+      setIsDeleting(true);
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        toast.error(
+          "Você precisa estar logado para deletar comentários próprios."
+        );
+        setIsDeleting(false);
+        return;
+      }
+
+      const { error } = await supabase
+        .from("review_comments")
+        .delete()
+        .eq("id", commentId)
+        .eq("user_id", user.id);
+
+      if (error) {
+        toast.error("Ocorreu um problema ao tentar deletar seu comentário.");
+        setIsDeleting(false);
+        return;
+      }
+
+      setComments((prev) => prev.filter((c) => c.id !== commentId));
+
+      await supabase
+        .from("reviews")
+        .update({ comments: comments.length - 1 })
+        .eq("id", reviewId);
+
+      toast.success("Comentário deletado com sucesso!");
+      setIsDeleting(false);
+    },
+    [supabase, reviewId, setComments, comments.length]
+  );
 
   return (
     <div className="mt-4 pt-4 border-t border-[#010b62]/20 dark:border-white/20 space-y-3">
@@ -169,17 +185,13 @@ export function ReviewComments({
                     <AvatarFallback>{c.users?.name?.charAt(0)}</AvatarFallback>
                   </Avatar>
                 )}
-
                 <div className="flex-1 flex flex-col">
-                  <p className="text-sm font-semibold text-[#010b62] comment-bubble dark:text-white">
+                  <p className="text-sm font-semibold text-[#010b62] dark:text-white">
                     {c.users?.name}
                   </p>
-
-                  {/* Badges de conquistas */}
                   {c.user_id && (
                     <AchievementBadges userId={c.user_id} size="sm" />
                   )}
-
                   <p className="text-sm text-[#010b62] dark:text-white break-words mt-1">
                     {c.text}
                   </p>
@@ -201,8 +213,9 @@ export function ReviewComments({
                       <DropdownMenuItem
                         className="text-red-600 cursor-pointer"
                         onClick={() => handleDeleteComment(c.id)}
+                        disabled={isDeleting}
                       >
-                        Deletar comentário
+                        {isDeleting ? "Deletando..." : "Deletar comentário"}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>

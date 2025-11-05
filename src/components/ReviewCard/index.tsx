@@ -8,6 +8,7 @@ import ReviewActions from "../ReviewActions";
 import { ReviewComments } from "../ReviewComments";
 import { ReviewOptions } from "../ReviewOptions";
 import ReviewMeta from "../ReviewMeta";
+import { useState } from "react";
 
 type ReviewCardProps = {
   review: UserReview;
@@ -30,12 +31,11 @@ export function ReviewCard({
   onVote,
   hasLiked,
   hasDisliked,
-  isExpanded,
-  onToggleExpand,
   setReviews,
-  showComments,
-  onToggleComments,
 }: ReviewCardProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [showComments, setShowComments] = useState(false);
+
   return (
     <Card
       className="flex flex-col justify-between shadow-lg hover:shadow-2xl 
@@ -60,7 +60,7 @@ export function ReviewCard({
           title={review.title}
           text={review.text}
           isExpanded={isExpanded}
-          onToggleExpand={() => onToggleExpand?.(review.id)}
+          onToggleExpand={() => setIsExpanded((prev) => !prev)}
         />
 
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
@@ -69,7 +69,7 @@ export function ReviewCard({
             hasLiked={hasLiked}
             hasDisliked={hasDisliked}
             onVote={onVote}
-            onToggleComments={() => onToggleComments?.(review.id)}
+            onToggleComments={() => setShowComments((prev) => !prev)}
           />
 
           <ReviewOptions review={review} setReviews={setReviews} />
@@ -79,7 +79,6 @@ export function ReviewCard({
           <div className="w-full mt-4">
             <ReviewComments
               reviewId={review.id}
-              setReviews={setReviews}
               onCommentAdded={() => {
                 setReviews?.((prev) =>
                   prev.map((r) =>

@@ -30,15 +30,6 @@ export default function UserReviews({ productId }: UserReviewProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  const [expandedIds, setExpandedIds] = useState<string[]>([]);
-  const [openCommentsIds, setOpenCommentsIds] = useState<string[]>([]);
-
-  const handleToggleComments = (id: string) => {
-    setOpenCommentsIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-    );
-  };
-
   const REVIEWS_PER_PAGE = 8;
 
   type ReviewVote = {
@@ -369,16 +360,6 @@ export default function UserReviews({ productId }: UserReviewProps) {
               onVote={handleVote}
               hasLiked={userVotes[review.id] === "like"}
               hasDisliked={userVotes[review.id] === "dislike"}
-              isExpanded={expandedIds.includes(review.id)}
-              onToggleExpand={(id) =>
-                setExpandedIds((prev) =>
-                  prev.includes(id)
-                    ? prev.filter((x) => x !== id)
-                    : [...prev, id]
-                )
-              }
-              showComments={openCommentsIds.includes(review.id)}
-              onToggleComments={handleToggleComments}
             />
           ))
         ) : (
