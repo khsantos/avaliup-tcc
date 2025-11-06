@@ -57,6 +57,13 @@ export default function Login() {
     setError("");
     setLoading(true);
 
+    if (!email.trim() || !password.trim()) {
+      setLoading(false);
+      setError("Preencha o e-mail e a senha para continuar.");
+      toast.error("Preencha o e-mail e a senha para continuar.");
+      return;
+    }
+
     try {
       const { data: signInData, error } =
         await supabase.auth.signInWithPassword({
