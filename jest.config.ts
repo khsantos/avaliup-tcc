@@ -8,6 +8,19 @@ const config: Config = {
   collectCoverage: true,
   coverageDirectory: "coverage",
   coverageProvider: "v8",
+
+  transform: {
+    "^.+\\.(t|j)sx?$": ["ts-jest", { tsconfig: "tsconfig.test.json" }],
+  },
+
+  globals: {
+    "ts-jest": {
+      tsconfig: "tsconfig.test.json",
+      isolatedModules: true,
+      useESM: false,
+    },
+  },
+
   coveragePathIgnorePatterns: ["/node_modules/", "/.next/"],
   testPathIgnorePatterns: ["/node_modules/", "/.next/"],
   moduleNameMapper: {

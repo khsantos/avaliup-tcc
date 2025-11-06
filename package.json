@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest"
+    "test": "jest --silent"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.11",
