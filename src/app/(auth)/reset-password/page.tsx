@@ -71,6 +71,11 @@ export default function ResetPassword() {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
+    if (!password || !confirmPassword) {
+      toast.error("Preencha ambos os campos de senha.");
+      return;
+    }
+
     if (password !== confirmPassword) {
       toast.error("As senhas não coincidem.");
       return;
@@ -90,12 +95,18 @@ export default function ResetPassword() {
 
     setLoading(true);
     const { error } = await supabase.auth.updateUser({ password });
+    if (error?.message?.includes("different from the old password")) {
+      toast.error("A nova senha deve ser diferente da atual.");
+      return;
+    }
+
     setLoading(false);
 
     if (error) {
       toast.error("Erro ao redefinir a senha.");
     } else {
-      toast.success("Senha redefinida com sucesso!");
+      await supabase.auth.signOut();
+      toast.success("Senha redefinida com sucesso! Faça login novamente.");
       router.push("/signIn");
     }
   }

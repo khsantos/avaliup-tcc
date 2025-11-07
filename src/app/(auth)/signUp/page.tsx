@@ -83,6 +83,17 @@ export default function Register() {
         return;
       }
 
+      const { data: existingEmail } = await supabase
+        .from("users")
+        .select("id")
+        .eq("email", email.trim())
+        .maybeSingle();
+
+      if (existingEmail) {
+        toast.error("E-mail já está em uso.");
+        return;
+      }
+
       const { data, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
@@ -124,6 +135,7 @@ export default function Register() {
       toast.success(
         "Conta criada com sucesso! Verifique seu e-mail para ativar a conta."
       );
+
       router.push("/confirmation");
     } catch (err: unknown) {
       console.error("Erro ao criar usuário:", err);

@@ -15,6 +15,11 @@ export default function ForgotPassword() {
     const formData = new FormData(e.currentTarget);
     const email = formData.get("email") as string;
 
+    if (!email.includes("@") || !email.includes(".")) {
+      toast.error("E-mail inválido.");
+      return;
+    }
+
     setLoading(true);
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/reset-password`,
@@ -55,7 +60,7 @@ export default function ForgotPassword() {
             <input
               id="email"
               name="email"
-              type="email"
+              type="text"
               required
               placeholder="Insira seu e-mail"
               className="w-full px-3 py-2 mt-1 border-2 rounded-md border-[#010b62] focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-white"
