@@ -73,7 +73,7 @@ export default function CategoryPage({ slug }: CategoryPageProps) {
             Top 10
           </span>
           <h1 className="text-3xl font-bold text-[#010b62] dark:text-white mb-6 text-left">
-            {slug.charAt(0).toUpperCase() + slug.slice(1)} Gamers Custo-Benefício
+            {slug.charAt(0).toUpperCase() + slug.slice(1)} Gamers
           </h1>
           <div className="-ml-1">
             <ProductCarousel products={topProducts} />
@@ -90,7 +90,7 @@ export default function CategoryPage({ slug }: CategoryPageProps) {
             <section className="px-4 py-10 flex justify-center">
               <div className="w-full px-4 py-8">
                 <h2 className="text-xl font-semibold text-[#010b62] dark:text-white mb-4">
-                  Outros {slug} gamers custo-benefício
+                  Outros {slug} gamers
                 </h2>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">

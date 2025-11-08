@@ -213,25 +213,8 @@ export default function PriceMarketplaceComparison({
               >
                 <Card
                   className={`relative overflow-hidden rounded-md border transition-all duration-200 ease-in-out group-hover:scale-[1.02] group-hover:shadow-lg
-                    flex flex-col justify-between h-full cursor-pointer
-                    ${
-                      store.is_on_sale
-                        ? "border-[#FFB24B] bg-white dark:bg-[#010a24]"
-                        : "border-[#010b62] dark:border-white dark:bg-[#010a24]"
-                    }`}
+                    flex flex-col justify-between h-full cursor-pointer border-[#010b62] dark:border-white dark:bg-[#030712] bg-white`}
                 >
-                  {store.is_on_sale && (
-                    <div
-                      className="absolute top-0 left-0 right-0 bg-[#FFB24B] text-white text-md font-bold text-center py-1 z-10"
-                      aria-hidden={false}
-                    >
-                      <span className="inline-flex items-center justify-center gap-1">
-                        <BiSolidDiscount size={16} />
-                        <span className="sr-only">Promoção:</span>
-                        Promoção
-                      </span>
-                    </div>
-                  )}
 
                   <CardContent className="pt-6 px-3 pb-3 flex flex-col min-h-[220px] md:min-h-[240px]">
                     <div className="flex gap-3 items-start">

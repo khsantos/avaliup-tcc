@@ -18,7 +18,7 @@ export async function generateMetadata({
 
   return {
     title: `${categoryName} | Avali.up`,
-    description: `Veja os melhores ${categoryName} gamers custo-benefício.`,
+    description: `Veja os melhores ${categoryName} gamers.`,
   };
 }
 

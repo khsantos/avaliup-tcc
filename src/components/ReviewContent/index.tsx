@@ -13,6 +13,7 @@ export function ReviewContent({
   isExpanded = false,
   onToggleExpand,
 }: ReviewContentProps) {
+  const canExpand = text.split("\n").length > 4 || text.length > 200;
   return (
     <div className="space-y-2">
       <div className="font-bold text-lg text-[#010b62] dark:text-white">
@@ -21,14 +22,13 @@ export function ReviewContent({
 
       <div className="relative flex flex-col">
         <p
-          className={`dark:text-white text-[#010b62] text-base text-justify leading-snug whitespace-pre-line transition-all ${
-            isExpanded ? "" : "line-clamp-4 overflow-hidden"
-          }`}
+          className={`dark:text-white text-[#010b62] text-base text-justify leading-snug whitespace-pre-line transition-all ${isExpanded ? "" : "line-clamp-4 overflow-hidden"
+            }`}
         >
           {text}
         </p>
 
-        {!isExpanded && (
+        {!isExpanded && canExpand && (
           <div
             className="absolute bottom-0 left-0 w-full h-12 pointer-events-none 
                           bg-gradient-to-t from-white dark:from-[#030712] to-transparent"
@@ -36,7 +36,7 @@ export function ReviewContent({
         )}
       </div>
 
-      {text.split("\n").length > 4 || text.length > 200 ? (
+      {canExpand ? (
         <div className="flex justify-end">
           <Button
             variant="ghost"

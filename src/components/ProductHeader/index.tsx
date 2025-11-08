@@ -20,9 +20,9 @@ export default function ProductHeader({
   const getRankingText = (rank: number, category: string) => {
     switch (category.toLowerCase()) {
       case "mouse":
-        return `Top #${rank} - Mouses gamers custo-benefício`;
+        return `Top #${rank} - Mouses gamers`;
       case "teclado":
-        return `Top #${rank} - Teclados mecânicos custo-benefício`;
+        return `Top #${rank} - Teclados mecânicos`;
       case "headset":
         return `Top #${rank} - Headsets gamers recomendados`;
       default:

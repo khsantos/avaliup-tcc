@@ -205,7 +205,7 @@ export function ReviewComments({
                 <div className="flex justify-end sm:justify-start">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <button className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700">
+                      <button className="p-1 text-[#010b62] dark:text-[#01BAEF] rounded hover:bg-gray-200 dark:hover:bg-gray-700">
                         <MoreVertical size={16} />
                       </button>
                     </DropdownMenuTrigger>

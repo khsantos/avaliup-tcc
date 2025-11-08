@@ -135,7 +135,7 @@ export default function ProductLayout({ product }: { product: Product }) {
   );
 
   return (
-    <div className="max-w-9xl mx-auto px-4 sm:px-6 py-10">
+    <div className="max-w-9xl mx-auto py-10">
       <AnimatePresence mode="sync">
         {!showForm ? (
           <motion.div
