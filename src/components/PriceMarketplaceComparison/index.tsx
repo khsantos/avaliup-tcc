@@ -1,7 +1,6 @@
 import Image from "next/image";
 import { Button } from "@/src/components/ui/button";
 import { Card, CardContent } from "@/src/components/ui/card";
-import { BiSolidDiscount } from "react-icons/bi";
 import { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/src/lib/supabase";
 import { Product_Prices } from "@/src/types/Product_Prices";
