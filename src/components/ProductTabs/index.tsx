@@ -58,7 +58,7 @@ export default function ProductTabs({ productId }: ProductTabsProps) {
   };
 
   return (
-    <div className="max-w-9xl mx-auto p-6">
+    <div className="max-w-9xl mx-auto">
       <div className="mb-6">
         <nav className="flex border-b border-gray-300">
           {tabs.map((tab) => {
@@ -67,11 +67,10 @@ export default function ProductTabs({ productId }: ProductTabsProps) {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex-1 flex flex-col items-center justify-end pb-1 text-xs sm:text-sm font-medium transition-colors
-                  ${
-                    isActive
-                      ? "text-[#010b62] dark:text-white"
-                      : "text-gray-600 hover:text-gray-700"
+                className={`flex-1 flex flex-col items-center justify-end pb-1 text-xs sm:text-sm font-medium transition-colors cursor-pointer
+                  ${isActive
+                    ? "text-[#010b62] dark:text-white"
+                    : "text-gray-600 hover:text-gray-700"
                   }
                 `}
                 style={{

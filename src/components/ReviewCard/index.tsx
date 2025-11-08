@@ -47,7 +47,7 @@ export function ReviewCard({
              h-auto 
              mx-auto"
     >
-      <CardContent className="p-4 sm:p-6 flex flex-col gap-3">
+      <CardContent className="px-4 sm:px-6 flex flex-col gap-3">
         {variant === "user" ? (
           <ReviewUserHeader review={review} onOpenDetails={onOpenDetails} />
         ) : (

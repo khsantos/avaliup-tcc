@@ -107,7 +107,7 @@ export default function ProductCriteriaStars({
         <div className="flex-2 -space-y-0.5 max-w-[400px] min-w-[200px] w-1/2">
           {ratingBreakdown.map((item) => (
             <div key={item.stars} className="flex items-center gap-2">
-              <div className="flex-1 bg-gray-200 rounded-full h-2">
+              <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                 <div
                   className="bg-[#010b62] dark:bg-[#01BAEF] h-2 rounded-full"
                   style={{

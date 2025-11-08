@@ -10,11 +10,11 @@ import { Product } from "@/src/types/Product";
 const PLACEHOLDER_IMAGE = "/placeholder-image.webp";
 
 const CATEGORIES = [
-  { key: "mouse", title: "Mouses gamers custo-benefício" },
-  { key: "teclado", title: "Teclados gamers custo-benefício" },
-  { key: "headset", title: "Headsets gamers custo-benefício" },
-  { key: "mousepad", title: "Mousepads gamers custo-benefício" },
-  { key: "controle", title: "Controles gamers custo-benefício" },
+  { key: "mouse", title: "Mouses gamers" },
+  { key: "teclado", title: "Teclados gamers" },
+  { key: "headset", title: "Headsets gamers" },
+  { key: "mousepad", title: "Mousepads gamers" },
+  { key: "controle", title: "Controles gamers" },
 ] as const;
 
 function mapToProduct(item: Product): Product {

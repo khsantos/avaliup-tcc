@@ -66,17 +66,20 @@ export default function ReviewForm({
 
   useEffect(() => {
     const handleResize = () => {
-      const width = window.innerWidth;
-      if (width < 480) setStarSize(16);
-      else if (width < 768) setStarSize(18);
-      else if (width < 1024) setStarSize(20);
-      else setStarSize(22);
+      const container = document.querySelector(".grid");
+      if (container) {
+        const containerWidth = container.clientWidth;
+        const starCount = ratingFields.length;
+        const maxStarSize = Math.floor(containerWidth / (starCount * 5)); // 5 estrelas por critério
+        const adjustedStarSize = Math.min(maxStarSize, 22); // Limita o tamanho máximo a 22
+        setStarSize(Math.max(adjustedStarSize, 18)); // Define um tamanho mínimo de 18 para mobile
+      }
     };
 
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  }, [ratingFields]);
 
   async function fetchUpdatedProduct() {
     const { data, error } = await supabase
@@ -221,9 +224,8 @@ export default function ReviewForm({
 
       <form
         onSubmit={submitReview}
-        className={`space-y-6 ${
-          !session ? "pointer-events-none select-none opacity-60" : ""
-        }`}
+        className={`space-y-6 ${!session ? "pointer-events-none select-none opacity-60" : ""
+          }`}
       >
         {[
           { id: "title", label: "Título da avaliação", type: "text" },
@@ -252,10 +254,9 @@ export default function ReviewForm({
                   }))
                 }
                 className={`w-full border rounded-md px-3 pt-5 pb-2 text-sm bg-white dark:bg-[#030712] text-[#010b62] dark:text-white
-                  ${
-                    errorMessages[id as keyof FormData]
-                      ? "border-red-600 focus:ring-red-600"
-                      : "border-[#010b62]/50 dark:border-[#01BAEF] focus:ring-[#010b62] dark:focus:ring-[#01BAEF]"
+                  ${errorMessages[id as keyof FormData]
+                    ? "border-red-600 focus:ring-red-600"
+                    : "border-[#010b62]/50 dark:border-[#01BAEF] focus:ring-[#010b62] dark:focus:ring-[#01BAEF]"
                   }`}
               />
             ) : (
@@ -273,10 +274,9 @@ export default function ReviewForm({
                   }))
                 }
                 className={`w-full border rounded-md px-3 pt-5 pb-2 text-sm bg-white dark:bg-[#030712] text-[#010b62] dark:text-white
-                  ${
-                    errorMessages[id as keyof FormData]
-                      ? "border-red-600 focus:ring-red-600"
-                      : "border-[#010b62]/50 dark:border-[#01BAEF] focus:ring-2 focus:ring-[#010b62] dark:focus:ring-[#01BAEF]"
+                  ${errorMessages[id as keyof FormData]
+                    ? "border-red-600 focus:ring-red-600"
+                    : "border-[#010b62]/50 dark:border-[#01BAEF] focus:ring-2 focus:ring-[#010b62] dark:focus:ring-[#01BAEF]"
                   } ${type === "number" ? "no-spinner" : ""}`}
               />
             )}
@@ -300,9 +300,8 @@ export default function ReviewForm({
           {ratingFields.map(({ label, key }) => (
             <div
               key={key}
-              className={`flex flex-col text-left min-w-0 ${
-                key === "durability" ? "lg:col-span-4" : ""
-              }`}
+              className={`flex flex-col text-left min-w-0 ${key === "durability" ? "lg:col-span-4" : ""
+                }`}
             >
               <label className="text-sm text-[#010b62] dark:text-white mb-1">
                 {label}

@@ -38,7 +38,7 @@ export default function ProductActions({
         onClick={onToggleFavorite}
         className={
           isWishlisted
-            ? "text-white bg-[#010b62] dark:text-[#01BAEF] dark:border-[#01BAEF] cursor-pointer"
+            ? "text-white bg-[#010b62] dark:text-[#01BAEF] dark:border-[#01BAEF] cursor-pointer hover:bg-[#1C2CA3] hover:text-white"
             : "text-[#010b62] border border-[#010b62] hover:text-white hover:bg-[#010b62] dark:bg-[#030712] cursor-pointer dark:text-white dark:border-white"
         }
       >

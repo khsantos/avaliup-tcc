@@ -85,7 +85,7 @@ export default function PriceNotificationDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[728px] bg-gray-100 border-white dark:bg-[#030712] dark:border-white">
+      <DialogContent className="w-[95vw] max-w-[728px] bg-gray-100 border-white dark:bg-[#030712] dark:border-white p-4 sm:p-6">
         <DialogHeader>
           <DialogTitle className="dark:text-white text-[#010b62]">
             Alerta de preços
@@ -97,12 +97,12 @@ export default function PriceNotificationDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex gap-4 mt-4 justify-center">
-          <div className="flex flex-col items-center">
+        <div className="flex flex-col sm:flex-row gap-4 mt-4 justify-center sm:justify-between">
+          <div className="flex flex-col items-stretch sm:items-center w-full sm:w-auto">
             <label className="text-sm font-medium dark:text-white mb-1 text-center text-[#010b62]">
               Valor mínimo
             </label>
-            <div className="flex w-52 border dark:border-white border-[#010b62] rounded-md overflow-hidden">
+            <div className="flex w-full sm:w-52 border dark:border-white border-[#010b62] rounded-md overflow-hidden">
               <span className="px-2 py-2 text-[#010b62] dark:text-white flex items-center justify-center">
                 R$
               </span>
@@ -116,11 +116,11 @@ export default function PriceNotificationDialog({
             </div>
           </div>
 
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-stretch sm:items-center w-full sm:w-auto">
             <label className="text-sm font-medium dark:text-white text-[#010b62] mb-1 text-center">
               Valor máximo
             </label>
-            <div className="flex w-52 border dark:border-white border-[#010b62] rounded-md overflow-hidden">
+            <div className="flex w-full sm:w-52 border dark:border-white border-[#010b62] rounded-md overflow-hidden">
               <span className="px-2 py-2 text-[#010b62] dark:text-white flex items-center justify-center">
                 R$
               </span>
@@ -136,18 +136,18 @@ export default function PriceNotificationDialog({
         </div>
 
         <DialogFooter>
-          <div className="flex justify-start gap-2 w-full">
+          <div className="flex flex-col sm:flex-row justify-stretch sm:justify-start gap-2 w-full">
             <Button
               onClick={handleSubmit}
               disabled={loading}
-              className="bg-[#010b62] hover:bg-[#1C2CA3] dark:bg-[#01BAEF] px-10 dark:hover:bg-[#33C9F2] dark:text-white"
+              className="bg-[#010b62] hover:bg-[#1C2CA3] dark:bg-[#01BAEF] px-10 w-full sm:w-auto dark:hover:bg-[#33C9F2] dark:text-white"
             >
               {loading ? "Salvando..." : "Confirmar"}
             </Button>
             <Button
               variant="outline"
               onClick={() => onOpenChange(false)}
-              className="border border-[#010b62] text-[#010b62] px-10 ml-2 hover:bg-gray-200 hover:text-[#1C2CA3] dark:bg-[#030712] dark:text-white dark:hover:text-gray-300 "
+              className="border border-[#010b62] text-[#010b62] px-10 sm:ml-2 w-full sm:w-auto hover:bg-gray-200 hover:text-[#1C2CA3] dark:bg-[#030712] dark:text-white dark:hover:text-gray-300"
             >
               Cancelar
             </Button>

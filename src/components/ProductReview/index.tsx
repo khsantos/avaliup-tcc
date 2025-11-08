@@ -63,9 +63,9 @@ export default function ProductReviewView({
   const getRankingText = (rank: number, category: string) => {
     switch (category.toLowerCase()) {
       case "mouse":
-        return `Top #${rank} - Mouses gamers custo-benefício`;
+        return `Top #${rank} - Mouses gamers`;
       case "teclado":
-        return `Top #${rank} - Teclados mecânicos custo-benefício`;
+        return `Top #${rank} - Teclados mecânicos`;
       case "headset":
         return `Top #${rank} - Headsets gamers recomendados`;
       default:
@@ -86,7 +86,7 @@ export default function ProductReviewView({
       </header>
 
       <div className="flex flex-col lg:flex-row gap-10 items-start w-full py-2">
-        <div className="space-y-8 px-4 w-full">
+        <div className="space-y-8 w-full">
           <div className="bg-[#010b62] dark:bg-[#01BAEF] text-white px-4 py-2 rounded-md flex items-center gap-2 w-full">
             <Award className="w-5 h-5 text-[#FFB24B]" />
             <span className="text-xl font-bold dark:text-white">
