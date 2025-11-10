@@ -34,6 +34,7 @@ function ProductCard({ id, rank, name, rating, image }: Product) {
       className={`border border-[#010b62] dark:border-white rounded-xl p-4 box-border text-white flex flex-col justify-between cursor-pointer transition-all duration-200 hover:ring-2 hover:ring-offset-0 hover:ring-[#010b62]/30 dark:hover:ring-white/30 hover:ring-offset-white dark:hover:ring-offset-[#030712]
         ${cardLoading ? "opacity-70 pointer-events-none" : ""}
       `}
+      data-testid="related-product"
     >
       {rank && rank <= 10 && (
         <div className="text-[#010b62] dark:text-white mb-2 text-sm font-bold flex items-center">
@@ -80,6 +81,7 @@ function ProductCard({ id, rank, name, rating, image }: Product) {
       <button
         disabled={btnLoading}
         onClick={handleButtonClick}
+        data-testid="view-reviews-{id}"
         className={`bg-[#010b62] hover:bg-[#010b62]/80 dark:bg-[#01BAEF] dark:hover:bg-[#01BAEF]/80 transition text-white font-medium text-sm px-4 py-2 rounded w-full mt-2 flex justify-center items-center cursor-pointer`}
       >
         {btnLoading ? (

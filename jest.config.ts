@@ -28,7 +28,7 @@ const config: Config = {
   },
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
-  reporters: ["default"],
+  reporters: ["default", "<rootDir>/minimalReporter.js"],
   testMatch: ["**/__tests__/**/*.(test|spec).[jt]s?(x)"],
 };
 

@@ -26,6 +26,8 @@ export default function StarRatingInput({
           onMouseEnter={() => setHovered(star)}
           onMouseLeave={() => setHovered(0)}
           className="focus:outline-none"
+          data-testid="star-icon"
+          aria-label={`${star} estrelas`}
         >
           <Star
             className={`transition-colors ${

@@ -302,10 +302,14 @@ export default function UserReviews({ productId }: UserReviewProps) {
 
         <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto justify-center">
           <div className="flex flex-col w-full sm:w-auto">
-            <label className="text-[#010b62] flex items-center gap-1 dark:text-white">
+            <label
+              htmlFor="sortBy"
+              className="text-[#010b62] flex items-center gap-1 dark:text-white"
+            >
               Ordenar
             </label>
             <select
+              id="sortBy"
               value={sortBy}
               onChange={(e) =>
                 setSortBy(
@@ -322,10 +326,14 @@ export default function UserReviews({ productId }: UserReviewProps) {
           </div>
 
           <div className="flex flex-col w-full sm:w-auto">
-            <label className="text-[#010b62] dark:text-white">
+            <label
+              htmlFor="filterRating"
+              className="text-[#010b62] dark:text-white"
+            >
               Filtrar por
             </label>
             <select
+              id="filterRating"
               value={filterRating ?? ""}
               onChange={(e) =>
                 setFilterRating(

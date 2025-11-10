@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import {
   Table,
   TableBody,
@@ -14,13 +14,17 @@ import {
 import { useSupabase } from "@/src/contexts/supabase-provider";
 import { User } from "@/src/types/User";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Pagination } from "../Pagination";
 
 export default function RankingComponent() {
   const { theme } = useTheme();
   const { supabase } = useSupabase();
   const [ranking, setRanking] = useState<User[]>([]);
-  const currentUserName = "Você";
   const [timeLeft, setTimeLeft] = useState<string>("");
+  const currentUserName = "Você";
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const getTheme = (light: string, dark: string, opacity?: number) => {
     const color = theme === "dark" ? dark : light;
@@ -51,9 +55,6 @@ export default function RankingComponent() {
     fetchUsers();
   }, [supabase]);
 
-  const podiumUsers = ranking.slice(0, 3);
-  const tableUsers = ranking.filter((user) => !podiumUsers.includes(user));
-
   useEffect(() => {
     const updateCountdown = () => {
       const now = new Date();
@@ -75,9 +76,22 @@ export default function RankingComponent() {
 
     updateCountdown();
     const interval = setInterval(updateCountdown, 1000);
-
     return () => clearInterval(interval);
   }, []);
+
+  const podiumUsers = ranking.slice(0, 3);
+  const tableUsers = ranking.filter((user) => !podiumUsers.includes(user));
+
+  const totalPages = Math.ceil(tableUsers.length / itemsPerPage);
+  const currentUsers = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return tableUsers.slice(startIndex, endIndex);
+  }, [currentPage, tableUsers]);
+
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPages) setCurrentPage(page);
+  };
 
   const PodiumBlock = ({
     place,
@@ -122,7 +136,7 @@ export default function RankingComponent() {
           style={{
             height: `${topHeight}px`,
             backgroundColor: topColor,
-            boxShadow: "0 3px 6px rgba(0,0,0,0.25), inset 0 -2px 3px rgba()",
+            boxShadow: "0 3px 6px rgba(0,0,0,0.25)",
           }}
         />
 
@@ -215,68 +229,59 @@ export default function RankingComponent() {
         >
           <TableHeader>
             <TableRow>
-              <TableHead className="border-b border-[#010b62] dark:border-white text-[#010b62] dark:text-white">
+              <TableHead className="text-[#010b62] dark:text-white border-b">
                 Rank
               </TableHead>
-              <TableHead className="border-b border-[#010b62] dark:border-white text-[#010b62] dark:text-white">
+              <TableHead className="text-[#010b62] dark:text-white border-b">
                 Foto
               </TableHead>
-              <TableHead className="border-b border-[#010b62] dark:border-white text-[#010b62] dark:text-white">
+              <TableHead className="text-[#010b62] dark:text-white border-b">
                 Usuário
               </TableHead>
-              <TableHead className="border-b border-[#010b62] dark:border-white text-[#010b62] dark:text-white">
+              <TableHead className="text-[#010b62] dark:text-white border-b">
                 Pontos
               </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {tableUsers.map((user, i) => {
+            {currentUsers.map((user, i) => {
               const isCurrentUser = user.name === currentUserName;
+              const globalRank = (currentPage - 1) * itemsPerPage + i + 4;
 
               return (
                 <TableRow
                   key={user.id}
-                  className={`${
+                  className={
                     isCurrentUser
-                      ? "bg-[#010b62]/40 dark:bg-bg-[#010b62]/90 font-semibold text-[#010b62] dark:text-white"
+                      ? "bg-[#010b62]/30 dark:bg-[#010b62]/70 font-semibold text-white"
                       : "text-[#010b62] dark:text-white"
-                  }`}
+                  }
                 >
-                  <TableCell
-                    className={
-                      i === tableUsers.length - 1
-                        ? "rounded-bl-md border-b border-[#010b62] dark:border-white dark:text-white"
-                        : "border-b border-[#010b62] dark:border-white dark:text-white"
-                    }
-                  >
-                    {i + 4}{" "}
-                  </TableCell>
-                  <TableCell className="border-b border-[#010b62] dark:border-white">
+                  <TableCell>{globalRank}</TableCell>
+                  <TableCell>
                     <Avatar>
                       {user.profile_img ? (
                         <AvatarImage src={user.profile_img} alt={user.name} />
                       ) : (
-                        <AvatarFallback></AvatarFallback>
+                        <AvatarFallback>{user.name[0]}</AvatarFallback>
                       )}
                     </Avatar>
                   </TableCell>
-                  <TableCell className="border-b border-[#010b62] dark:border-white text-[#010b62] dark:text-white">
-                    {user.name}
-                  </TableCell>
-                  <TableCell
-                    className={
-                      i === tableUsers.length - 1
-                        ? "rounded-br-md border-b border-[#010b62] dark:border-white text-[#010b62] dark:text-white"
-                        : "border-b border-[#010b62] dark:border-white text-[#010b62] dark:text-white"
-                    }
-                  >
-                    {user.points ?? 0}
-                  </TableCell>
+                  <TableCell>{user.name}</TableCell>
+                  <TableCell>{user.points ?? 0}</TableCell>
                 </TableRow>
               );
             })}
           </TableBody>
         </Table>
+
+        {totalPages >= 0 && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        )}
       </div>
     </div>
   );
