@@ -34,7 +34,10 @@ export const Pagination = ({
   };
 
   return (
-    <div className="flex items-center justify-center gap-2 mt-6">
+    <div
+      className="flex items-center justify-center gap-2 mt-6"
+      data-testid="pagination"
+    >
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}

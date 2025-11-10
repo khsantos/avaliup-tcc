@@ -13,7 +13,6 @@ import { FaStar, FaThumbsUp } from "react-icons/fa";
 export default function Page() {
   const { user, loading } = useSupabase();
 
-  const [notifications, setNotifications] = useState(true);
   const [tab, setTab] = useState(0);
   const [username, setUsername] = useState<string | null>("Usuário");
   const [email, setEmail] = useState<string>("");
@@ -200,30 +199,7 @@ export default function Page() {
                 </div>
 
                 <div className="flex flex-col sm:flex-row sm:items-center mb-4">
-                  <label className="sm:w-40 text-base text-[#010B62] dark:text-white mb-2 sm:mb-0">
-                    Notificações
-                  </label>
-                  <div className="flex items-center">
-                    <button
-                      type="button"
-                      onClick={() => setNotifications((v) => !v)}
-                      className={`relative inline-flex items-center cursor-pointer h-6 rounded-full w-12 focus:outline-none transition ${
-                        notifications
-                          ? "bg-[#010B62] dark:bg-[#01BAEF]"
-                          : "bg-gray-300"
-                      }`}
-                    >
-                      <span className="sr-only">Toggle Notifications</span>
-                      <span
-                        className={`inline-block h-5 w-5 rounded-full bg-white shadow transform transition ${
-                          notifications ? "translate-x-6" : "translate-x-1"
-                        }`}
-                      ></span>
-                    </button>
-                    <span className="ml-3 text-sm text-gray-600">
-                      {notifications ? "Ativadas" : "Desativadas"}
-                    </span>
-                  </div>
+                  <div className="flex items-center"></div>
                 </div>
               </div>
             </div>

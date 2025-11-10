@@ -3,6 +3,8 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import ReviewForm from "@/src/components/CreateReviewForm";
 import { supabase } from "@/src/lib/supabase";
 import { toast } from "sonner";
+import ProductReviewView from "@/src/components/ProductReview";
+import { Product } from "@/src/types/Product";
 
 let originalConsoleError: typeof console.error;
 
@@ -106,6 +108,22 @@ const mockProduct = {
   image_url: "/mouse.jpg",
   image: "/mouse.jpg",
 };
+
+const mockSetShowForm = jest.fn();
+const mockSetSelectedThumb = jest.fn();
+
+const mockProductForReviewView = {
+  id: 1,
+  name: "Mouse Gamer XYZ",
+  slug: "mouse-gamer-xyz",
+  image_url: "/mouse.jpg",
+  image: "/mouse.jpg",
+  images: [],
+  rating: 4.5,
+  review_count: 10,
+  rank: 1,
+  category: "mouse",
+} as unknown as Product;
 
 describe("Tela de Avaliação de Produto", () => {
   beforeEach(() => {
@@ -241,12 +259,16 @@ describe("Tela de Avaliação de Produto", () => {
     fireEvent.click(stars[1]);
     fireEvent.click(screen.getByRole("button", { name: /enviar avaliação/i }));
 
-    // SEU COMPONENTE atualmente não valida emojis — se quiser bloquear emojis, implemente a validação.
-    // Aqui assumimos que você adicionou verificação e seta errorMessages com:
-    // "Remova caracteres inválidos do título ou descrição."
     await waitFor(() => {
       expect(
-        screen.getByText("Remova caracteres inválidos do título ou descrição.")
+        screen.getByText(
+          "Título inválido ou muito longo (máx. 100 caracteres)."
+        )
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          "Descrição inválida ou muito longa (máx. 5000 caracteres)."
+        )
       ).toBeInTheDocument();
     });
 
@@ -254,16 +276,17 @@ describe("Tela de Avaliação de Produto", () => {
   });
 
   test("Caso 6: Acessar a página do produto (botão Voltar)", async () => {
-    const mockBack = jest.fn();
-    const original = window.history.back;
-    window.history.back = mockBack;
+    render(
+      <ProductReviewView
+        product={mockProductForReviewView}
+        selectedThumb={0}
+        setSelectedThumb={mockSetSelectedThumb}
+        setShowForm={mockSetShowForm}
+      />
+    );
 
-    render(<ReviewForm product={mockProduct} />);
-
-    // Se o botão 'Voltar' estiver em outro componente (ProductReviewView), adapte o teste.
     fireEvent.click(screen.getByRole("button", { name: /voltar/i }));
 
-    expect(mockBack).toHaveBeenCalled();
-    window.history.back = original;
+    expect(mockSetShowForm).toHaveBeenCalledWith(false);
   });
 });

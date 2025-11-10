@@ -95,23 +95,69 @@ export default function ReviewForm({
     }
   }
 
+  const INVALID_CHARS_REGEX = /[<>]/;
+
+  const ALLOWED_TEXT_REGEX =
+    /^[a-zA-Z0-9À-ÖØ-öø-ÿ\s\.,\-'\"()\/:;?!%$@#&+\n]*$/;
+
+  // limites
+  const TITLE_MAX = 100;
+  const DESCRIPTION_MAX = 5000;
+  const STORE_MAX = 100;
+  const USAGE_TIME_MAX = 100;
+  const MAX_PRICE = 1_000_000_00;
+
   async function submitReview(e: React.FormEvent) {
     e.preventDefault();
     if (!session) return;
 
     const newErrors: typeof errorMessages = {};
 
-    if (!formData.title.trim()) newErrors.title = "O título é obrigatório.";
-    if (!formData.description.trim())
-      newErrors.description = "A descrição é obrigatória.";
-    if (!formData.store.trim()) newErrors.store = "A loja é obrigatória.";
-    if (formData.price <= 0) newErrors.price = "Informe um valor válido.";
-    if (!formData.usage_time.trim())
-      newErrors.usage_time = "Informe o tempo de uso.";
+    const title = String(formData.title ?? "").trim();
+    const description = String(formData.description ?? "").trim();
+    const store = String(formData.store ?? "").trim();
+    const usage_time = String(formData.usage_time ?? "").trim();
+    const priceValue = Number(formData.price);
+
+    if (!title) newErrors.title = "O título é obrigatório.";
+    if (!description) newErrors.description = "A descrição é obrigatória.";
+    if (!store) newErrors.store = "A loja é obrigatória.";
+    if (!usage_time) newErrors.usage_time = "Informe o tempo de uso.";
+    if (Number.isNaN(priceValue) || priceValue <= 0)
+      newErrors.price = "Informe um valor válido.";
 
     const allRatingsValid = Object.values(ratings).every((val) => val > 0);
     if (!allRatingsValid)
       newErrors.ratings = "Avalie todos os critérios para enviar.";
+
+    if (title && INVALID_CHARS_REGEX.test(title))
+      newErrors.title = "O título contém caracteres inválidos.";
+    if (description && INVALID_CHARS_REGEX.test(description))
+      newErrors.description = "A descrição contém caracteres inválidos.";
+    if (store && INVALID_CHARS_REGEX.test(store))
+      newErrors.store = "O nome da loja contém caracteres inválidos.";
+    if (usage_time && INVALID_CHARS_REGEX.test(usage_time))
+      newErrors.usage_time = "O tempo de uso contém caracteres inválidos.";
+
+    if (title && (title.length > TITLE_MAX || !ALLOWED_TEXT_REGEX.test(title)))
+      newErrors.title = `Título inválido ou muito longo (máx. ${TITLE_MAX} caracteres).`;
+    if (
+      description &&
+      (description.length > DESCRIPTION_MAX ||
+        !ALLOWED_TEXT_REGEX.test(description))
+    )
+      newErrors.description = `Descrição inválida ou muito longa (máx. ${DESCRIPTION_MAX} caracteres).`;
+    if (store && (store.length > STORE_MAX || !ALLOWED_TEXT_REGEX.test(store)))
+      newErrors.store = `Nome da loja inválido ou muito longo (máx. ${STORE_MAX} caracteres).`;
+    if (
+      usage_time &&
+      (usage_time.length > USAGE_TIME_MAX ||
+        !ALLOWED_TEXT_REGEX.test(usage_time))
+    )
+      newErrors.usage_time = `Tempo de uso inválido ou muito longo (máx. ${USAGE_TIME_MAX} caracteres).`;
+
+    if (priceValue > MAX_PRICE)
+      newErrors.price = "Valor informado excede o máximo permitido.";
 
     if (Object.keys(newErrors).length > 0) {
       setErrorMessages(newErrors);
@@ -124,7 +170,13 @@ export default function ReviewForm({
     const users_id = session.user.id;
     const product_id = product.id;
 
-    const { title, description, store, price, usage_time } = formData;
+    const {
+      title: titleToInsert,
+      description: descToInsert,
+      store: storeToInsert,
+      price: priceToInsert,
+      usage_time: usageToInsert,
+    } = formData;
 
     const rating =
       Object.values(ratings).reduce((a, b) => a + b, 0) /
@@ -137,11 +189,11 @@ export default function ReviewForm({
           users_id,
           product_id,
           rating,
-          text: description,
-          title,
-          store,
-          price_paid: Number(price),
-          time_of_use: usage_time,
+          text: descToInsert,
+          title: titleToInsert,
+          store: storeToInsert,
+          price_paid: Number(priceToInsert),
+          time_of_use: usageToInsert,
           rating_performance: ratings.performance,
           rating_cost_benefit: ratings.costBenefit,
           rating_comfort: ratings.comfort,
@@ -184,7 +236,6 @@ export default function ReviewForm({
     setIsSubmitting(false);
     toast.success("Avaliação enviada com sucesso!");
 
-    // Resetar formulário
     setFormData({
       title: "",
       description: "",

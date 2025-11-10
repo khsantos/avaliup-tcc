@@ -7,10 +7,11 @@ import { toast } from "sonner";
 import Image from "next/image";
 import formatCpf from "@/src/lib/formatCpf";
 import { useValidateCPF } from "@/src/hooks/useValidateCpf";
-import { FiEye, FiEyeOff } from "react-icons/fi";
+import { FiArrowLeft, FiEye, FiEyeOff } from "react-icons/fi";
 import { ChangeProfilePhotoDialog } from "@/src/components/ChangeProfileDialog";
 import { DeleteAccountDialog } from "@/src/components/DeleteAccountDialog";
 import { UserUpdate } from "@/src/types/UserUpdate";
+import Link from "next/link";
 
 export default function ProfileEditPage() {
   const { user, loading } = useSupabase();
@@ -125,6 +126,8 @@ export default function ProfileEditPage() {
       }
 
       toast.success("Perfil atualizado com sucesso!");
+      setMessage("Perfil atualizado com sucesso!");
+
       setOriginalData({ name, cpf, gender });
     } catch (err: unknown) {
       let errorMessage =
@@ -148,24 +151,15 @@ export default function ProfileEditPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-[#030712] py-6 px-4 sm:px-6 lg:px-8">
-      <div className="bg-white dark:bg-[#030712] shadow-sm mb-8 rounded-md">
-        <div className="max-w-4xl mx-auto px-4">
-          <nav className="flex flex-wrap gap-3 justify-center sm:justify-start border-b border-gray-700">
-            <a
-              href="/profile-general"
-              className="whitespace-nowrap py-3 border-b-2 font-medium text-sm dark:text-white text-gray-700 hover:text-[#010b62]"
-            >
-              Geral
-            </a>
-            <a
-              href="#"
-              className="whitespace-nowrap py-3 border-b-2 font-medium text-sm text-[#010b62] border-[#010b62] cursor-auto dark:text-[#01BAEF] dark:border-[#01BAEF]"
-            >
-              Editar
-            </a>
-          </nav>
-        </div>
+    <div className="min-h-screen   py-6 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto px-4">
+        <Link
+          href="/profile-general"
+          className="flex items-center text-[#010B62] dark:text-white hover:underline"
+        >
+          <FiArrowLeft className="mr-2" size={20} />
+          Voltar
+        </Link>
       </div>
 
       <div className="max-w-4xl mx-auto bg-white dark:bg-[#030712] p-6 sm:p-8 shadow-md rounded-md">

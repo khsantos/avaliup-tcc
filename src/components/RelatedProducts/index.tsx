@@ -52,17 +52,16 @@ export const RelatedProducts = ({ productId }: RelatedProductsProps) => {
         Produtos relacionados
       </h2>
 
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
-        {products.map((product) => (
+      {products.map((product) => (
+        <div key={product.id}>
           <ProductCard
-            key={product.id}
             id={product.id}
             name={product.name}
             image={product.image}
             rating={product.rating}
           />
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
   );
 };
