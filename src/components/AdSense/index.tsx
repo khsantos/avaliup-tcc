@@ -1,13 +1,18 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
 
 function AdSenseComponent() {
+  const adLoaded = useRef(false);
+
   useEffect(() => {
+    if (adLoaded.current) return; // já inicializado
+
     try {
-      // @ts-expect-error adsbygoogle pode não estar definido
+      // @ts-expect-error description about adsbygoogle
       (window.adsbygoogle = window.adsbygoogle || []).push({});
+      adLoaded.current = true;
     } catch (e) {
       console.error("Adsense error", e);
     }
@@ -32,7 +37,4 @@ function AdSenseComponent() {
   );
 }
 
-// 🔥 Só renderiza no client
-export default dynamic(() => Promise.resolve(AdSenseComponent), {
-  ssr: false,
-});
+export default dynamic(() => Promise.resolve(AdSenseComponent), { ssr: false });
