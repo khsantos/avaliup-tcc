@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/src/lib/supabase";
 import LoadingOrEmpty from "@/src/components/LoadingOrEmpty";
 import { Product } from "@/src/types/Product";
+import AdSense from "../AdSense";
 
 const PLACEHOLDER_IMAGE = "/placeholder-image.webp";
 
@@ -98,6 +99,8 @@ export default function MainPage() {
             <h2 className="text-[#010b62] text-3xl font-semibold mb-6 text-left dark:text-white">
               {c.title}
             </h2>
+
+            <AdSense></AdSense>
 
             <LoadingOrEmpty
               loading={loading}
