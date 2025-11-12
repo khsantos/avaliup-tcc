@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { NAV } from "@/src/components/Header/nav/nav.config";
 import Logo from "../Logo";
-import { SiInstagram, SiYoutube, SiLinkedin } from "react-icons/si";
+import { SiInstagram, SiYoutube } from "react-icons/si";
 
 function SocialLinks() {
   const link =
@@ -13,7 +13,7 @@ function SocialLinks() {
   return (
     <div className="flex items-center gap-5">
       <a
-        href="#"
+        href="https://www.instagram.com/avali.up/"
         aria-label="Instagram"
         title="Instagram"
         className={`${link} text-[#23307a] hover:text-[#0f1a54] dark:text-gray-300 dark:hover:text-white`}
@@ -22,7 +22,7 @@ function SocialLinks() {
       </a>
 
       <a
-        href="#"
+        href="https://www.youtube.com/@Avali-up"
         aria-label="YouTube"
         title="YouTube"
         className={`${link} text-[#23307a] hover:text-[#0f1a54] dark:text-gray-300 dark:hover:text-white`}
@@ -30,14 +30,14 @@ function SocialLinks() {
         <SiYoutube className={icon} />
       </a>
 
-      <a
+      {/* <a
         href="#"
         aria-label="LinkedIn"
         title="LinkedIn"
         className={`${link} text-[#23307a] hover:text-[#0f1a54] dark:text-gray-300 dark:hover:text-white`}
       >
         <SiLinkedin className={icon} />
-      </a>
+      </a> */}
     </div>
   );
 }
@@ -89,7 +89,7 @@ export default function Footer() {
               role="list"
               className="space-y-2 text-gray-600 dark:text-gray-300 text-center md:text-left"
             >
-              <li>
+              {/* <li>
                 <Link href="/about-us" className="hover:underline">
                   Sobre nós
                 </Link>
@@ -98,7 +98,7 @@ export default function Footer() {
                 <Link href="/security" className="hover:underline">
                   Segurança
                 </Link>
-              </li>
+              </li> */}
               <li>
                 <Link href="/terms-of-use" className="hover:underline">
                   Termos de uso
