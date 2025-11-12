@@ -8,7 +8,12 @@ import ReviewDetailsModal from "../UserReviewDetails";
 import { Pagination } from "../Pagination";
 import { ReviewCard } from "../ReviewCard";
 import { toast } from "sonner";
-import { PostgrestError } from "@supabase/supabase-js";
+import {
+  PostgrestError,
+  PostgrestResponse,
+  PostgrestSingleResponse,
+} from "@supabase/supabase-js";
+import { ReviewVoteRow } from "@/src/types/ReviewVoteRow";
 
 type UserReviewProps = {
   productId: number;
@@ -105,46 +110,82 @@ export default function UserReviews({ productId }: UserReviewProps) {
 
     try {
       let supabaseError: PostgrestError | null = null;
+      let result:
+        | PostgrestSingleResponse<ReviewVoteRow | null>
+        | PostgrestResponse<ReviewVoteRow>;
+
+      console.log(
+        `%c[VOTE] Tentando registrar voto: reviewId=${reviewId}, userId=${userId}, tipo=${voteType}`,
+        "color: #00aaff;"
+      );
 
       if (currentVote === voteType) {
-        const { error } = await supabase
+        result = await supabase
           .from("review_votes")
           .delete()
           .eq("review_id", reviewId)
           .eq("user_id", userId);
-        supabaseError = error;
+        supabaseError = result.error;
       } else if (currentVote && currentVote !== voteType) {
-        const { error } = await supabase
+        result = await supabase
           .from("review_votes")
           .update({ vote_type: voteType })
           .eq("review_id", reviewId)
           .eq("user_id", userId);
-        supabaseError = error;
+        supabaseError = result.error;
       } else {
-        const { error } = await supabase.from("review_votes").insert({
+        result = await supabase.from("review_votes").insert({
           review_id: reviewId,
           user_id: userId,
           vote_type: voteType,
         });
-        supabaseError = error;
+        supabaseError = result.error;
       }
 
       if (supabaseError) {
-        console.error("Erro ao registrar voto:", supabaseError);
+        console.group(
+          "%c❌ ERRO AO REGISTRAR VOTO",
+          "color: red; font-weight: bold;"
+        );
+        console.error("Mensagem:", supabaseError.message);
         if (supabaseError.details)
           console.error("Detalhes:", supabaseError.details);
         if (supabaseError.hint) console.error("Dica:", supabaseError.hint);
         if (supabaseError.code)
           console.error("Código do erro:", supabaseError.code);
+        console.error("Erro completo:", JSON.stringify(supabaseError, null, 2));
+        console.groupEnd();
+
+        // Reverte estado local
         toast("Não foi possível registrar seu voto.");
         setUserVotes((prev) => ({ ...prev, [reviewId]: currentVote }));
         return;
       }
 
-      const { data } = await supabase
+      console.log("%c✅ Voto registrado com sucesso:", "color: green;", result);
+
+      const {
+        data,
+        error: countError,
+        status,
+      } = await supabase
         .from("review_votes")
         .select("vote_type")
         .eq("review_id", reviewId);
+
+      if (countError) {
+        console.error("Erro ao atualizar contagem:", countError);
+        return;
+      }
+
+      console.log(
+        `%c[COUNT SYNC] Status=${status} - Likes: ${
+          data?.filter((v) => v.vote_type === "like").length || 0
+        }, Dislikes: ${
+          data?.filter((v) => v.vote_type === "dislike").length || 0
+        }`,
+        "color: #ffaa00;"
+      );
 
       const newLikes = data?.filter((v) => v.vote_type === "like").length || 0;
       const newDislikes =
@@ -160,6 +201,12 @@ export default function UserReviews({ productId }: UserReviewProps) {
     } catch (err: unknown) {
       console.error("Erro inesperado ao votar:", err);
       toast("Não foi possível registrar seu voto.");
+      console.group(
+        "%c🚨 ERRO INESPERADO AO VOTAR",
+        "color: darkred; font-weight: bold;"
+      );
+      console.error(err);
+      console.groupEnd();
 
       setUserVotes((prev) => ({ ...prev, [reviewId]: currentVote }));
     }
@@ -170,6 +217,17 @@ export default function UserReviews({ productId }: UserReviewProps) {
       if (!productId) return;
 
       setLoading(true);
+
+      console.groupCollapsed(
+        "%c🔎 Iniciando busca de reviews",
+        "color: #00aaff; font-weight: bold;"
+      );
+      console.log("📦 Parâmetros iniciais:", {
+        productId,
+        sortBy,
+        filterRating,
+        currentPage,
+      });
 
       try {
         // 1️⃣ Contagem total de reviews para paginação
@@ -196,7 +254,7 @@ export default function UserReviews({ productId }: UserReviewProps) {
             `
     *,
     users_id,
-    users (id, name, profile_img),
+    users!reviews_users_id_fkey2 (id, name, profile_img),
     review_votes (vote_type),
     products (id, name, image)
   `
@@ -229,8 +287,18 @@ export default function UserReviews({ productId }: UserReviewProps) {
         const { data, error } = await query;
 
         if (error) {
-          console.error("Erro ao buscar reviews:", error);
+          console.group(
+            "%c❌ ERRO AO BUSCAR REVIEWS",
+            "color: red; font-weight: bold;"
+          );
+          console.error("Mensagem:", error.message);
+          if (error.details) console.error("Detalhes:", error.details);
+          if (error.hint) console.error("Dica:", error.hint);
+          if (error.code) console.error("Código:", error.code);
+          console.error("Erro completo:", JSON.stringify(error, null, 2));
+          console.groupEnd();
           setLoading(false);
+          console.groupEnd(); // Fecha "fetchReviews"
           return;
         }
 
