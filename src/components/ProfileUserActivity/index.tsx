@@ -143,6 +143,11 @@ export default function ProfileUserActivity() {
       if (!userId) return;
       setLoading(true);
 
+      console.groupCollapsed(
+        `%c[FETCH REVIEWS] Iniciando busca de interações do usuário ${userId}`,
+        "color: #00aaff; font-weight: bold;"
+      );
+
       try {
         const { data: votesData, error: votesError } = await supabase
           .from("review_votes")
@@ -180,7 +185,7 @@ export default function ProfileUserActivity() {
           .select(
             `
           *,
-          users (id, name, profile_img),
+          users!reviews_users_id_fkey2 (id, name, profile_img),
           review_votes (vote_type, user_id),
           review_comments (id, user_id),
           products (id, name, image)
@@ -204,7 +209,21 @@ export default function ProfileUserActivity() {
         else if (sortBy === "useful")
           query = query.order("likes", { ascending: false });
 
-        const { data, error } = await query;
+        const { data, error, status } = await query;
+
+        if (error) {
+          console.group(
+            "%c❌ ERRO AO BUSCAR REVIEWS",
+            "color: red; font-weight: bold;"
+          );
+          console.error("Status:", status);
+          console.error("Mensagem:", error.message);
+          console.error("Detalhes:", error.details);
+          console.error("Código:", error.code);
+          console.groupEnd();
+          throw error;
+        }
+
         if (error) throw error;
 
         if (data) {
