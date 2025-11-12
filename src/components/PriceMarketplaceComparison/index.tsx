@@ -270,7 +270,7 @@ export default function PriceMarketplaceComparison({
 
                     <div className="pt-3 mt-3">
                       <Button
-                        className="w-full dark:bg-[#01BAEF] dark:hover:bg-[#00a3e6] bg-[#010b62] hover:bg-[#010A24] text-white font-semibold text-sm sm:text-md h-9 transition-all duration-200 transform group-hover:scale-[1.03] group-hover:brightness-110"
+                        className="w-full dark:bg-[#01BAEF] dark:hover:bg-[#33C9F2] bg-[#010b62] hover:bg-[#1C2CA3] text-white font-semibold text-sm sm:text-md h-9 transition-all duration-200 transform group-hover:scale-[1.03] group-hover:brightness-110"
                         type="button"
                         aria-label={`Acessar ${store.marketplace}`}
                       >
