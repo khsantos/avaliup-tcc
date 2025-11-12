@@ -56,15 +56,15 @@ function ProductCard({ id, rank, name, rating, image }: Product) {
         {name}
       </h3>
 
-      <div className="relative w-28 h-28 my-4 mx-auto">
+      <div className="relative w-28 h-28 my-4 mx-auto flex items-center justify-center overflow-hidden aspect-square">
         <Image
           src={image}
           alt={`Imagem do ${name}`}
-          width={120}
-          height={120}
-          className="object-contain"
+          width={112}
+          height={112}
+          className="object-contain max-w-full max-h-full"
           loading="lazy"
-          sizes="(max-width: 768px) 112px, 112px"
+          sizes="112px"
         />
       </div>
 
