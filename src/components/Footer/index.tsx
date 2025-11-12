@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { NAV } from "@/src/components/Header/nav/nav.config";
 import Logo from "../Logo";
-import { SiInstagram, SiYoutube, SiLinkedin } from "react-icons/si";
+import { SiInstagram, SiYoutube } from "react-icons/si";
 
 function SocialLinks() {
   const link =
