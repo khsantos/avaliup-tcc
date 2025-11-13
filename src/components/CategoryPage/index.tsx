@@ -6,6 +6,7 @@ import { Product } from "@/src/types/Product";
 import ProductCard from "@/src/components/ProductCard";
 import dynamic from "next/dynamic";
 import { Pagination } from "@/src/components/Pagination";
+import AdBanner from "../AdBanner";
 
 interface CategoryPageProps {
   slug: string;
@@ -79,13 +80,16 @@ export default function CategoryPage({ slug }: CategoryPageProps) {
             <ProductCarousel products={topProducts} />
           </div>
         </div>
-
       </section>
 
       {loading ? (
         <p className="text-gray-500">Carregando produtos...</p>
       ) : (
         <>
+          {otherProducts.length > 0 && (
+            <AdBanner slot="2165327748" height={55} margin="my-6" />
+          )}
+
           {otherProducts.length > 0 && (
             <section className="px-4 py-10 flex justify-center">
               <div className="w-full px-4 py-8">

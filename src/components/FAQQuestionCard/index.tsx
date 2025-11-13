@@ -11,7 +11,6 @@ import {
 } from "../ui/dropdown-menu";
 import { Button } from "@/src/components/ui/button";
 import {
-  Award,
   MoreVertical,
   Trash,
   User as UserIcon,
@@ -26,6 +25,7 @@ import { Question } from "@/src/types/Question";
 import { User } from "@/src/types/User";
 import { Comentario } from "@/src/types/FAQComment";
 import DeleteDialog from "../DeleteDialog";
+import { AchievementBadges } from "../AchievementsBadges";
 
 interface FAQQuestionCardProps {
   q: Question;
@@ -43,6 +43,7 @@ interface FAQQuestionCardProps {
   handleQuestionVote: (id: string, type: "like" | "dislike") => void;
   animatedVote: { [key: string]: "like" | "dislike" | null };
   enviarResposta: (id: string) => void;
+  handleDeleteAnswer?: (id: string) => void;
 }
 
 export default function FAQQuestionCard({
@@ -61,9 +62,10 @@ export default function FAQQuestionCard({
   handleQuestionVote,
   animatedVote,
   enviarResposta,
+  handleDeleteAnswer,
 }: FAQQuestionCardProps) {
   return (
-    <div className="bg-white dark:bg-[#030712] shadow-md dark:shadow-none border border-[#010b62]/10 dark:border-white/10 rounded-2xl p-4 sm:p-5 mt-8 space-y-3">
+    <div className="relative bg-white dark:bg-[#030712] shadow-md dark:shadow-none border border-[#010b62]/10 dark:border-white/10 rounded-2xl p-4 sm:p-5 mt-8 space-y-3">
       <DeleteDialog
         open={openDialogId === q.id}
         onOpenChange={(open) => {
@@ -105,44 +107,46 @@ export default function FAQQuestionCard({
                 </span>
               </div>
               <div className="flex items-center gap-1 mt-1">
-                <Award className="w-4 h-4 text-blue-400" />
-                <Award className="w-4 h-4 text-blue-300" />
-                <Award className="w-4 h-4 text-blue-200" />
+                <AchievementBadges userId={q.user_id} size="sm" />
               </div>
             </div>
 
             {user?.id === q.user_id && (
-              <DropdownMenu
-                open={openMenuId === q.id}
-                onOpenChange={(open) => {
-                  if (open) setOpenMenuId(q.id);
-                  else setOpenMenuId(null);
-                }}
-              >
-                <DropdownMenuTrigger asChild>
-                  <button
-                    className="p-1 rounded-md hover:bg-[#010b62]/10 dark:hover:bg-white/10 transition"
-                    aria-label="Mais opções"
-                  >
-                    <MoreVertical className="w-5 h-5 text-[#010b62]/70 dark:text-white/70" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  align="end"
-                  className="w-40 animate-in fade-in zoom-in-95 duration-200"
+              <div className="absolute top-3 right-3">
+                <DropdownMenu
+                  open={openMenuId === q.id}
+                  onOpenChange={(open) => {
+                    if (open) setOpenMenuId(q.id);
+                    else setOpenMenuId(null);
+                  }}
                 >
-                  <DropdownMenuItem
-                    onClick={() => {
-                      setOpenDialogId(q.id);
-                      setOpenMenuId(null);
-                    }}
-                    className="flex items-center gap-2 px-3 py-2 text-[#010b62] hover:bg-gray-200 dark:hover:bg-gray-800 w-full overflow-hidden whitespace-nowrap"
+                  <DropdownMenuTrigger asChild>
+                    <button
+                      className="p-1 rounded-md hover:bg-[#010b62]/10 dark:hover:bg-white/10 transition"
+                      aria-label="Mais opções"
+                    >
+                      <MoreVertical className="w-5 h-5 text-[#010b62]/70 dark:text-white/70" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    side="right"
+                    align="end"
+                    sideOffset={6}
+                    className="w-40 animate-in fade-in zoom-in-95 duration-200"
                   >
-                    <Trash className="w-6 h-6" />
-                    Deletar pergunta
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setOpenDialogId(q.id);
+                        setOpenMenuId(null);
+                      }}
+                      className="flex items-center gap-2 px-3 py-2 text-[#010b62] hover:bg-gray-200 dark:hover:bg-gray-800 w-full overflow-hidden whitespace-nowrap"
+                    >
+                      <Trash className="w-6 h-6" />
+                      Deletar pergunta
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             )}
           </div>
 
@@ -208,6 +212,7 @@ export default function FAQQuestionCard({
           setRespostas={setRespostas}
           user={user}
           enviarResposta={enviarResposta}
+          handleDeleteAnswer={handleDeleteAnswer}
         />
       )}
     </div>

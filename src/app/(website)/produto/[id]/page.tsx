@@ -5,6 +5,7 @@ import ProductLayout from "@/src/components/ProductLayout";
 import { RelatedProducts } from "@/src/components/RelatedProducts";
 import type { Metadata } from "next";
 import { getProductImageUrl } from "@/src/lib/supabase-storage";
+import AdBanner from "@/src/components/AdBanner";
 
 type PageParams = { id: string };
 
@@ -67,6 +68,7 @@ export default async function ProductPage({
     <div className="w-[80%] mx-auto text-white">
       <ProductLayout product={productWithSignedUrl} />
       <ProductTabs productId={product.id} />
+      <AdBanner slot="2165327748" height={40} margin="my-20" />
       <RelatedProducts productId={product.id} />
     </div>
   );

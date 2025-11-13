@@ -241,6 +241,22 @@ export default function FAQ({ productId }: FAQProps) {
       }
     : null;
 
+  async function handleDeleteAnswer(answerId: string) {
+    const { error } = await supabase
+      .from("faq_answers")
+      .delete()
+      .eq("id", answerId)
+      .eq("user_id", user?.id);
+
+    if (error) {
+      toast.error("Erro ao deletar resposta.");
+      console.error(error);
+    } else {
+      toast.success("Resposta deletada com sucesso!");
+      fetchAllAnswers();
+    }
+  }
+
   return (
     <div className="px-2 sm:px-4 md:px-6 lg:px-8">
       <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -352,6 +368,7 @@ export default function FAQ({ productId }: FAQProps) {
             handleQuestionVote={handleQuestionVote}
             animatedVote={animatedVote}
             enviarResposta={enviarResposta}
+            handleDeleteAnswer={handleDeleteAnswer}
           />
         ))}
       </div>

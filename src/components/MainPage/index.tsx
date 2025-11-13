@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/src/lib/supabase";
 import LoadingOrEmpty from "@/src/components/LoadingOrEmpty";
 import { Product } from "@/src/types/Product";
-import AdSense from "../AdSense";
+import AdBanner from "../AdBanner";
 
 const PLACEHOLDER_IMAGE = "/placeholder-image.webp";
 
@@ -91,26 +91,32 @@ export default function MainPage() {
     <div className="min-h-screen p-4 dark:bg-[#030712]">
       <Hero />
 
-      {CATEGORIES.map((c) => (
-        <section key={c.key} className="px-4 py-10 flex justify-center">
-          <div className="py-8 w-full px-4">
-            <span className="font-medium text-lg text-[#010B62]/60 dark:text-[#FFFFFF]/60">
-              Top 10
-            </span>
-            <h2 className="text-[#010b62] text-3xl font-semibold mb-6 text-left dark:text-white">
-              {c.title}
-            </h2>
+      <AdBanner slot="2165327748" height={90} margin="mb-10" />
 
-            <AdSense></AdSense>
+      {CATEGORIES.map((c, index) => (
+        <div key={c.key}>
+          <section className="px-4 py-10 flex justify-center">
+            <div className="py-8 w-full px-4">
+              <span className="font-medium text-lg text-[#010B62]/60 dark:text-[#FFFFFF]/60">
+                Top 10
+              </span>
+              <h2 className="text-[#010b62] text-3xl font-semibold mb-6 text-left dark:text-white">
+                {c.title}
+              </h2>
 
-            <LoadingOrEmpty
-              loading={loading}
-              items={dataByCategory[c.key] ?? []}
-              renderEmpty="Nenhum produto encontrado."
-              renderContent={(items) => <ProductCarousel products={items} />}
-            />
-          </div>
-        </section>
+              <LoadingOrEmpty
+                loading={loading}
+                items={dataByCategory[c.key] ?? []}
+                renderEmpty="Nenhum produto encontrado."
+                renderContent={(items) => <ProductCarousel products={items} />}
+              />
+            </div>
+          </section>
+
+          {index % 2 === 1 && (
+            <AdBanner slot="2165327748" height={55} margin="my-6" />
+          )}
+        </div>
       ))}
     </div>
   );

@@ -257,14 +257,14 @@ export default function Login() {
         </button>
         <div className="text-center justify-center text-sm text-gray-500">
           <Link
-            href="/terms"
+            href="/terms-of-use"
             className="hover:underline text-[#0969da] dark:text-[#00AFD3]"
           >
             Termos de uso
           </Link>{" "}
           |{" "}
           <Link
-            href="/privacy"
+            href="/policy-and-privacy"
             className="hover:underline text-[#0969da] dark:text-[#00AFD3]"
           >
             Política de Privacidade
