@@ -26,7 +26,7 @@ function AdSenseComponent() {
           display: "block",
           width: "100%",
           maxWidth: "970px",
-          height: "90px",
+          height: "55px",
         }}
         data-ad-client="ca-pub-8840751358865151"
         data-ad-slot="2165327748"
