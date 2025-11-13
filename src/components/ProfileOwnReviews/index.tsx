@@ -170,7 +170,7 @@ export default function ProfileReview({ productId }: ProfileReviewProps) {
         .select(
           `
         *,
-        users (id, name, profile_img),
+        users!reviews_users_id_fkey2 (id, name, profile_img),
         review_votes (vote_type),
         products (id, name, image)
       `
