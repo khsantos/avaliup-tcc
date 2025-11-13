@@ -87,9 +87,12 @@ export default function NotificationsSheet({ onClose, open }: Props) {
       prev.map((n) => {
         if (n.triggered) return n;
 
-        const productPrice = pricesData.find(
-          (p) => p.products_id === n.product_id
-        )?.price;
+        const productPrices = pricesData
+          .filter((p) => p.products_id === n.product_id)
+          .map((p) => p.price);
+
+        const productPrice =
+          productPrices.length > 0 ? Math.min(...productPrices) : undefined;
 
         if (productPrice === undefined) return n;
 
