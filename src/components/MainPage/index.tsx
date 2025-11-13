@@ -16,6 +16,7 @@ const CATEGORIES = [
   { key: "headset", title: "Headsets gamers" },
   { key: "mousepad", title: "Mousepads gamers" },
   { key: "controle", title: "Controles gamers" },
+  { key: "monitor", title: "Monitores gamers" },
 ] as const;
 
 function mapToProduct(item: Product): Product {

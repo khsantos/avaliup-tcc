@@ -45,7 +45,7 @@ export default function ForgotPassword() {
         <h2 className="text-2xl font-bold text-center text-[#010b62] dark:text-white">
           Esqueceu a senha?
         </h2>
-        <p className="text-md text-center text-gray-700">
+        <p className="text-md text-center text-gray-700 dark:text-gray-400">
           Informe o seu endereço de e-mail para que possamos enviar o link de
           recuperação da senha.
         </p>

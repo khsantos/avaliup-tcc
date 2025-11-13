@@ -123,7 +123,7 @@ export default function ResetPassword() {
         <h2 className="text-2xl font-bold text-center text-[#010b62] dark:text-white">
           Alteração de senha
         </h2>
-        <p className="text-md text-center text-gray-700">
+        <p className="text-md text-center text-gray-700 dark:text-gray-400">
           Informe sua nova senha para confirmar a alteração.
         </p>
         <form onSubmit={handleSubmit} className="space-y-4">

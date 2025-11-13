@@ -192,7 +192,7 @@ export function ReviewComments({
                   {c.user_id && (
                     <AchievementBadges userId={c.user_id} size="sm" />
                   )}
-                  <p className="text-sm text-[#010b62] dark:text-white break-words mt-1">
+                  <p className="text-sm text-[#010b62] dark:text-white break-words mt-1 max-h-24 overflow-y-auto whitespace-pre-line w-full break-all">
                     {c.text}
                   </p>
                   <span className="text-xs dark:text-gray-400 text-gray-500">
