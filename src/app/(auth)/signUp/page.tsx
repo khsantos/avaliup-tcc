@@ -94,11 +94,16 @@ export default function Register() {
         return;
       }
 
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+      const redirectTo = appUrl
+        ? `${appUrl.replace(/\/$/, "")}/signIn?confirmed=true`
+        : `${window.location.origin}/signIn?confirmed=true`;
+
       const { data, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/signIn?confirmed=true`,
+          emailRedirectTo: redirectTo,
         },
       });
 
