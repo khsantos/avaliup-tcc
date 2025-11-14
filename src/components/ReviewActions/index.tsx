@@ -13,7 +13,7 @@ export default function ReviewActions({
   hasLiked?: boolean;
   hasDisliked?: boolean;
   onVote: (id: string, type: "like" | "dislike") => void;
-  onToggleComments: (id: string) => void;
+  onToggleComments: () => void;
 }) {
   return (
     <div className="flex items-center gap-4 mt-2 flex-wrap">
@@ -41,7 +41,7 @@ export default function ReviewActions({
 
       <span
         className="cursor-pointer flex items-center gap-1 text-[#010b62]/50 hover:text-[#010b62] dark:hover:text-[#01BAEF] dark:text-[#b6c2cd] text-sm sm:text-base transition-transform duration-150 hover:scale-110"
-        onClick={() => onToggleComments(review.id)}
+        onClick={() => onToggleComments?.()}
       >
         <MessageCircle className="w-5 h-5 sm:w-5 sm:h-5" />
         {review.comments}

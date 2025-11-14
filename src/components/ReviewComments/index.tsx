@@ -187,7 +187,7 @@ export function ReviewComments({
                 )}
                 <div className="flex-1 flex flex-col">
                   <p className="text-sm font-semibold text-[#010b62] dark:text-white">
-                    {c.users?.name}
+                    {c.users?.name || "Usuário Deletado"}
                   </p>
                   {c.user_id && (
                     <AchievementBadges userId={c.user_id} size="sm" />

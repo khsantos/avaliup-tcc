@@ -36,9 +36,17 @@ export function ReviewCard({
   const [isExpanded, setIsExpanded] = useState(false);
   const [showComments, setShowComments] = useState(false);
 
+  const handleToggleComments = () => {
+    setShowComments((prev) => {
+      const next = !prev;
+      if (next) setIsExpanded(true);
+      return next;
+    });
+  };
+
   return (
     <Card
-      className="flex flex-col justify-between shadow-lg hover:shadow-2xl 
+      className="self-start flex flex-col justify-between shadow-lg hover:shadow-2xl 
              transition-transform hover:scale-102 dark:bg-[#030712] 
              border border-[#010b62] dark:border-[#ffffff]/20 
              rounded-sm text-white 
@@ -69,7 +77,7 @@ export function ReviewCard({
             hasLiked={hasLiked}
             hasDisliked={hasDisliked}
             onVote={onVote}
-            onToggleComments={() => setShowComments((prev) => !prev)}
+            onToggleComments={handleToggleComments}
           />
 
           <ReviewOptions review={review} setReviews={setReviews} />

@@ -1,10 +1,12 @@
 import { Button } from "@/src/components/ui/button";
+import { useRef, useLayoutEffect, useState } from "react";
 
 type ReviewContentProps = {
   title: string;
   text: string;
   isExpanded?: boolean;
   onToggleExpand: () => void;
+  previewChars?: number;
 };
 
 export function ReviewContent({
@@ -13,7 +15,26 @@ export function ReviewContent({
   isExpanded = false,
   onToggleExpand,
 }: ReviewContentProps) {
-  const canExpand = text.split("\n").length > 4 || text.length > 200;
+  const previewLines = 3;
+  const lineHeightPx = 32;
+  const previewMaxHeight = previewLines * lineHeightPx;
+
+  const pRef = useRef<HTMLParagraphElement | null>(null);
+  const [height, setHeight] = useState<string>(`${previewMaxHeight}px`);
+  const [hasOverflow, setHasOverflow] = useState<boolean>(false);
+
+  useLayoutEffect(() => {
+    const el = pRef.current;
+    if (!el) return;
+    const contentHeight = el.scrollHeight;
+    setHasOverflow(contentHeight > previewMaxHeight + 1);
+    if (isExpanded) {
+      setHeight(`${contentHeight}px`);
+    } else {
+      setHeight(`${previewMaxHeight}px`);
+    }
+  }, [isExpanded, text, previewMaxHeight]);
+
   return (
     <div className="space-y-2">
       <div className="font-bold text-lg text-[#010b62] dark:text-white">
@@ -22,21 +43,26 @@ export function ReviewContent({
 
       <div className="relative flex flex-col">
         <p
-          className={`dark:text-white text-[#010b62] text-base text-justify leading-snug whitespace-pre-line transition-all ${isExpanded ? "" : "line-clamp-4 overflow-hidden"
-            }`}
+          ref={pRef}
+          style={{
+            maxHeight: height,
+            overflow: "hidden",
+            transition: "max-height 220ms ease",
+          }}
+          className="dark:text-white text-[#010b62] text-base text-justify leading-snug whitespace-pre-line"
         >
           {text}
         </p>
 
-        {!isExpanded && canExpand && (
+        {!isExpanded && hasOverflow && (
           <div
             className="absolute bottom-0 left-0 w-full h-12 pointer-events-none 
-                          bg-gradient-to-t from-white dark:from-[#030712] to-transparent"
+                       bg-gradient-to-t from-white dark:from-[#030712] to-transparent"
           />
         )}
       </div>
 
-      {canExpand ? (
+      {hasOverflow ? (
         <div className="flex justify-end">
           <Button
             variant="ghost"
