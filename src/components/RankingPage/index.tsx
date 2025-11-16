@@ -15,6 +15,7 @@ import { useSupabase } from "@/src/contexts/supabase-provider";
 import { User } from "@/src/types/User";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Pagination } from "../Pagination";
+import HeroRanking from "../../../public/hero-ranking.png";
 
 export default function RankingComponent() {
   const { theme } = useTheme();
@@ -189,7 +190,7 @@ export default function RankingComponent() {
 
         <div className="w-full h-auto rounded-md overflow-hidden shadow-md mb-8">
           <Image
-            src={"/hero-ranking.svg"}
+            src={HeroRanking}
             alt="Banner do prêmio"
             width={500}
             height={100}
