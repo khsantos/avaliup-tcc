@@ -325,7 +325,7 @@ export default function ProfileEditPage() {
           </div>
 
           {message && (
-            <p className="text-md mt-2 text-center text-red-500">{message}</p>
+            <p className="text-md mt-2 text-center text-[#010b62] dark:text-[#01BAEF]">{message}</p>
           )}
 
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-6">
