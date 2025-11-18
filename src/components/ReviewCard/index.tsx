@@ -39,7 +39,9 @@ export function ReviewCard({
   const handleToggleComments = () => {
     setShowComments((prev) => {
       const next = !prev;
+
       if (next) setIsExpanded(true);
+
       return next;
     });
   };
@@ -77,6 +79,7 @@ export function ReviewCard({
             hasLiked={hasLiked}
             hasDisliked={hasDisliked}
             onVote={onVote}
+            commentsOpen={showComments}
             onToggleComments={handleToggleComments}
           />
 

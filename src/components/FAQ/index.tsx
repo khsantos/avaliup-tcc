@@ -373,8 +373,8 @@ export default function FAQ({ productId }: FAQProps) {
         ))}
       </div>
 
-      {totalPages > 0 && (
-        <div className="flex justify-center mt-4 sm:justify-start">
+      {totalPages > 1 && (
+        <div className="flex justify-center mt-4">
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}

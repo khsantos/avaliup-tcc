@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/src/components/ui/card";
 import { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/src/lib/supabase";
 import { Product_Prices } from "@/src/types/Product_Prices";
+import normalizePrice from "@/src/lib/normalizePrice";
 
 type StoreItem = Product_Prices & {
   product_image?: string;
@@ -187,16 +188,9 @@ export default function PriceMarketplaceComparison({
           role="list"
         >
           {stores.map((store, index) => {
-            const price =
-              store.price > 10000
-                ? Number(store.price) / 100
-                : Number(store.price);
+            const price = normalizePrice(store.price);
             const oldPrice =
-              store.old_price !== null
-                ? store.old_price > 10000
-                  ? Number(store.old_price) / 100
-                  : Number(store.old_price)
-                : null;
+              store.old_price !== null ? normalizePrice(store.old_price) : null;
 
             return (
               <a
@@ -214,7 +208,6 @@ export default function PriceMarketplaceComparison({
                   className={`relative overflow-hidden rounded-md border transition-all duration-200 ease-in-out group-hover:scale-[1.02] group-hover:shadow-lg
                     flex flex-col justify-between h-full cursor-pointer border-[#010b62] dark:border-white dark:bg-[#030712] bg-white`}
                 >
-
                   <CardContent className="pt-6 px-3 pb-3 flex flex-col min-h-[220px] md:min-h-[240px]">
                     <div className="flex gap-3 items-start">
                       <div className="w-24 h-24 md:w-28 md:h-28 flex items-center justify-center shrink-0 mt-1">

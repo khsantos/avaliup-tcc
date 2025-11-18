@@ -6,12 +6,14 @@ export default function ReviewActions({
   review,
   hasLiked,
   hasDisliked,
+  commentsOpen,
   onVote,
   onToggleComments,
 }: {
   review: UserReview;
   hasLiked?: boolean;
   hasDisliked?: boolean;
+  commentsOpen?: boolean;
   onVote: (id: string, type: "like" | "dislike") => void;
   onToggleComments: () => void;
 }) {
@@ -40,7 +42,10 @@ export default function ReviewActions({
       </span>
 
       <span
-        className="cursor-pointer flex items-center gap-1 text-[#010b62]/50 hover:text-[#010b62] dark:hover:text-[#01BAEF] dark:text-[#b6c2cd] text-sm sm:text-base transition-transform duration-150 hover:scale-110"
+        className={cn(
+          "cursor-pointer flex items-center gap-1 text-[#010b62]/50 hover:text-[#010b62] dark:hover:text-[#01BAEF] dark:text-[#b6c2cd] text-sm sm:text-base transition-transform duration-150 hover:scale-110",
+          commentsOpen && "text-[#010b62] dark:text-[#01BAEF]"
+        )}
         onClick={() => onToggleComments?.()}
       >
         <MessageCircle className="w-5 h-5 sm:w-5 sm:h-5" />

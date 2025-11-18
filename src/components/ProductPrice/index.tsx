@@ -1,5 +1,7 @@
+import normalizePrice from "@/src/lib/normalizePrice";
+
 interface ProductPriceProps {
-  lowestPrice?: number;
+  lowestPrice?: number | string;
   lowestPlatform?: string;
 }
 
@@ -15,15 +17,18 @@ export default function ProductPrice({
     );
   }
 
+  const price = normalizePrice(lowestPrice);
+
   return (
     <div className="mt-2">
       <div className="text-2xl font-bold text-[#010b62] dark:text-white">
         {new Intl.NumberFormat("pt-BR", {
           style: "currency",
           currency: "BRL",
-        }).format(lowestPrice > 10000 ? lowestPrice / 100 : lowestPrice)}{" "}
+        }).format(price)}{" "}
         <span className="text-base">à vista</span>
       </div>
+
       <div className="text-sm text-gray-600 dark:text-gray-300 font-light">
         menor preço atual {lowestPlatform && `na ${lowestPlatform}`}
       </div>
