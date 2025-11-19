@@ -117,10 +117,15 @@ export default function Login() {
   };
 
   const handleGoogleLogin = async () => {
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+    const redirectTo = appUrl
+      ? `${appUrl.replace(/\/$/, "")}/auth/callback`
+      : `${window.location.origin}/auth/callback`;
+
     setLoading(true);
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
+      options: { redirectTo },
     });
     setLoading(false);
 

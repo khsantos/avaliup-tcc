@@ -4,7 +4,6 @@ import dynamic from "next/dynamic";
 import { useAdSense } from "@/src/hooks/useAdSense";
 
 function AdBanner({
-  slot,
   height = 40,
   margin = "my-6",
 }: {
@@ -25,7 +24,7 @@ function AdBanner({
           height: `${height}px`,
         }}
         data-ad-client="ca-pub-8840751358865151"
-        data-ad-slot={slot}
+        data-ad-slot="2165327748"
         data-ad-format="auto"
         data-full-width-responsive="true"
       />

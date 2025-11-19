@@ -1,5 +1,6 @@
-import SearchPage from "@/src/components/SearchPage";
+import SearchClient from "@/src/components/SearchPage";
 import { Metadata } from "next";
+import { Suspense } from "react";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -8,5 +9,9 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default function Search() {
-  return <SearchPage />;
+  return (
+    <Suspense fallback={<p>Carregando...</p>}>
+      <SearchClient />
+    </Suspense>
+  );
 }

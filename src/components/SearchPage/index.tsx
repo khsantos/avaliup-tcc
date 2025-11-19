@@ -6,7 +6,7 @@ import ProductCard from "@/src/components/ProductCard";
 import { Product } from "@/src/types/Product";
 import { useSearchParams } from "next/navigation";
 
-export default function SearchPage() {
+export default function SearchClient() {
   const searchParams = useSearchParams();
   const q = searchParams.get("query") ?? "";
 
@@ -24,7 +24,7 @@ export default function SearchPage() {
         .select("*")
         .ilike("name", `%${q}%`);
 
-      if (error) console.error("Error fetching products:", error);
+      if (error) console.error(error);
       else setProducts(data as Product[]);
 
       setLoading(false);
