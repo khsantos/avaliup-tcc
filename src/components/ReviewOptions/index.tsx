@@ -10,6 +10,7 @@ import {
 import { Button } from "@/src/components/ui/button";
 import { useSupabase } from "@/src/contexts/supabase-provider";
 import { UserReview } from "@/src/types/UserReview";
+import { toast } from "sonner";
 
 type ReviewOptionsProps = {
   review: UserReview;
@@ -27,6 +28,7 @@ export function ReviewOptions({ review, setReviews }: ReviewOptionsProps) {
       .delete()
       .eq("id", review.id);
 
+    toast.success("Review deletada com sucesso!");
     if (!error) {
       setReviews?.((prev) => prev.filter((r) => r.id !== review.id));
     } else {

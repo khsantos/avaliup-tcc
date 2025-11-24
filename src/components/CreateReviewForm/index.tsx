@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import StarRatingInput from "../StarRatingInput";
 import { Button } from "../ui/button";
 import { supabase } from "@/src/lib/supabase";
 import { Product } from "@/src/types/Product";
 import { useSupabase } from "@/src/contexts/supabase-provider";
 import { toast } from "sonner";
+import { formatCurrencyBRL } from "@/src/lib/formatCurrencyBrl";
 
 type RatingKey =
   | "performance"
@@ -46,6 +47,8 @@ export default function ReviewForm({
     usage_time: "",
   });
 
+  const [priceDisplay, setPriceDisplay] = useState<string>("");
+
   const [ratings, setRatings] = useState<Record<RatingKey, number>>({
     performance: 0,
     costBenefit: 0,
@@ -56,13 +59,16 @@ export default function ReviewForm({
 
   const [starSize, setStarSize] = useState(18);
 
-  const ratingFields: { label: string; key: RatingKey }[] = [
-    { label: "Performance", key: "performance" },
-    { label: "Custo-benefício", key: "costBenefit" },
-    { label: "Conforto", key: "comfort" },
-    { label: "Peso", key: "weight" },
-    { label: "Durabilidade", key: "durability" },
-  ];
+  const ratingFields: { label: string; key: RatingKey }[] = useMemo(
+    () => [
+      { label: "Performance", key: "performance" },
+      { label: "Custo-benefício", key: "costBenefit" },
+      { label: "Conforto", key: "comfort" },
+      { label: "Peso", key: "weight" },
+      { label: "Durabilidade", key: "durability" },
+    ],
+    []
+  );
 
   useEffect(() => {
     const handleResize = () => {
@@ -70,9 +76,9 @@ export default function ReviewForm({
       if (container) {
         const containerWidth = container.clientWidth;
         const starCount = ratingFields.length;
-        const maxStarSize = Math.floor(containerWidth / (starCount * 5)); // 5 estrelas por critério
-        const adjustedStarSize = Math.min(maxStarSize, 22); // Limita o tamanho máximo a 22
-        setStarSize(Math.max(adjustedStarSize, 18)); // Define um tamanho mínimo de 18 para mobile
+        const maxStarSize = Math.floor(containerWidth / (starCount * 5));
+        const adjustedStarSize = Math.min(maxStarSize, 22);
+        setStarSize(Math.max(adjustedStarSize, 18));
       }
     };
 
@@ -103,7 +109,6 @@ export default function ReviewForm({
   const ALLOWED_TEXT_REGEX =
     /^[a-zA-Z0-9À-ÖØ-öø-ÿ\s\.,\-'\"()\/:;?!%$@#&+\n]*$/;
 
-  // limites
   const TITLE_MAX = 100;
   const DESCRIPTION_MAX = 5000;
   const STORE_MAX = 100;
@@ -256,7 +261,45 @@ export default function ReviewForm({
 
     setTimeout(() => {
       window.location.reload();
-    }, 3000);
+    }, 500);
+  }
+
+  function handlePriceChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const raw = e.target.value;
+
+    const numeric = raw.replace(/\D/g, "");
+
+    const numberValue = numeric === "" ? 0 : Number(numeric) / 100;
+
+    const formatted = numberValue.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
+
+    setPriceDisplay(formatted);
+
+    setFormData((prev) => ({
+      ...prev,
+      price: numberValue,
+    }));
+  }
+
+  function handlePriceBlur() {
+    if (formData.price === 0) {
+      setPriceDisplay("");
+    }
+  }
+
+  function handlePricePaste(e: React.ClipboardEvent<HTMLInputElement>) {
+    e.preventDefault();
+    const paste = e.clipboardData.getData("Text");
+    const numeric = paste.replace(/\D/g, "").slice(0, 11);
+
+    setPriceDisplay(formatCurrencyBRL(numeric));
+    setFormData((prev) => ({
+      ...prev,
+      price: numeric === "" ? 0 : Number(numeric),
+    }));
   }
 
   return (
@@ -275,26 +318,49 @@ export default function ReviewForm({
 
       <form
         onSubmit={submitReview}
-        className={`space-y-6 ${!session ? "pointer-events-none select-none opacity-60" : ""
-          }`}
+        className={`space-y-6 ${
+          !session ? "pointer-events-none select-none opacity-60" : ""
+        }`}
       >
         {[
-          { id: "title", label: "Título da avaliação", type: "text" },
+          {
+            id: "title",
+            label: "Título da avaliação",
+            type: "text",
+            placeholder: "Um título breve e objetivo...",
+          },
           {
             id: "description",
             label: "Descrição da avaliação",
             type: "textarea",
+            placeholder: "Conte sobre sua experiência com o produto...",
           },
-          { id: "store", label: "Loja / Site da compra", type: "text" },
-          { id: "price", label: "Valor pago", type: "number" },
-          { id: "usage_time", label: "Tempo de uso", type: "text" },
-        ].map(({ id, label, type }) => (
+          {
+            id: "store",
+            label: "Loja / Site da compra",
+            type: "text",
+            placeholder: "Onde você comprou o produto?",
+          },
+          {
+            id: "price",
+            label: "Valor pago",
+            type: "number",
+            placeholder: "R$ 0,00",
+          },
+          {
+            id: "usage_time",
+            label: "Tempo de uso",
+            type: "text",
+            placeholder: "Ex: 3 meses, 1 ano...",
+          },
+        ].map(({ id, label, type, placeholder }) => (
           <div className="relative w-full" key={id}>
             {type === "textarea" ? (
               <textarea
                 id={id}
                 rows={5}
                 value={formData[id as keyof FormData]}
+                placeholder={placeholder}
                 onChange={(e) =>
                   setFormData((prev) => ({
                     ...prev,
@@ -305,16 +371,36 @@ export default function ReviewForm({
                   }))
                 }
                 className={`w-full border rounded-md px-3 pt-5 pb-2 text-sm bg-white dark:bg-[#030712] text-[#010b62] dark:text-white
-                  ${errorMessages[id as keyof FormData]
-                    ? "border-red-600 focus:ring-red-600"
-                    : "border-[#010b62]/50 dark:border-[#01BAEF] focus:ring-[#010b62] dark:focus:ring-[#01BAEF]"
+                  ${
+                    errorMessages[id as keyof FormData]
+                      ? "border-red-600 focus:ring-red-600"
+                      : "border-[#010b62]/50 dark:border-[#01BAEF] focus:ring-[#010b62] dark:focus:ring-[#01BAEF]"
                   }`}
+              />
+            ) : id === "price" ? (
+              <input
+                id="price"
+                type="text"
+                inputMode="numeric"
+                value={priceDisplay}
+                onChange={handlePriceChange}
+                onPaste={handlePricePaste}
+                onBlur={handlePriceBlur}
+                placeholder="R$ 0,00"
+                className={`w-full border rounded-md px-3 pt-5 pb-2 text-sm bg-white dark:bg-[#030712] text-[#010b62] dark:text-white
+    ${
+      errorMessages.price
+        ? "border-red-600 focus:ring-red-600"
+        : "border-[#010b62]/50 dark:border-[#01BAEF] focus:ring-2 focus:ring-[#010b62] dark:focus:ring-[#01BAEF]"
+    } no-spinner`}
+                aria-label="Valor pago"
               />
             ) : (
               <input
                 id={id}
                 type={type}
                 value={formData[id as keyof FormData]}
+                placeholder={placeholder}
                 onChange={(e) =>
                   setFormData((prev) => ({
                     ...prev,
@@ -325,10 +411,11 @@ export default function ReviewForm({
                   }))
                 }
                 className={`w-full border rounded-md px-3 pt-5 pb-2 text-sm bg-white dark:bg-[#030712] text-[#010b62] dark:text-white
-                  ${errorMessages[id as keyof FormData]
-                    ? "border-red-600 focus:ring-red-600"
-                    : "border-[#010b62]/50 dark:border-[#01BAEF] focus:ring-2 focus:ring-[#010b62] dark:focus:ring-[#01BAEF]"
-                  } ${type === "number" ? "no-spinner" : ""}`}
+      ${
+        errorMessages[id as keyof FormData]
+          ? "border-red-600 focus:ring-red-600"
+          : "border-[#010b62]/50 dark:border-[#01BAEF] focus:ring-2 focus:ring-[#010b62] dark:focus:ring-[#01BAEF]"
+      } ${type === "number" ? "no-spinner" : ""}`}
               />
             )}
 
@@ -351,8 +438,9 @@ export default function ReviewForm({
           {ratingFields.map(({ label, key }) => (
             <div
               key={key}
-              className={`flex flex-col text-left min-w-0 ${key === "durability" ? "lg:col-span-4" : ""
-                }`}
+              className={`flex flex-col text-left min-w-0 ${
+                key === "durability" ? "lg:col-span-4" : ""
+              }`}
             >
               <label className="text-sm text-[#010b62] dark:text-white mb-1">
                 {label}
