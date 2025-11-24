@@ -1,7 +1,5 @@
 # Avali.up
 
-![Avali.up logo](/public/logo-avaliup.png)
-
 Aplicação de reviews e rankings de produtos construída com Next.js + Supabase.
 
 Principais pontos
