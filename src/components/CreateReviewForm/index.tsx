@@ -7,7 +7,7 @@ import { supabase } from "@/src/lib/supabase";
 import { Product } from "@/src/types/Product";
 import { useSupabase } from "@/src/contexts/supabase-provider";
 import { toast } from "sonner";
-import { formatCurrencyBRL } from "@/src/lib/formatCurrencyBrl";
+import { formatCurrencyBRL } from "@/src/lib/formatCurrency";
 
 type RatingKey =
   | "performance"

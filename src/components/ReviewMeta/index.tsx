@@ -1,4 +1,4 @@
-import { formatCurrencyBRL } from "@/src/lib/formatCurrencyBrl";
+import { formatCurrencyBRL } from "@/src/lib/formatCurrency";
 import { UserReview } from "@/src/types/UserReview";
 
 export default function ReviewMeta({ review }: { review: UserReview }) {
